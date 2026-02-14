@@ -31,7 +31,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
 - [x] **Task: Implement MockTool & MockToolkit** 3725363
     - [ ] Implement `MockTool` with `invoke` and `reset` logic.
     - [ ] Implement `MockToolkit` with `mock` registration, `as_dict` wiring, and `reset`.
-- [ ] **Task: Verify Mock Layer**
+- [x] **Task: Verify Mock Layer** 760c9af
     - [ ] Write unit tests for each strategy, ensuring correct error raising and exception capturing in `CallableStrategy`.
     - [ ] Verify `MockToolkit` correctly manages multiple tools and state resets.
     - [ ] Run `mypy --strict` and `ruff check`.
