@@ -12,7 +12,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
 - [x] **Task: Conductor - User Manual Verification 'Project Scaffolding' (Protocol in workflow.md)**
 
 ## Phase 2: Core Data Models (`unitai.core`)
-- [ ] **Task: Implement Trajectory & TrajectoryStep Dataclasses**
+- [x] **Task: Implement Trajectory & TrajectoryStep Dataclasses** e9be248
     - [ ] Define `TrajectoryStep` with `step_type` validation in `__post_init__`.
     - [ ] Define `Trajectory` to hold steps and metadata.
     - [ ] Implement robust `to_dict` and `from_dict` methods for JSON serialization, handling Exception types.
