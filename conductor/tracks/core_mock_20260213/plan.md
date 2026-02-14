@@ -25,7 +25,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
 - [x] **Task: Conductor - User Manual Verification 'Core Data Models' (Protocol in workflow.md)**
 
 ## Phase 3: Mock Layer Implementation (`unitai.mock`)
-- [ ] **Task: Implement Response Strategies**
+- [x] **Task: Implement Response Strategies** 7f41652
     - [ ] Create `strategies.py` with `StaticStrategy`, `SequenceStrategy`, `ConditionalStrategy`, `ErrorStrategy`, and `CallableStrategy`.
     - [ ] Implement custom error types: `MockExhaustedError`, `NoMatchingConditionError`.
 - [ ] **Task: Implement MockTool & MockToolkit**
