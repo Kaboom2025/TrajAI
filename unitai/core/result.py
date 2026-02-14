@@ -1,7 +1,10 @@
 from __future__ import annotations
-from dataclasses import dataclass, asdict
+
+from dataclasses import asdict, dataclass
 from typing import Any, Optional, Union
+
 from unitai.core.trajectory import Trajectory
+
 
 @dataclass(frozen=True)
 class MockToolCall:

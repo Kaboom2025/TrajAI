@@ -1,26 +1,28 @@
 from __future__ import annotations
-from dataclasses import dataclass, asdict, field
-from typing import Any, Optional, Union
+
 import uuid
+from dataclasses import asdict, dataclass, field
+from typing import Any, Optional, Union
+
 
 @dataclass(frozen=True)
 class TrajectoryStep:
     step_index: int
     step_type: str  # "tool_call", "llm_call", "state_change"
     timestamp: float
-    
+
     # Tool call fields
     tool_name: Optional[str] = None
     tool_args: Optional[dict[str, Any]] = None
     tool_result: Optional[Any] = None
     tool_error: Optional[Union[Exception, dict[str, Any]]] = None
-    
+
     # LLM call fields
     model: Optional[str] = None
     prompt_tokens: Optional[int] = None
     completion_tokens: Optional[int] = None
     cost: Optional[float] = None
-    
+
     # State change fields
     key: Optional[str] = None
     old_value: Optional[Any] = None
@@ -29,7 +31,9 @@ class TrajectoryStep:
     def __post_init__(self) -> None:
         valid_types = {"tool_call", "llm_call", "state_change"}
         if self.step_type not in valid_types:
-            raise ValueError(f"Invalid step_type: {self.step_type}. Must be one of {valid_types}")
+            raise ValueError(
+                f"Invalid step_type: {self.step_type}. Must be one of {valid_types}"
+            )
 
     def to_dict(self) -> dict[str, Any]:
         data = asdict(self)

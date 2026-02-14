@@ -1,6 +1,7 @@
 import os
 
-def test_directory_structure():
+
+def test_directory_structure() -> None:
     expected_dirs = [
         "unitai",
         "unitai/core",
@@ -12,7 +13,7 @@ def test_directory_structure():
         "unitai/ci",
         "unitai/config",
     ]
-    
+
     for d in expected_dirs:
         assert os.path.isdir(d), f"Directory {d} does not exist"
         init_file = os.path.join(d, "__init__.py")

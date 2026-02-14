@@ -1,9 +1,12 @@
-import pytest
 from datetime import datetime
-from unitai.core.trajectory import Trajectory, TrajectoryStep
-from unitai.core.result import AgentRunResult, MockToolCall
 
-def test_mock_tool_call_creation():
+import pytest
+
+from unitai.core.result import AgentRunResult, MockToolCall
+from unitai.core.trajectory import Trajectory
+
+
+def test_mock_tool_call_creation() -> None:
     call = MockToolCall(
         args={"q": "test"},
         result="some result",
@@ -12,7 +15,7 @@ def test_mock_tool_call_creation():
     assert call.args["q"] == "test"
     assert call.result == "some result"
 
-def test_test_run_result_properties():
+def test_test_run_result_properties() -> None:
     traj = Trajectory(
         run_id="test-id",
         input="hi",
@@ -21,26 +24,26 @@ def test_test_run_result_properties():
         duration_seconds=1.5
     )
     result = AgentRunResult(trajectory=traj)
-    
+
     assert result.output == "hello"
     assert result.total_cost == 0.05
     assert result.duration == 1.5
     assert result.succeeded is True
 
-def test_test_run_result_error():
+def test_test_run_result_error() -> None:
     traj = Trajectory(
         run_id="test-id",
         input="hi",
         error=ValueError("oops")
     )
     result = AgentRunResult(trajectory=traj)
-    
+
     assert result.failed is True
     assert result.error is not None
 
-def test_test_run_result_stubs():
+def test_test_run_result_stubs() -> None:
     traj = Trajectory()
     result = AgentRunResult(trajectory=traj)
-    
+
     with pytest.raises(NotImplementedError):
         result.tool_was_called("any")

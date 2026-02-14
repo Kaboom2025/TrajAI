@@ -1,9 +1,11 @@
-import pytest
-import json
 from datetime import datetime
+
+import pytest
+
 from unitai.core.trajectory import Trajectory, TrajectoryStep
 
-def test_trajectory_step_creation():
+
+def test_trajectory_step_creation() -> None:
     step = TrajectoryStep(
         step_index=0,
         step_type="tool_call",
@@ -15,7 +17,7 @@ def test_trajectory_step_creation():
     assert step.step_index == 0
     assert step.step_type == "tool_call"
 
-def test_trajectory_step_invalid_type():
+def test_trajectory_step_invalid_type() -> None:
     with pytest.raises(ValueError, match="Invalid step_type"):
         TrajectoryStep(
             step_index=0,
@@ -23,7 +25,7 @@ def test_trajectory_step_invalid_type():
             timestamp=datetime.now().timestamp()
         )
 
-def test_trajectory_serialization():
+def test_trajectory_serialization() -> None:
     step = TrajectoryStep(
         step_index=0,
         step_type="tool_call",
@@ -37,18 +39,18 @@ def test_trajectory_serialization():
         input="test input",
         steps=[step]
     )
-    
+
     data = traj.to_dict()
     assert data["run_id"] == "test-run"
     assert data["steps"][0]["tool_name"] == "test_tool"
-    
+
     # Test round-trip
     traj_back = Trajectory.from_dict(data)
     assert traj_back.run_id == traj.run_id
     assert traj_back.steps[0].tool_name == traj.steps[0].tool_name
     assert traj_back.steps[0].timestamp == traj.steps[0].timestamp
 
-def test_exception_serialization():
+def test_exception_serialization() -> None:
     try:
         raise ValueError("test error")
     except ValueError as e:
@@ -60,13 +62,15 @@ def test_exception_serialization():
             tool_args={},
             tool_error=e
         )
-    
+
     traj = Trajectory(run_id="err-run", input="err", steps=[error_step])
     data = traj.to_dict()
-    
+
     assert data["steps"][0]["tool_error"]["type"] == "ValueError"
     assert data["steps"][0]["tool_error"]["message"] == "test error"
-    
+
     traj_back = Trajectory.from_dict(data)
-    # We expect tool_error to be a dict or a reconstructed object that behaves like one for now
-    assert traj_back.steps[0].tool_error["type"] == "ValueError"
+    # tool_error is serialized as a dict in this phase
+    error = traj_back.steps[0].tool_error
+    assert isinstance(error, dict)
+    assert error["type"] == "ValueError"
