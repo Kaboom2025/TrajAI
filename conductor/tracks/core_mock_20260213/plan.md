@@ -11,7 +11,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
     - [ ] Set up `.gitignore` and `.github/workflows/ci.yml`.
 - [x] **Task: Conductor - User Manual Verification 'Project Scaffolding' (Protocol in workflow.md)**
 
-## Phase 2: Core Data Models (`unitai.core`)
+## Phase 2: Core Data Models (`unitai.core`) [checkpoint: 641181f]
 - [x] **Task: Implement Trajectory & TrajectoryStep Dataclasses** e9be248
     - [ ] Define `TrajectoryStep` with `step_type` validation in `__post_init__`.
     - [ ] Define `Trajectory` to hold steps and metadata.
@@ -22,7 +22,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
 - [x] **Task: Verify Data Models** 2f1b779
     - [ ] Write unit tests for JSON round-tripping of all models, including complex cases like nested exceptions.
     - [ ] Run `mypy --strict` and `ruff check`.
-- [ ] **Task: Conductor - User Manual Verification 'Core Data Models' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Core Data Models' (Protocol in workflow.md)**
 
 ## Phase 3: Mock Layer Implementation (`unitai.mock`)
 - [ ] **Task: Implement Response Strategies**
