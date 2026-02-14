@@ -57,7 +57,7 @@ unitai/
 │   ├── __init__.py
 │   ├── trajectory.py        # Trajectory data model + collector
 │   ├── assertions.py        # Assertion library
-│   └── result.py            # TestRunResult container
+│   └── result.py            # AgentRunResult container
 ├── mock/
 │   ├── __init__.py
 │   ├── toolkit.py           # MockToolkit — the primary user-facing mock API
@@ -148,12 +148,12 @@ TrajectoryStep:
   new_value: Any
 ```
 
-### 3.3 TestRunResult
+### 3.3 AgentRunResult
 
 Returned by `toolkit.run()`. Wraps a Trajectory and exposes the assertion methods.
 
 ```
-TestRunResult:
+AgentRunResult:
   trajectory: Trajectory
   output: str (alias for trajectory.final_output)
   total_cost: float
@@ -182,7 +182,7 @@ The primary user-facing API. Developers create a MockToolkit, register mock tool
 - Register mock tools with configurable response strategies
 - Inject mocks into the agent (via the appropriate framework adapter)
 - Collect the full trajectory during the run
-- Return a TestRunResult
+- Return a AgentRunResult
 
 **Key methods:**
 
@@ -193,7 +193,7 @@ MockToolkit:
 
   run(agent, input, adapter=None, model_override=None, timeout=60)
     # Executes the agent with mocked tools. Auto-detects adapter if not specified.
-    # Returns TestRunResult.
+    # Returns AgentRunResult.
 
   reset()
     # Clears all recorded calls and resets mock state. Mocks stay registered.
@@ -284,7 +284,7 @@ If the agent tries to call a tool that hasn't been mocked, the behavior depends 
 
 ## 5. Assertion Library
 
-All assertions are methods on `TestRunResult`. They return booleans so they work with Python's `assert` keyword natively. Each assertion also has a descriptive `__repr__` for clear pytest failure messages.
+All assertions are methods on `AgentRunResult`. They return booleans so they work with Python's `assert` keyword natively. Each assertion also has a descriptive `__repr__` for clear pytest failure messages.
 
 ### 5.1 Tool Call Assertions
 
@@ -962,7 +962,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - Trajectory must be serializable to JSON (for future snapshot testing and cache)
    - Implement `Trajectory.add_step()`, `Trajectory.to_dict()`, `Trajectory.from_dict()`
 
-3. **`core/result.py`** — TestRunResult container
+3. **`core/result.py`** — AgentRunResult container
    - Wraps a Trajectory
    - Exposes property accessors: `output`, `total_cost`, `duration`, `error`, `succeeded`, `failed`
    - Stub out assertion methods (raise `NotImplementedError`) — implemented in Phase 3
@@ -992,7 +992,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 - MockTool records calls with correct args and timestamps
 - MockToolkit registers tools, prevents duplicate names, retrieves by name
 - Trajectory serializes to JSON and round-trips
-- TestRunResult exposes correct properties from a manually constructed Trajectory
+- AgentRunResult exposes correct properties from a manually constructed Trajectory
 
 **Success criteria:**
 - [ ] All dataclasses type-check cleanly with mypy (strict mode)
@@ -1008,7 +1008,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 ### Phase 2: Generic Adapter & Agent Execution
 
-**Goal:** Wire MockToolkit to actually run an agent. Use the generic adapter first — no framework-specific code yet. At the end of this phase, a developer can run a simple agent with mocked tools and get back a TestRunResult with a real trajectory.
+**Goal:** Wire MockToolkit to actually run an agent. Use the generic adapter first — no framework-specific code yet. At the end of this phase, a developer can run a simple agent with mocked tools and get back a AgentRunResult with a real trajectory.
 
 **Build order:**
 
@@ -1022,7 +1022,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - Trajectory collection works by: the mock tools record their own calls during execution. After the callable returns, the adapter collects all calls from all MockTools and assembles them into a Trajectory in chronological order.
 
 3. **`mock/toolkit.py`** — Complete `run()` and `run_generic()`
-   - `run_generic(callable, timeout=60)` — executes the callable, collects trajectory from mock tools, returns TestRunResult
+   - `run_generic(callable, timeout=60)` — executes the callable, collects trajectory from mock tools, returns AgentRunResult
    - `run(agent, input, adapter=None, ...)` — stubbed for now, will delegate to framework adapters in Phase 5. If no adapter found, raise with instructions to use `run_generic()`.
    - Implement timeout via `threading.Timer` that interrupts execution
    - Implement `strict` mode: if a tool name is invoked that wasn't mocked, raise `UnmockedToolError`
@@ -1049,7 +1049,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 - End-to-end: simple fixture agent with mocked tools produces correct trajectory
 
 **Success criteria:**
-- [ ] `toolkit.run_generic(my_fn)` executes and returns a `TestRunResult` with populated trajectory
+- [ ] `toolkit.run_generic(my_fn)` executes and returns a `AgentRunResult` with populated trajectory
 - [ ] Trajectory contains correct tool call steps in chronological order with accurate args/results
 - [ ] Timeout works: agent running >60s is killed and `result.error` is `AgentTimeoutError`
 - [ ] Strict mode works: unmocked tool call raises immediately
@@ -1062,13 +1062,13 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 ### Phase 3: Assertion Library
 
-**Goal:** Implement all assertion methods on TestRunResult. At the end of this phase, a developer can run an agent, then write expressive assertions about what the agent did. The assertions produce clear, human-readable failure messages.
+**Goal:** Implement all assertion methods on AgentRunResult. At the end of this phase, a developer can run an agent, then write expressive assertions about what the agent did. The assertions produce clear, human-readable failure messages.
 
 **Build order:**
 
 1. **`core/assertions.py`** — Standalone assertion functions
    - Each assertion is a pure function that takes a Trajectory and returns a boolean + failure message
-   - This separation allows assertions to be reused outside of TestRunResult (e.g., by the statistical runner for failure mode grouping)
+   - This separation allows assertions to be reused outside of AgentRunResult (e.g., by the statistical runner for failure mode grouping)
 
 2. **Tool call assertions (Section 5.1)**
    - `tool_was_called(trajectory, name)` — scan steps for any tool_call with matching name
@@ -1097,8 +1097,8 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - `get_calls(name)` → filter steps by tool name, return list of MockToolCall
    - `get_call(name, n=0)` → return Nth call to a specific tool
 
-7. **Wire assertions into TestRunResult**
-   - Each method on TestRunResult delegates to the corresponding function in assertions.py, passing `self.trajectory`
+7. **Wire assertions into AgentRunResult**
+   - Each method on AgentRunResult delegates to the corresponding function in assertions.py, passing `self.trajectory`
    - Override `__repr__` or use custom assertion introspection to produce rich failure messages when used with `assert`
 
 8. **Failure message formatting**
@@ -1238,7 +1238,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
      - Calls `adapter.can_handle(agent)` on each
      - Uses the first matching adapter
      - Calls `inject_mocks` then `execute`
-     - Returns TestRunResult
+     - Returns AgentRunResult
 
 8. **Build a LangGraph test fixture agent**
    - Simple LangGraph agent in `tests/fixtures/langgraph_agent.py`

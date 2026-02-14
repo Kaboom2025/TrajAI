@@ -23,7 +23,7 @@ This track focuses on building the foundational data structures and the mock too
     - Dataclass representing a single invocation of a mock tool.
     - Fields: `args: dict`, `result: Any`, `error: Exception | None`, `timestamp: float`.
     - Implements JSON serialization logic identical to `TrajectoryStep`.
-- **`TestRunResult`:**
+- **`AgentRunResult`:**
     - A container class wrapping a `Trajectory`.
     - Exposes properties: `output`, `total_cost`, `duration`, `error`, `succeeded`, `failed`.
     - Assertion methods will be stubbed (raising `NotImplementedError`) in this phase.

@@ -16,9 +16,9 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
     - [ ] Define `TrajectoryStep` with `step_type` validation in `__post_init__`.
     - [ ] Define `Trajectory` to hold steps and metadata.
     - [ ] Implement robust `to_dict` and `from_dict` methods for JSON serialization, handling Exception types.
-- [ ] **Task: Implement MockToolCall & TestRunResult**
+- [~] **Task: Implement MockToolCall & AgentRunResult**
     - [ ] Define `MockToolCall` dataclass with JSON serialization support.
-    - [ ] Define `TestRunResult` as a wrapper for `Trajectory` with property accessors and stubbed assertion methods.
+    - [ ] Define `AgentRunResult` as a wrapper for `Trajectory` with property accessors and stubbed assertion methods.
 - [ ] **Task: Verify Data Models**
     - [ ] Write unit tests for JSON round-tripping of all models, including complex cases like nested exceptions.
     - [ ] Run `mypy --strict` and `ruff check`.
