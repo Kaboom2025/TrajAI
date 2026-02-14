@@ -3,7 +3,7 @@
 This plan covers the initial scaffolding of the UnitAI project and the implementation of its core data structures and mocking layer.
 
 ## Phase 1: Project Scaffolding
-- [ ] **Task: Initialize Directory Structure**
+- [x] **Task: Initialize Directory Structure** ecd84df
     - [ ] Create all package directories: `unitai`, `unitai/core`, `unitai/mock`, `unitai/runner`, `unitai/adapters`, `unitai/pytest_plugin`, `unitai/cli`, `unitai/ci`, `unitai/config`.
     - [ ] Create `__init__.py` files in each directory.
 - [ ] **Task: Project Configuration**
