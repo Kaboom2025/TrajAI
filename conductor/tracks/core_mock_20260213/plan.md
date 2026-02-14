@@ -19,7 +19,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
 - [x] **Task: Implement MockToolCall & AgentRunResult** ee8476c
     - [ ] Define `MockToolCall` dataclass with JSON serialization support.
     - [ ] Define `AgentRunResult` as a wrapper for `Trajectory` with property accessors and stubbed assertion methods.
-- [ ] **Task: Verify Data Models**
+- [x] **Task: Verify Data Models** 2f1b779
     - [ ] Write unit tests for JSON round-tripping of all models, including complex cases like nested exceptions.
     - [ ] Run `mypy --strict` and `ruff check`.
 - [ ] **Task: Conductor - User Manual Verification 'Core Data Models' (Protocol in workflow.md)**
