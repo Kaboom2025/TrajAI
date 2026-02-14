@@ -16,7 +16,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
     - [ ] Define `TrajectoryStep` with `step_type` validation in `__post_init__`.
     - [ ] Define `Trajectory` to hold steps and metadata.
     - [ ] Implement robust `to_dict` and `from_dict` methods for JSON serialization, handling Exception types.
-- [~] **Task: Implement MockToolCall & AgentRunResult**
+- [x] **Task: Implement MockToolCall & AgentRunResult** ee8476c
     - [ ] Define `MockToolCall` dataclass with JSON serialization support.
     - [ ] Define `AgentRunResult` as a wrapper for `Trajectory` with property accessors and stubbed assertion methods.
 - [ ] **Task: Verify Data Models**
