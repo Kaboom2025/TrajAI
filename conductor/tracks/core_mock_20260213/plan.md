@@ -24,7 +24,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
     - [ ] Run `mypy --strict` and `ruff check`.
 - [x] **Task: Conductor - User Manual Verification 'Core Data Models' (Protocol in workflow.md)**
 
-## Phase 3: Mock Layer Implementation (`unitai.mock`)
+## Phase 3: Mock Layer Implementation (`unitai.mock`) [checkpoint: 6eb3e73]
 - [x] **Task: Implement Response Strategies** 7f41652
     - [ ] Create `strategies.py` with `StaticStrategy`, `SequenceStrategy`, `ConditionalStrategy`, `ErrorStrategy`, and `CallableStrategy`.
     - [ ] Implement custom error types: `MockExhaustedError`, `NoMatchingConditionError`.
@@ -35,4 +35,4 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
     - [ ] Write unit tests for each strategy, ensuring correct error raising and exception capturing in `CallableStrategy`.
     - [ ] Verify `MockToolkit` correctly manages multiple tools and state resets.
     - [ ] Run `mypy --strict` and `ruff check`.
-- [ ] **Task: Conductor - User Manual Verification 'Mock Layer Implementation' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Mock Layer Implementation' (Protocol in workflow.md)**
