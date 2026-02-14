@@ -6,7 +6,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
 - [x] **Task: Initialize Directory Structure** ecd84df
     - [ ] Create all package directories: `unitai`, `unitai/core`, `unitai/mock`, `unitai/runner`, `unitai/adapters`, `unitai/pytest_plugin`, `unitai/cli`, `unitai/ci`, `unitai/config`.
     - [ ] Create `__init__.py` files in each directory.
-- [ ] **Task: Project Configuration**
+- [x] **Task: Project Configuration** 89ecf78
     - [ ] Create `pyproject.toml` with build system (Hatch), project metadata, and dependencies (core: none, dev: pytest, ruff, mypy, pre-commit).
     - [ ] Set up `.gitignore` and `.github/workflows/ci.yml`.
 - [ ] **Task: Conductor - User Manual Verification 'Project Scaffolding' (Protocol in workflow.md)**
