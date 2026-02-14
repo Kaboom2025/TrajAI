@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Optional, Sequence
+from typing import Any, Callable, Sequence
+
 
 class UnitAIMockError(Exception):
     """Base class for errors in the UnitAI mock layer."""
@@ -16,7 +18,7 @@ class NoMatchingConditionError(UnitAIMockError):
 
 class ResponseStrategy(ABC):
     """Abstract base class for all mock tool response strategies."""
-    
+
     @abstractmethod
     def execute(self, args: dict[str, Any]) -> Any:
         """Execute the strategy and return a value or raise an error."""

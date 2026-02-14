@@ -1,13 +1,17 @@
+from typing import Any
+
 import pytest
+
 from unitai.mock.strategies import (
-    StaticStrategy,
-    SequenceStrategy,
+    CallableStrategy,
     ConditionalStrategy,
     ErrorStrategy,
-    CallableStrategy,
     MockExhaustedError,
-    NoMatchingConditionError
+    NoMatchingConditionError,
+    SequenceStrategy,
+    StaticStrategy,
 )
+
 
 def test_static_strategy() -> None:
     strategy = StaticStrategy(value="static-val")
@@ -38,8 +42,8 @@ def test_error_strategy() -> None:
         strategy.execute({})
 
 def test_callable_strategy() -> None:
-    def my_fn(args):
+    def my_fn(args: dict[str, Any]) -> Any:
         return args["x"] * 2
-    
+
     strategy = CallableStrategy(fn=my_fn)
     assert strategy.execute({"x": 5}) == 10

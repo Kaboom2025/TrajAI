@@ -1,15 +1,18 @@
 from __future__ import annotations
+
 from datetime import datetime
 from typing import Any, Callable, Optional, Sequence
+
 from unitai.core.result import MockToolCall
 from unitai.mock.strategies import (
-    ResponseStrategy,
-    StaticStrategy,
-    SequenceStrategy,
+    CallableStrategy,
     ConditionalStrategy,
     ErrorStrategy,
-    CallableStrategy
+    ResponseStrategy,
+    SequenceStrategy,
+    StaticStrategy,
 )
+
 
 class MockTool:
     def __init__(self, name: str, strategy: ResponseStrategy):
@@ -21,7 +24,7 @@ class MockTool:
         timestamp = datetime.now().timestamp()
         result = None
         error = None
-        
+
         try:
             result = self.strategy.execute(args)
             return result
@@ -41,7 +44,7 @@ class MockTool:
         self.calls = []
 
 class MockToolkit:
-    def __init__(self):
+    def __init__(self) -> None:
         self._tools: dict[str, MockTool] = {}
 
     def mock(
@@ -53,7 +56,7 @@ class MockToolkit:
         conditional: Optional[dict[Callable[[dict[str, Any]], bool], Any]] = None,
     ) -> MockTool:
         strategy: ResponseStrategy
-        
+
         if sequence is not None:
             strategy = SequenceStrategy(sequence)
         elif conditional is not None:
@@ -64,7 +67,7 @@ class MockToolkit:
             strategy = CallableStrategy(side_effect)
         else:
             strategy = StaticStrategy(return_value)
-            
+
         tool = MockTool(name, strategy)
         self._tools[name] = tool
         return tool
