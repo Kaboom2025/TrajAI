@@ -11,7 +11,7 @@ This plan covers the implementation of the `BaseAdapter` interface, the `Generic
     - [ ] Implement `GenericAdapter.execute` to run a callable, aggregate `MockTool.calls` and toolkit LLM calls, and return a `Trajectory`.
 - [x] **Task: Conductor - User Manual Verification 'Adapter Infrastructure' (Protocol in workflow.md)**
 
-## Phase 2: MockToolkit Integration & Execution Logic
+## Phase 2: MockToolkit Integration & Execution Logic [checkpoint: 9464f56]
 - [x] **Task: Implement MockToolDict & record_llm_call** 84a1002
     - [ ] Implement `MockToolDict` in `unitai/mock/toolkit.py` with `strict` mode logic.
     - [ ] Add `_recorded_llm_calls` and `record_llm_call` to `MockToolkit`.
@@ -19,7 +19,7 @@ This plan covers the implementation of the `BaseAdapter` interface, the `Generic
     - [ ] Implement `run_generic` using `asyncio.wait_for` and `asyncio.to_thread` for timeout handling.
     - [ ] Implement `run_callable` as a wrapper around `run_generic`.
     - [ ] Ensure `AgentTimeoutError` returns partial trajectories.
-- [ ] **Task: Conductor - User Manual Verification 'Execution Logic' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Execution Logic' (Protocol in workflow.md)**
 
 ## Phase 3: Simple Agent Fixture & Final Verification
 - [ ] **Task: Create Simple Agent Fixture**
