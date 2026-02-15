@@ -22,7 +22,7 @@ This plan covers the implementation of the `BaseAdapter` interface, the `Generic
 - [x] **Task: Conductor - User Manual Verification 'Execution Logic' (Protocol in workflow.md)**
 
 ## Phase 3: Simple Agent Fixture & Final Verification
-- [ ] **Task: Create Simple Agent Fixture**
+- [x] **Task: Create Simple Agent Fixture** 6822c2f
     - [ ] Create `tests/fixtures/simple_agent.py` containing a basic tool-calling agent.
 - [ ] **Task: Verify Generic Adapter End-to-End**
     - [ ] Write tests verifying `run_generic` and `run_callable` with the simple agent.
