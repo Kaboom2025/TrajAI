@@ -6,7 +6,7 @@ This plan covers the implementation of the `BaseAdapter` interface, the `Generic
 - [x] **Task: Define BaseAdapter Interface** 74c7f84
     - [ ] Create `unitai/adapters/base.py`.
     - [ ] Define `BaseAdapter` abstract base class with `can_handle`, `inject_mocks`, `execute`, and `extract_tools` methods.
-- [ ] **Task: Implement GenericAdapter**
+- [x] **Task: Implement GenericAdapter** 1ca7a78
     - [ ] Create `unitai/adapters/generic.py`.
     - [ ] Implement `GenericAdapter.execute` to run a callable, aggregate `MockTool.calls` and toolkit LLM calls, and return a `Trajectory`.
 - [ ] **Task: Conductor - User Manual Verification 'Adapter Infrastructure' (Protocol in workflow.md)**
