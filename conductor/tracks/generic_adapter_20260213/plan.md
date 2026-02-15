@@ -3,7 +3,7 @@
 This plan covers the implementation of the `BaseAdapter` interface, the `GenericAdapter` for framework-less agent code, and the `run_generic` / `run_callable` entry points in `MockToolkit`.
 
 ## Phase 1: Adapter Infrastructure
-- [ ] **Task: Define BaseAdapter Interface**
+- [x] **Task: Define BaseAdapter Interface** 74c7f84
     - [ ] Create `unitai/adapters/base.py`.
     - [ ] Define `BaseAdapter` abstract base class with `can_handle`, `inject_mocks`, `execute`, and `extract_tools` methods.
 - [ ] **Task: Implement GenericAdapter**
