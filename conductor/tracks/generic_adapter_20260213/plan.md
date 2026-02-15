@@ -15,7 +15,7 @@ This plan covers the implementation of the `BaseAdapter` interface, the `Generic
 - [x] **Task: Implement MockToolDict & record_llm_call** 84a1002
     - [ ] Implement `MockToolDict` in `unitai/mock/toolkit.py` with `strict` mode logic.
     - [ ] Add `_recorded_llm_calls` and `record_llm_call` to `MockToolkit`.
-- [ ] **Task: Implement run_generic & run_callable**
+- [x] **Task: Implement run_generic & run_callable** f8e863d
     - [ ] Implement `run_generic` using `asyncio.wait_for` and `asyncio.to_thread` for timeout handling.
     - [ ] Implement `run_callable` as a wrapper around `run_generic`.
     - [ ] Ensure `AgentTimeoutError` returns partial trajectories.
