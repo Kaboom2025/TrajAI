@@ -40,6 +40,10 @@ class AgentRunResult:
         return self.trajectory.total_cost
 
     @property
+    def total_tokens(self) -> int:
+        return self.trajectory.total_tokens
+
+    @property
     def duration(self) -> float:
         return self.trajectory.duration_seconds
 

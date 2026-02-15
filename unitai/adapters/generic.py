@@ -23,17 +23,28 @@ class GenericAdapter(BaseAdapter):
     def extract_tools(self, agent: Any) -> list[str]:
         return []
 
-    def execute(self, wrapped_agent: Any, input: str, timeout: float) -> Trajectory:
+    def execute(
+        self,
+        wrapped_agent: Any,
+        input: str,
+        timeout: float,
+        tools: dict[str, Any] | None = None
+    ) -> Trajectory:
         # Reset toolkit before run
         self.toolkit.reset()
         
         # Execute the agent
         try:
-            # We use a simple execution here for the baseline implementation.
-            # Timeout logic will be added in MockToolkit.run_generic.
-            output = wrapped_agent()
+            if tools is not None:
+                output = wrapped_agent(input, tools)
+            else:
+                output = wrapped_agent()
         except Exception as e:
-            # Capture partial trajectory on error
+            # Re-raise mock errors immediately
+            from unitai.mock.toolkit import UnitAIMockError
+            if isinstance(e, UnitAIMockError):
+                raise
+            # Capture partial trajectory on other errors
             return self._build_trajectory(input, error=e)
             
         return self._build_trajectory(input, final_output=str(output))

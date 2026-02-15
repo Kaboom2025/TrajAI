@@ -3,18 +3,18 @@ from typing import Any, Callable
 def simple_tool_agent(input_str: str, tools: dict[str, Callable[[dict[str, Any]], Any]]) -> str:
     """
     A simple agent that calls tools based on the input.
-    Matches strings like 'search: query' or 'calc: 1+1'.
     """
     if input_str.startswith("search:"):
         query = input_str.split(":", 1)[1].strip()
-        result = tools["search"]({"q": query})
+        # Direct access will trigger UnmockedToolError in strict mode
+        tool = tools["search"]
+        result = tool({"q": query})
         return f"Found: {result}"
     
     if input_str.startswith("calc:"):
         expr = input_str.split(":", 1)[1].strip()
-        # In a real agent, this might be an LLM decision. 
-        # Here we just call the tool.
-        result = tools["calculator"]({"expression": expr})
+        tool = tools["calculator"]
+        result = tool({"expression": expr})
         return f"Result is {result}"
         
     return "I don't know how to do that."
