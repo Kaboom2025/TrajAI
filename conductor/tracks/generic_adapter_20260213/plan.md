@@ -12,7 +12,7 @@ This plan covers the implementation of the `BaseAdapter` interface, the `Generic
 - [x] **Task: Conductor - User Manual Verification 'Adapter Infrastructure' (Protocol in workflow.md)**
 
 ## Phase 2: MockToolkit Integration & Execution Logic
-- [ ] **Task: Implement MockToolDict & record_llm_call**
+- [x] **Task: Implement MockToolDict & record_llm_call** 84a1002
     - [ ] Implement `MockToolDict` in `unitai/mock/toolkit.py` with `strict` mode logic.
     - [ ] Add `_recorded_llm_calls` and `record_llm_call` to `MockToolkit`.
 - [ ] **Task: Implement run_generic & run_callable**
