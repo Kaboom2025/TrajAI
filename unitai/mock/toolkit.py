@@ -16,6 +16,32 @@ from unitai.mock.strategies import (
 )
 
 
+class UnitAIMockError(Exception):
+    """Base class for errors in the UnitAI mock layer."""
+    pass
+
+class UnmockedToolError(UnitAIMockError):
+    """Raised when an agent calls a tool that has no mock registered in strict mode."""
+    pass
+
+class MockToolDict(dict[str, Callable[[dict[str, Any]], Any]]):
+    def __init__(
+        self,
+        tools: dict[str, Callable[[dict[str, Any]], Any]],
+        strict: bool = True
+    ):
+        super().__init__(tools)
+        self._strict = strict
+
+    def __getitem__(self, key: str) -> Callable[[dict[str, Any]], Any]:
+        if key not in self:
+            if self._strict:
+                raise UnmockedToolError(
+                    f"Agent called tool '{key}' which has no mock registered. "
+                    f"Registered mocks: {list(self.keys())}"
+                )
+        return super().__getitem__(key)
+
 class MockTool:
     def __init__(self, name: str, strategy: ResponseStrategy):
         self.name = name
@@ -115,9 +141,19 @@ class MockToolkit:
 
 
 
-    def as_dict(self) -> dict[str, Callable[[dict[str, Any]], Any]]:
+        def as_dict(self, strict: bool = True) -> MockToolDict:
 
-        return {name: tool.invoke for name, tool in self._tools.items()}
+
+
+            tools = {name: tool.invoke for name, tool in self._tools.items()}
+
+
+
+            return MockToolDict(tools, strict=strict)
+
+
+
+    
 
 
 
