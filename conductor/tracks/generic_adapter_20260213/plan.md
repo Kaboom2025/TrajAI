@@ -24,7 +24,7 @@ This plan covers the implementation of the `BaseAdapter` interface, the `Generic
 ## Phase 3: Simple Agent Fixture & Final Verification
 - [x] **Task: Create Simple Agent Fixture** 6822c2f
     - [ ] Create `tests/fixtures/simple_agent.py` containing a basic tool-calling agent.
-- [ ] **Task: Verify Generic Adapter End-to-End**
+- [x] **Task: Verify Generic Adapter End-to-End** f0acd40
     - [ ] Write tests verifying `run_generic` and `run_callable` with the simple agent.
     - [ ] Verify `strict` mode and `UnmockedToolError`.
     - [ ] Verify timeout handling and partial trajectory capture.
