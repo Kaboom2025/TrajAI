@@ -1,4 +1,4 @@
-# Track core_mock_20260213 Context
+# Track generic_adapter_20260213 Context
 
 - [Specification](./spec.md)
 - [Implementation Plan](./plan.md)
