@@ -21,7 +21,7 @@ This plan covers the implementation of the `BaseAdapter` interface, the `Generic
     - [ ] Ensure `AgentTimeoutError` returns partial trajectories.
 - [x] **Task: Conductor - User Manual Verification 'Execution Logic' (Protocol in workflow.md)**
 
-## Phase 3: Simple Agent Fixture & Final Verification
+## Phase 3: Simple Agent Fixture & Final Verification [checkpoint: 4eb2e35]
 - [x] **Task: Create Simple Agent Fixture** 6822c2f
     - [ ] Create `tests/fixtures/simple_agent.py` containing a basic tool-calling agent.
 - [x] **Task: Verify Generic Adapter End-to-End** f0acd40
@@ -30,4 +30,4 @@ This plan covers the implementation of the `BaseAdapter` interface, the `Generic
     - [ ] Verify timeout handling and partial trajectory capture.
     - [ ] Verify `record_llm_call` correctly populates LLM metadata in the trajectory.
     - [ ] Run `mypy --strict` and `ruff check`.
-- [ ] **Task: Conductor - User Manual Verification 'Final Verification' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Final Verification' (Protocol in workflow.md)**
