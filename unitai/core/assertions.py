@@ -5,6 +5,8 @@ import re
 if TYPE_CHECKING:
     from unitai.core.trajectory import Trajectory
 
+# --- Tool Call Assertions ---
+
 def tool_was_called(trajectory: Trajectory, name: str) -> tuple[bool, str]:
     """Check if a tool was called at least once."""
     for step in trajectory.steps:
@@ -92,36 +94,94 @@ def call_order_contains(trajectory: Trajectory, subsequence: list[str]) -> tuple
         return True, f"Trajectory contains tool call subsequence: {subsequence}"
     return False, f"Trajectory does NOT contain tool call subsequence: {subsequence}"
 
-# Placeholders for Output & Metadata Assertions
+# --- Output Assertions ---
+
 def output_equals(trajectory: Trajectory, text: str) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if final agent output matches text exactly."""
+    if trajectory.final_output is None:
+        return False, "Agent produced no output (final_output is None)."
+    if trajectory.final_output == text:
+        return True, f"Agent output matches exactly: '{text}'"
+    return False, f"Agent output does NOT match. Expected: '{text}', Actual: '{trajectory.final_output}'"
 
 def output_contains(trajectory: Trajectory, text: str) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if final agent output contains text."""
+    if trajectory.final_output is None:
+        return False, "Agent produced no output (final_output is None)."
+    if text in trajectory.final_output:
+        return True, f"Agent output contains: '{text}'"
+    return False, f"Agent output does NOT contain: '{text}'"
 
 def output_not_contains(trajectory: Trajectory, text: str) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if final agent output does NOT contain text."""
+    contained, _ = output_contains(trajectory, text)
+    if contained:
+        return False, f"Agent output contains '{text}' but expected not to."
+    return True, f"Agent output does not contain: '{text}'"
 
 def output_matches(trajectory: Trajectory, pattern: str) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if final agent output matches regex pattern."""
+    if trajectory.final_output is None:
+        return False, "Agent produced no output (final_output is None)."
+    if re.search(pattern, trajectory.final_output):
+        return True, f"Agent output matches pattern: '{pattern}'"
+    return False, f"Agent output does NOT match pattern: '{pattern}'"
+
+# --- Metadata Assertions ---
 
 def cost_under(trajectory: Trajectory, limit: float) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if total cost is under limit."""
+    if trajectory.total_cost < limit:
+        return True, f"Total cost ${trajectory.total_cost:.4f} is under limit ${limit:.4f}."
+    return False, f"Total cost ${trajectory.total_cost:.4f} exceeds limit ${limit:.4f}."
 
 def tokens_under(trajectory: Trajectory, limit: int) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if total tokens are under limit."""
+    if trajectory.total_tokens < limit:
+        return True, f"Total tokens {trajectory.total_tokens} are under limit {limit}."
+    return False, f"Total tokens {trajectory.total_tokens} exceed limit {limit}."
 
 def duration_under(trajectory: Trajectory, limit: float) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if total duration is under limit."""
+    if trajectory.duration_seconds < limit:
+        return True, f"Duration {trajectory.duration_seconds:.2f}s is under limit {limit:.2f}s."
+    return False, f"Duration {trajectory.duration_seconds:.2f}s exceeds limit {limit:.2f}s."
 
 def llm_calls_under(trajectory: Trajectory, limit: int) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if number of LLM calls is under limit."""
+    if trajectory.llm_calls < limit:
+        return True, f"Number of LLM calls {trajectory.llm_calls} is under limit {limit}."
+    return False, f"Number of LLM calls {trajectory.llm_calls} exceeds limit {limit}."
+
+# --- Error Assertions ---
 
 def succeeded(trajectory: Trajectory) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if the agent execution completed without raising."""
+    if trajectory.error is None:
+        return True, "Agent execution succeeded."
+    return False, f"Agent execution failed with error: {trajectory.error}"
 
 def failed(trajectory: Trajectory) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if the agent execution raised an exception."""
+    if trajectory.error is not None:
+        return True, f"Agent execution failed as expected with error: {trajectory.error}"
+    return False, "Agent execution succeeded but was expected to fail."
 
 def error_is(trajectory: Trajectory, exception_type: type[Exception]) -> tuple[bool, str]:
-    return False, "Not implemented"
+    """Check if the agent raised a specific exception type."""
+    if trajectory.error is None:
+        return False, f"Agent succeeded, expected exception {exception_type.__name__}."
+    
+    actual_error = trajectory.error
+    # Handle both raw Exception objects and the serialized dict form from Phase 1
+    if isinstance(actual_error, Exception):
+        if isinstance(actual_error, exception_type):
+            return True, f"Agent raised expected exception: {exception_type.__name__}"
+        return False, f"Agent raised {type(actual_error).__name__}, expected {exception_type.__name__}."
+    
+    if isinstance(actual_error, dict):
+        if actual_error.get("type") == exception_type.__name__:
+            return True, f"Agent raised expected exception: {exception_type.__name__}"
+        return False, f"Agent raised {actual_error.get('type')}, expected {exception_type.__name__}."
+        
+    return False, f"Unknown error format in trajectory: {type(actual_error)}"
