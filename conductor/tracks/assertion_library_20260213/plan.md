@@ -1,4 +1,4 @@
-# Implementation Plan: Phase 3 - Assertion Library
+# Implementation Plan: Phase 3 - Assertion Library [checkpoint: b0ce42c]
 
 This plan covers the implementation of the assertion engine, the trajectory formatter, and the integration of both boolean and raising assertion APIs on `AgentRunResult`.
 
@@ -24,12 +24,12 @@ This plan covers the implementation of the assertion engine, the trajectory form
 - [x] **Task: Conductor - User Manual Verification 'Trajectory Formatter' (Protocol in workflow.md)**
 
 ## Phase 3: AgentRunResult Integration & Final Verification
-- [~] **Task: Wire APIs to AgentRunResult**
+- [x] **Task: Wire APIs to AgentRunResult** 7af1575
     - [ ] Update `unitai/core/result.py`.
     - [ ] Implement the Boolean API (delegating to `assertions.py`).
     - [ ] Implement the Assert API (`assert_*` methods raising `UnitAIAssertionError`).
     - [ ] Implement `get_calls` and `get_call` (with descriptive `IndexError`).
-- [ ] **Task: Final Verification & Test Suite**
+- [x] **Task: Final Verification & Test Suite** 7af1575
     - [ ] Write 25+ unit tests in `tests/test_assertions.py` covering happy paths and all edge cases (missing tools, None output, etc.).
     - [ ] Run `mypy --strict` and `ruff check`.
-- [ ] **Task: Conductor - User Manual Verification 'Final Verification' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Final Verification' (Protocol in workflow.md)**
