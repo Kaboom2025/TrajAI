@@ -1,10 +1,11 @@
-import pytest
-from typing import Any, TYPE_CHECKING
-from unitai.adapters.base import BaseAdapter
+from typing import Any
 
-if TYPE_CHECKING:
-    from unitai.core.trajectory import Trajectory
-    from unitai.mock.toolkit import MockToolkit
+import pytest
+
+from unitai.adapters.base import BaseAdapter
+from unitai.core.trajectory import Trajectory
+from unitai.mock.toolkit import MockToolkit
+
 
 def test_base_adapter_is_abstract() -> None:
     with pytest.raises(TypeError):

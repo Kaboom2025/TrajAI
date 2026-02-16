@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import Any, Callable, TYPE_CHECKING
-import asyncio
+
+from typing import TYPE_CHECKING, Any
+
 from unitai.adapters.base import BaseAdapter
 from unitai.core.trajectory import Trajectory, TrajectoryStep
 
@@ -32,7 +33,7 @@ class GenericAdapter(BaseAdapter):
     ) -> Trajectory:
         # Reset toolkit before run
         self.toolkit.reset()
-        
+
         # Execute the agent
         try:
             if tools is not None:
@@ -46,7 +47,7 @@ class GenericAdapter(BaseAdapter):
                 raise
             # Capture partial trajectory on other errors
             return self._build_trajectory(input, error=e)
-            
+
         return self._build_trajectory(input, final_output=str(output))
 
     def _build_trajectory(
@@ -56,7 +57,7 @@ class GenericAdapter(BaseAdapter):
         error: Exception | None = None
     ) -> Trajectory:
         all_steps = []
-        
+
         # Collect tool calls
         for tool_name, tool in self.toolkit._tools.items():
             for call in tool.calls:
@@ -70,13 +71,13 @@ class GenericAdapter(BaseAdapter):
                     tool_error=call.error
                 )
                 all_steps.append(step)
-                
+
         # Collect LLM calls
         all_steps.extend(self.toolkit._recorded_llm_calls)
-        
+
         # Sort chronologically
         all_steps.sort(key=lambda x: x.timestamp)
-        
+
         # Re-index
         indexed_steps = []
         for i, step in enumerate(all_steps):
@@ -97,16 +98,18 @@ class GenericAdapter(BaseAdapter):
                 new_value=step.new_value
             )
             indexed_steps.append(new_step)
-            
+
         # Compute aggregates
         total_tokens = sum(
             (s.prompt_tokens or 0) + (s.completion_tokens or 0)
             for s in indexed_steps
             if s.step_type == "llm_call"
         )
-        total_cost = sum(s.cost or 0.0 for s in indexed_steps if s.step_type == "llm_call")
+        total_cost = sum(
+            s.cost or 0.0 for s in indexed_steps if s.step_type == "llm_call"
+        )
         llm_calls = sum(1 for s in indexed_steps if s.step_type == "llm_call")
-        
+
         return Trajectory(
             input=input_str,
             steps=indexed_steps,

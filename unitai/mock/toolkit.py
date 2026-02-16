@@ -1,11 +1,13 @@
 from __future__ import annotations
+
 from datetime import datetime
-from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Sequence
+
 from unitai.core.result import MockToolCall
 
 if TYPE_CHECKING:
-    from unitai.core.trajectory import TrajectoryStep
     from unitai.core.result import AgentRunResult
+    from unitai.core.trajectory import TrajectoryStep
 
 from unitai.mock.strategies import (
     CallableStrategy,
@@ -15,6 +17,7 @@ from unitai.mock.strategies import (
     SequenceStrategy,
     StaticStrategy,
 )
+
 
 class UnitAIMockError(Exception):
     """Base class for errors in the UnitAI mock layer."""
@@ -30,22 +33,24 @@ class AgentTimeoutError(UnitAIMockError):
         super().__init__(message)
         self.partial_result = partial_result
 
-class MockToolDict(dict[str, Callable[[dict[str, Any]], Any]]):
+class MockToolDict(dict): # type: ignore
     def __init__(
         self,
-        tools: dict[str, Callable[[dict[str, Any]], Any]],
+        tools: Any,
         strict: bool = True
     ):
         super().__init__(tools)
         self._strict = strict
 
-    def __getitem__(self, key: str) -> Callable[[dict[str, Any]], Any]:
+    def __getitem__(self, key: str) -> Any:
         if key not in self:
             if self._strict:
                 raise UnmockedToolError(
                     f"Agent called tool '{key}' which has no mock registered. "
                     f"Registered mocks: {list(self.keys())}"
                 )
+            else:
+                raise KeyError(key)
         return super().__getitem__(key)
 
 class MockTool:
@@ -58,7 +63,7 @@ class MockTool:
         timestamp = datetime.now().timestamp()
         result = None
         error = None
-        
+
         try:
             result = self.strategy.execute(args)
             return result
@@ -91,7 +96,7 @@ class MockToolkit:
         conditional: Optional[dict[Callable[[dict[str, Any]], bool], Any]] = None,
     ) -> MockTool:
         strategy: ResponseStrategy
-        
+
         if sequence is not None:
             strategy = SequenceStrategy(sequence)
         elif conditional is not None:
@@ -102,7 +107,7 @@ class MockToolkit:
             strategy = CallableStrategy(side_effect)
         else:
             strategy = StaticStrategy(return_value)
-            
+
         tool = MockTool(name, strategy)
         self._tools[name] = tool
         return tool
@@ -112,7 +117,7 @@ class MockToolkit:
             raise KeyError(f"No mock tool registered with name: {name}")
         return self._tools[name]
 
-    def as_dict(self, strict: bool = True) -> MockToolDict:
+    def as_dict(self, strict: bool = True) -> Dict[str, Any]:
         tools = {name: tool.invoke for name, tool in self._tools.items()}
         return MockToolDict(tools, strict=strict)
 
@@ -129,7 +134,7 @@ class MockToolkit:
         cost: float = 0.0,
     ) -> None:
         from unitai.core.trajectory import TrajectoryStep
-        
+
         step = TrajectoryStep(
             step_index=0,  # Will be re-indexed during aggregation
             step_type="llm_call",
@@ -151,11 +156,12 @@ class MockToolkit:
         _cleanup_callback: Optional[Callable[[], None]] = None
     ) -> AgentRunResult:
         import asyncio
+
         from unitai.adapters.generic import GenericAdapter
         from unitai.core.result import AgentRunResult
-        
+
         adapter = GenericAdapter(self)
-        
+
         async def _execute() -> AgentRunResult:
             try:
                 # Wrap synchronous agent in a thread to avoid blocking the event loop
@@ -171,7 +177,7 @@ class MockToolkit:
                     _cleanup_callback()
                 # Build partial trajectory
                 partial_traj = adapter._build_trajectory(
-                    "generic", 
+                    "generic",
                     error=AgentTimeoutError(f"Agent exceeded {timeout}s timeout")
                 )
                 partial_result = AgentRunResult(trajectory=partial_traj)
@@ -184,13 +190,40 @@ class MockToolkit:
 
     def run_callable(
         self,
-        fn: Callable[[Any], Any],
+        fn: Callable[[Any, dict[str, Any]], Any],
         input: Any,
         timeout: float = 60.0,
+        strict: bool = True,
         _cleanup_callback: Optional[Callable[[], None]] = None
     ) -> AgentRunResult:
-        return self.run_generic(
-            lambda: fn(input),
-            timeout=timeout,
-            _cleanup_callback=_cleanup_callback
-        )
+        import asyncio
+
+        from unitai.adapters.generic import GenericAdapter
+        from unitai.core.result import AgentRunResult
+
+        adapter = GenericAdapter(self)
+        tools = self.as_dict(strict=strict)
+
+        async def _execute() -> AgentRunResult:
+            try:
+                trajectory = await asyncio.wait_for(
+                    asyncio.to_thread(
+                        adapter.execute, fn, str(input), timeout, tools
+                    ),
+                    timeout=timeout
+                )
+                return AgentRunResult(trajectory=trajectory)
+            except asyncio.TimeoutError:
+                if _cleanup_callback:
+                    _cleanup_callback()
+                partial_traj = adapter._build_trajectory(
+                    str(input),
+                    error=AgentTimeoutError(f"Agent exceeded {timeout}s timeout")
+                )
+                partial_result = AgentRunResult(trajectory=partial_traj)
+                raise AgentTimeoutError(
+                    f"Agent exceeded {timeout}s timeout",
+                    partial_result=partial_result
+                ) from None
+
+        return asyncio.run(_execute())
