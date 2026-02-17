@@ -54,3 +54,58 @@ def test_result_get_call_index_error(sample_trajectory: Trajectory) -> None:
 def test_result_call_order(sample_trajectory: Trajectory) -> None:
     result = AgentRunResult(sample_trajectory)
     assert result.call_order() == ["search"]
+
+
+def test_result_output_not_contains(sample_trajectory: Trajectory) -> None:
+    result = AgentRunResult(sample_trajectory)
+    assert result.output_not_contains("goodbye") is True
+    assert result.output_not_contains("Hello") is False
+
+
+def test_result_call_order_contains() -> None:
+    steps = [
+        TrajectoryStep(0, "tool_call", 100.0, tool_name="a",
+                       tool_args={}, tool_result=None),
+        TrajectoryStep(1, "tool_call", 101.0, tool_name="b",
+                       tool_args={}, tool_result=None),
+        TrajectoryStep(2, "tool_call", 102.0, tool_name="c",
+                       tool_args={}, tool_result=None),
+    ]
+    traj = Trajectory(steps=steps, final_output="done")
+    result = AgentRunResult(traj)
+    assert result.call_order_contains(["a", "c"]) is True
+    assert result.call_order_contains(["c", "a"]) is False
+
+
+def test_result_error_is() -> None:
+    traj = Trajectory(error=ValueError("bad"))
+    result = AgentRunResult(traj)
+    assert result.error_is(ValueError) is True
+    assert result.error_is(TypeError) is False
+
+
+def test_result_llm_calls_property() -> None:
+    traj = Trajectory(llm_calls=5)
+    result = AgentRunResult(traj)
+    assert result.llm_calls == 5
+
+
+def test_result_assert_output_not_contains(sample_trajectory: Trajectory) -> None:
+    result = AgentRunResult(sample_trajectory)
+    result.assert_output_not_contains("goodbye")
+    with pytest.raises(UnitAIAssertionError):
+        result.assert_output_not_contains("Hello")
+
+
+def test_result_assert_tool_call_count(sample_trajectory: Trajectory) -> None:
+    result = AgentRunResult(sample_trajectory)
+    result.assert_tool_call_count("search", 1)
+    with pytest.raises(UnitAIAssertionError):
+        result.assert_tool_call_count("search", 2)
+
+
+def test_result_assert_output_equals(sample_trajectory: Trajectory) -> None:
+    result = AgentRunResult(sample_trajectory)
+    result.assert_output_equals("Hello world")
+    with pytest.raises(UnitAIAssertionError):
+        result.assert_output_equals("wrong")

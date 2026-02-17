@@ -14,5 +14,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Phase 3: Assertion Library**
+- [x] **Track: Phase 3: Assertion Library**
   *Link: [./tracks/assertion_library_20260213/](./tracks/assertion_library_20260213/)*
+
+---
+
+- [x] **Track: Implement the statistical test execution layer (Phase 4 of UnitAI core).**
+*Link: [./tracks/statistical_runner_20260217/](./tracks/statistical_runner_20260217/)*

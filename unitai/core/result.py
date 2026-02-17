@@ -61,6 +61,10 @@ class AgentRunResult:
     def failed(self) -> bool:
         return self.trajectory.error is not None
 
+    @property
+    def llm_calls(self) -> int:
+        return self.trajectory.llm_calls
+
     # --- Query API ---
 
     def get_calls(self, name: str) -> List[MockToolCall]:
@@ -123,8 +127,17 @@ class AgentRunResult:
     def output_contains(self, text: str) -> bool:
         return assertions.output_contains(self.trajectory, text)[0]
 
+    def output_not_contains(self, text: str) -> bool:
+        return assertions.output_not_contains(self.trajectory, text)[0]
+
     def output_matches(self, pattern: str) -> bool:
         return assertions.output_matches(self.trajectory, pattern)[0]
+
+    def call_order_contains(self, subsequence: list[str]) -> bool:
+        return assertions.call_order_contains(self.trajectory, subsequence)[0]
+
+    def error_is(self, exception_type: type[Exception]) -> bool:
+        return assertions.error_is(self.trajectory, exception_type)[0]
 
     # --- Assert API ---
 
@@ -137,8 +150,42 @@ class AgentRunResult:
     def assert_tool_called_before(self, first: str, second: str) -> None:
         self._check(assertions.tool_called_before(self.trajectory, first, second))
 
+    def assert_tool_call_count(self, name: str, count: int) -> None:
+        self._check(assertions.tool_call_count(self.trajectory, name, count))
+
+    def assert_tool_called_with(self, name: str, **kwargs: Any) -> None:
+        self._check(assertions.tool_called_with(self.trajectory, name, **kwargs))
+
+    def assert_tool_called_with_partial(self, name: str, **kwargs: Any) -> None:
+        self._check(
+            assertions.tool_called_with_partial(self.trajectory, name, **kwargs)
+        )
+
+    def assert_tool_called_immediately_before(
+        self, first: str, second: str
+    ) -> None:
+        self._check(
+            assertions.tool_called_immediately_before(
+                self.trajectory, first, second
+            )
+        )
+
+    def assert_call_order_contains(self, subsequence: list[str]) -> None:
+        self._check(
+            assertions.call_order_contains(self.trajectory, subsequence)
+        )
+
     def assert_output_contains(self, text: str) -> None:
         self._check(assertions.output_contains(self.trajectory, text))
+
+    def assert_output_not_contains(self, text: str) -> None:
+        self._check(assertions.output_not_contains(self.trajectory, text))
+
+    def assert_output_equals(self, text: str) -> None:
+        self._check(assertions.output_equals(self.trajectory, text))
+
+    def assert_output_matches(self, pattern: str) -> None:
+        self._check(assertions.output_matches(self.trajectory, pattern))
 
     def _check(
         self,
