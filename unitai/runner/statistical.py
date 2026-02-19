@@ -44,15 +44,26 @@ class StatisticalResult:
 class StatisticalRunner:
     def __init__(
         self, 
-        n: int = 10, 
-        threshold: float = 0.95, 
+        n: Optional[int] = None, 
+        threshold: Optional[float] = None, 
         max_workers: Optional[int] = None, 
-        budget: float = 5.00
+        budget: Optional[float] = None
     ):
-        self.n = n
-        self.threshold = threshold
-        self.max_workers = max_workers if max_workers is not None else min(n, 5)
-        self.budget = budget
+        """Initialize StatisticalRunner.
+        
+        Args:
+            n: Number of runs. If None, use config default.
+            threshold: Pass rate threshold. If None, use config default.
+            max_workers: Max parallel workers. If None, use config default.
+            budget: Cost budget. If None, use config default.
+        """
+        from unitai.config import get_config
+        
+        config = get_config()
+        self.n = n if n is not None else config.default_n
+        self.threshold = threshold if threshold is not None else config.default_threshold
+        self.max_workers = max_workers if max_workers is not None else config.max_workers
+        self.budget = budget if budget is not None else config.cost_budget_per_test
         self._stop_event = threading.Event()
 
     def _execute_run(
@@ -173,12 +184,19 @@ class StatisticalRunner:
         )
 
 def statistical(
-    n: int = 10, 
-    threshold: float = 0.95, 
+    n: Optional[int] = None, 
+    threshold: Optional[float] = None, 
     max_workers: Optional[int] = None, 
-    budget: float = 5.00
+    budget: Optional[float] = None
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    """Decorator to run a test function multiple times and assert on pass rate."""
+    """Decorator to run a test function multiple times and assert on pass rate.
+    
+    Args:
+        n: Number of runs. If None, use config default.
+        threshold: Pass rate threshold. If None, use config default.
+        max_workers: Max parallel workers. If None, use config default.
+        budget: Cost budget. If None, use config default.
+    """
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> StatisticalResult:
@@ -190,10 +208,10 @@ def statistical(
             )
             result = runner.run(func, *args, **kwargs)
             
-            if result.pass_rate < threshold:
+            if result.pass_rate < runner.threshold:
                 raise UnitAIStatisticalError(
                     f"Statistical failure: {result.passed_runs}/{result.total_runs} passed "
-                    f"({result.pass_rate*100:.1f}%) — required: {threshold*100:.1f}%\n\n"
+                    f"({result.pass_rate*100:.1f}%) — required: {runner.threshold*100:.1f}%\n\n"
                     f"{result.summary()}"
                 )
             return result

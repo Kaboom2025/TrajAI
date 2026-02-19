@@ -6,7 +6,6 @@ build-backend = "hatchling.build"
 name = "unitai"
 dynamic = ["version"]
 description = "The open-source testing framework for AI agents."
-readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 keywords = ["ai", "agents", "testing", "pytest"]
@@ -42,9 +41,14 @@ packages = ["unitai"]
 [project.scripts]
 unitai = "unitai.cli.main:main"
 
+[project.entry-points.pytest11]
+unitai = "unitai.pytest_plugin.plugin"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
+# Enable pytester fixture for plugin tests
+addopts = "-p pytester"
 
 [tool.ruff]
 line-length = 88

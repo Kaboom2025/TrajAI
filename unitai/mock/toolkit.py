@@ -33,6 +33,10 @@ class AgentTimeoutError(UnitAIMockError):
         super().__init__(message)
         self.partial_result = partial_result
 
+class AdapterNotFoundError(UnitAIMockError):
+    """Raised when no adapter can handle the given agent type."""
+    pass
+
 class MockToolDict(dict): # type: ignore
     def __init__(
         self,
@@ -83,7 +87,17 @@ class MockTool:
         self.calls = []
 
 class MockToolkit:
-    def __init__(self) -> None:
+    def __init__(self, strict: bool | None = None) -> None:
+        """Initialize MockToolkit.
+        
+        Args:
+            strict: If True, raise UnmockedToolError on unmocked tool calls.
+                   If None, use config default.
+        """
+        from unitai.config import get_config
+        
+        config = get_config()
+        self._strict = strict if strict is not None else config.strict_mocks
         self._tools: dict[str, MockTool] = {}
         self._recorded_llm_calls: list[TrajectoryStep] = []
 
@@ -117,7 +131,14 @@ class MockToolkit:
             raise KeyError(f"No mock tool registered with name: {name}")
         return self._tools[name]
 
-    def as_dict(self, strict: bool = True) -> Dict[str, Any]:
+    def as_dict(self, strict: bool | None = None) -> Dict[str, Any]:
+        """Get mock tools as a dictionary.
+        
+        Args:
+            strict: If None, use instance default (from config).
+        """
+        if strict is None:
+            strict = self._strict
         tools = {name: tool.invoke for name, tool in self._tools.items()}
         return MockToolDict(tools, strict=strict)
 
@@ -146,14 +167,87 @@ class MockToolkit:
         )
         self._recorded_llm_calls.append(step)
 
-    def run(self, *args: Any, **kwargs: Any) -> Any:
-        raise NotImplementedError("run() will be implemented in Phase 5 (Adapters)")
+    def run(
+        self, 
+        agent: Any, 
+        input: Any, 
+        timeout: float = 60.0,
+        cache: Optional[Any] = None,
+        cache_mode: str = "auto",
+    ) -> AgentRunResult:
+        import asyncio
+        import os
+
+        from unitai.core.result import AgentRunResult
+        from unitai.config import get_config
+
+        config = get_config()
+        
+        # Determine cache settings
+        if cache is None and config.cache_enabled:
+            from unitai.runner.replay import ReplayCache
+            cache = ReplayCache(
+                directory=config.cache_directory,
+                ttl_hours=config.cache_ttl_hours,
+            )
+            # Check environment for cache mode override
+            env_mode = os.environ.get("UNITAI_CACHE_MODE", "auto")
+            if env_mode != "auto":
+                cache_mode = env_mode
+
+        adapter = self._resolve_adapter(agent)
+        wrapped = adapter.inject_mocks(agent, self)
+
+        async def _execute() -> AgentRunResult:
+            try:
+                trajectory = await asyncio.wait_for(
+                    asyncio.to_thread(
+                        adapter.execute, 
+                        wrapped, 
+                        str(input), 
+                        timeout,
+                        cache,
+                        cache_mode,
+                    ),
+                    timeout=timeout,
+                )
+                return AgentRunResult(trajectory=trajectory)
+            except asyncio.TimeoutError:
+                from unitai.adapters.langgraph import LangGraphAdapter
+                partial_traj = LangGraphAdapter(self)._build_trajectory(
+                    str(input),
+                    error=AgentTimeoutError(f"Agent exceeded {timeout}s timeout"),
+                )
+                partial_result = AgentRunResult(trajectory=partial_traj)
+                raise AgentTimeoutError(
+                    f"Agent exceeded {timeout}s timeout",
+                    partial_result=partial_result,
+                ) from None
+
+        return asyncio.run(_execute())
+
+    def _resolve_adapter(self, agent: Any) -> Any:
+        try:
+            from unitai.adapters.langgraph import LangGraphAdapter
+            adapter = LangGraphAdapter(self)
+            if adapter.can_handle(agent):
+                return adapter
+        except ImportError:
+            pass
+
+        raise AdapterNotFoundError(
+            f"No adapter found for agent type '{type(agent).__name__}'. "
+            "Supported types: LangGraph CompiledStateGraph/StateGraph. "
+            "Make sure to install the required extras (e.g. pip install unitai[langgraph])."
+        )
 
     def run_generic(
         self,
         callable_agent: Callable[[], Any],
         timeout: float = 60.0,
-        _cleanup_callback: Optional[Callable[[], None]] = None
+        _cleanup_callback: Optional[Callable[[], None]] = None,
+        cache: Optional[Any] = None,
+        cache_mode: str = "auto",
     ) -> AgentRunResult:
         import asyncio
 
@@ -167,7 +261,12 @@ class MockToolkit:
                 # Wrap synchronous agent in a thread to avoid blocking the event loop
                 trajectory = await asyncio.wait_for(
                     asyncio.to_thread(
-                        adapter.execute, callable_agent, "generic", timeout
+                        adapter.execute, 
+                        callable_agent, 
+                        "generic", 
+                        timeout,
+                        cache,
+                        cache_mode,
                     ),
                     timeout=timeout
                 )
@@ -193,8 +292,10 @@ class MockToolkit:
         fn: Callable[[Any, dict[str, Any]], Any],
         input: Any,
         timeout: float = 60.0,
-        strict: bool = True,
-        _cleanup_callback: Optional[Callable[[], None]] = None
+        strict: bool | None = None,
+        _cleanup_callback: Optional[Callable[[], None]] = None,
+        cache: Optional[Any] = None,
+        cache_mode: str = "auto",
     ) -> AgentRunResult:
         import asyncio
 
@@ -208,7 +309,13 @@ class MockToolkit:
             try:
                 trajectory = await asyncio.wait_for(
                     asyncio.to_thread(
-                        adapter.execute, fn, str(input), timeout, tools
+                        adapter.execute, 
+                        fn, 
+                        str(input), 
+                        timeout,
+                        cache,
+                        cache_mode,
+                        tools,
                     ),
                     timeout=timeout
                 )

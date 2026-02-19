@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from unitai.adapters.base import BaseAdapter
 from unitai.core.trajectory import Trajectory, TrajectoryStep
@@ -29,6 +29,8 @@ class GenericAdapter(BaseAdapter):
         wrapped_agent: Any,
         input: str,
         timeout: float,
+        cache: Optional[Any] = None,
+        cache_mode: str = "auto",
         tools: dict[str, Any] | None = None
     ) -> Trajectory:
         # Reset toolkit before run
