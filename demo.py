@@ -4,16 +4,17 @@ TrajAI Phase 5 Demo — LangGraph Adapter
 Run with:  python demo.py
 """
 import warnings
+
 warnings.filterwarnings("ignore")
 
-from langchain_core.messages import AIMessage
-from trajai.mock.toolkit import MockToolkit
-from tests.fixtures.langgraph_agent import (
+from langchain_core.messages import AIMessage  # noqa: E402
+from tests.fixtures.langgraph_agent import (  # noqa: E402
     FakeToolCallingModel,
     build_react_agent,
     get_tool_definitions,
     make_tool_call_message,
 )
+from trajai.mock.toolkit import AdapterNotFoundError, MockToolkit  # noqa: E402
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -64,9 +65,16 @@ ok("total_tokens",                            result.total_tokens)
 section("Trajectory steps")
 for step in result.trajectory.steps:
     if step.step_type == "tool_call":
-        print(f"    [tool_call]  {step.tool_name}({step.tool_args})  →  {step.tool_result}")
+        print(
+            f"    [tool_call]  {step.tool_name}({step.tool_args})"
+            f"  →  {step.tool_result}"
+        )
     elif step.step_type == "llm_call":
-        print(f"    [llm_call]   model={step.model}  prompt={step.prompt_tokens}  completion={step.completion_tokens}")
+        print(
+            f"    [llm_call]   model={step.model}"
+            f"  prompt={step.prompt_tokens}"
+            f"  completion={step.completion_tokens}"
+        )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -77,7 +85,9 @@ header("Scenario 2 — Two tool calls in order")
 model2 = FakeToolCallingModel(
     responses=[
         make_tool_call_message("lookup_order", {"order_id": "99"}, call_id="c1"),
-        make_tool_call_message("process_refund", {"order_id": "99", "reason": "damaged"}, call_id="c2"),
+        make_tool_call_message(
+            "process_refund", {"order_id": "99", "reason": "damaged"}, call_id="c2"
+        ),
         AIMessage(content="Refund for order #99 approved."),
     ],
 )
@@ -90,11 +100,14 @@ toolkit2.mock("process_refund", return_value={"success": True, "refund_id": "R-0
 result2 = toolkit2.run(agent2, "Refund my damaged order 99")
 
 section("Assertions")
-ok("tool_was_called('lookup_order')",                       result2.tool_was_called("lookup_order"))
-ok("tool_was_called('process_refund')",                     result2.tool_was_called("process_refund"))
-ok("tool_called_before('lookup_order', 'process_refund')",  result2.tool_called_before("lookup_order", "process_refund"))
-ok("call_order()",                                          result2.call_order())
-ok("output_contains('Refund')",                             result2.output_contains("Refund"))
+ok("tool_was_called('lookup_order')",  result2.tool_was_called("lookup_order"))
+ok("tool_was_called('process_refund')", result2.tool_was_called("process_refund"))
+ok(
+    "tool_called_before('lookup_order', 'process_refund')",
+    result2.tool_called_before("lookup_order", "process_refund"),
+)
+ok("call_order()",            result2.call_order())
+ok("output_contains('Refund')", result2.output_contains("Refund"))
 
 section("Tool call details")
 lookup_call  = result2.get_call("lookup_order")
@@ -160,8 +173,6 @@ ok("call 1 result",                      result4.get_call("lookup_order", 1).res
 # Scenario 5: AdapterNotFoundError for unknown agent type
 # ─────────────────────────────────────────────────────────────────────────────
 header("Scenario 5 — AdapterNotFoundError for unknown agent")
-
-from trajai.mock.toolkit import AdapterNotFoundError
 
 toolkit5 = MockToolkit()
 try:

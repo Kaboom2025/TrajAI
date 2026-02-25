@@ -11,7 +11,8 @@ def chatbot_agent(input: str, tools: dict) -> str:
     if any(g in input.lower() for g in greetings):
         return "Hello! How can I help you today?"
 
-    if "?" in input or any(kw in input.lower() for kw in ["what", "how", "when", "where", "who", "why"]):
+    question_words = ["what", "how", "when", "where", "who", "why"]
+    if "?" in input or any(kw in input.lower() for kw in question_words):
         result = tools["knowledge_base"]({"query": input})
         if result.get("found"):
             return f"Here's what I found: {result['answer']}"
