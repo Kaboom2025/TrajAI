@@ -1,6 +1,6 @@
 name: Run UnitAI Tests
 description: >
-  Composite action that installs Python, installs UnitAI, runs `unitai test`,
+  Composite action that installs Python, installs UnitAI, runs `trajai test`,
   and uploads the JUnit XML artifact.
 
 inputs:
@@ -17,7 +17,7 @@ inputs:
     required: false
     default: ""
   extra-args:
-    description: Additional arguments to pass to `unitai test` (e.g. "--n 5 --threshold 0.9").
+    description: Additional arguments to pass to `trajai test` (e.g. "--n 5 --threshold 0.9").
     required: false
     default: ""
   test-path:
@@ -27,7 +27,7 @@ inputs:
   junit-xml:
     description: Path for the JUnit XML output file.
     required: false
-    default: "test-results/unitai.xml"
+    default: "test-results/trajai.xml"
   install-extras:
     description: >
       Comma-separated list of unitai extras to install
@@ -64,16 +64,16 @@ runs:
         python -m pip install --upgrade pip
         EXTRAS="${{ inputs.install-extras }}"
         if [ -n "$EXTRAS" ]; then
-          pip install "unitai[$EXTRAS]"
+          pip install "trajai[$EXTRAS]"
         else
-          pip install unitai
+          pip install trajai
         fi
 
     - name: Run UnitAI tests
       id: run-tests
       shell: bash
       env:
-        UNITAI_JUNIT_XML: ${{ inputs.junit-xml }}
+        TRAJAI_JUNIT_XML: ${{ inputs.junit-xml }}
       run: |
         bash "${{ github.action_path }}/entrypoint.sh" \
           "${{ inputs.test-path }}" \

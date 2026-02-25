@@ -21,8 +21,8 @@ Statistical testing handles this by running the same test N times and checking i
 The simplest way to run statistical tests:
 
 ```python
-from unitai.mock import MockToolkit
-from unitai.runner import statistical
+from trajai.mock import MockToolkit
+from trajai.runner import statistical
 
 @statistical(n=10, threshold=0.9)
 def test_agent_calls_correct_tool():
@@ -35,7 +35,7 @@ def test_agent_calls_correct_tool():
     assert result.tool_not_called("search_products")
 ```
 
-This runs the test 10 times. If at least 9 out of 10 runs pass (90%), the test passes. Otherwise it raises `UnitAIStatisticalError`.
+This runs the test 10 times. If at least 9 out of 10 runs pass (90%), the test passes. Otherwise it raises `TrajAIStatisticalError`.
 
 ### Parameters
 
@@ -53,7 +53,7 @@ This runs the test 10 times. If at least 9 out of 10 runs pass (90%), the test p
 For more control, use the `StatisticalRunner` class:
 
 ```python
-from unitai.runner.statistical import StatisticalRunner
+from trajai.runner.statistical import StatisticalRunner
 
 def my_test():
     toolkit = MockToolkit()
@@ -122,12 +122,12 @@ def test_expensive_agent():
 
 ## pytest Integration
 
-Use the `@pytest.mark.unitai` marker to configure statistical testing per-test:
+Use the `@pytest.mark.trajai` marker to configure statistical testing per-test:
 
 ```python
 import pytest
 
-@pytest.mark.unitai(n=10, threshold=0.9)
+@pytest.mark.trajai(n=10, threshold=0.9)
 def test_agent_behavior():
     toolkit = MockToolkit()
     toolkit.mock("search", return_value={"results": ["doc1"]})
@@ -144,7 +144,7 @@ The marker parameters override config defaults for that specific test.
 Set defaults in `pyproject.toml`:
 
 ```toml
-[tool.unitai]
+[tool.trajai]
 default_n = 10
 default_threshold = 0.95
 max_workers = 5
@@ -154,10 +154,10 @@ cost_budget_per_test = 1.00
 Or via environment variables:
 
 ```bash
-export UNITAI_DEFAULT_N=10
-export UNITAI_DEFAULT_THRESHOLD=0.95
-export UNITAI_MAX_WORKERS=5
-export UNITAI_COST_BUDGET_PER_TEST=1.00
+export TRAJAI_DEFAULT_N=10
+export TRAJAI_DEFAULT_THRESHOLD=0.95
+export TRAJAI_MAX_WORKERS=5
+export TRAJAI_COST_BUDGET_PER_TEST=1.00
 ```
 
 See [Configuration](configuration.md) for the full reference.

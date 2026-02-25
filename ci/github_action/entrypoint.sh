@@ -6,11 +6,11 @@ set -euo pipefail
 TEST_PATH="${1:-}"
 BUDGET="${2:-}"
 MODEL_OVERRIDE="${3:-}"
-JUNIT_XML="${4:-test-results/unitai.xml}"
+JUNIT_XML="${4:-test-results/trajai.xml}"
 EXTRA_ARGS="${5:-}"
 
-# Build the unitai test command
-CMD="unitai test"
+# Build the trajai test command
+CMD="trajai test"
 
 if [ -n "$TEST_PATH" ]; then
     CMD="$CMD $TEST_PATH"
@@ -48,7 +48,7 @@ import sys
 import xml.etree.ElementTree as ET
 import os
 
-xml_path = os.environ.get("UNITAI_JUNIT_XML", "test-results/unitai.xml")
+xml_path = os.environ.get("TRAJAI_JUNIT_XML", "test-results/trajai.xml")
 try:
     tree = ET.parse(xml_path)
     root = tree.getroot()

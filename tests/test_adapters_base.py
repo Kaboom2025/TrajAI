@@ -2,9 +2,9 @@ from typing import Any
 
 import pytest
 
-from unitai.adapters.base import BaseAdapter
-from unitai.core.trajectory import Trajectory
-from unitai.mock.toolkit import MockToolkit
+from trajai.adapters.base import BaseAdapter
+from trajai.core.trajectory import Trajectory
+from trajai.mock.toolkit import MockToolkit
 
 
 def test_base_adapter_is_abstract() -> None:

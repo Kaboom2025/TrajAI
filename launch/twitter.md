@@ -67,7 +67,7 @@ def test_agent():
 
 UnitAI is:
 • Open source (MIT)
-• Available on PyPI: `pip install unitai`
+• Available on PyPI: `pip install trajai`
 • Production-ready
 
 Works with pytest out of the box. Integrates with GitHub Actions, GitLab CI, CircleCI.
@@ -82,7 +82,7 @@ If you're building AI agents and frustrated with testing, give it a try.
 Would love your feedback.
 
 ⭐ Star the repo: [link]
-📦 Install: `pip install unitai`
+📦 Install: `pip install trajai`
 📖 Docs: [link]
 
 ---

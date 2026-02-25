@@ -1,7 +1,7 @@
 import pytest
-from unitai.runner.statistical import StatisticalRunner, StatisticalResult
-from unitai.mock.toolkit import MockToolkit
-from unitai.core.assertions import UnitAIAssertionError
+from trajai.runner.statistical import StatisticalRunner, StatisticalResult
+from trajai.mock.toolkit import MockToolkit
+from trajai.core.assertions import TrajAIAssertionError
 
 def test_runner_deterministic_pass():
     """Test that an always-passing function results in 100% pass rate."""
@@ -73,9 +73,9 @@ def test_runner_with_mock_toolkit_cost():
     assert result.total_cost == 0.20
 
 def test_runner_unitaiassertionerror_captured():
-    """Test that UnitAIAssertionError is also captured as a failure."""
+    """Test that TrajAIAssertionError is also captured as a failure."""
     def test_fn():
-        raise UnitAIAssertionError("UnitAI specific failure")
+        raise TrajAIAssertionError("UnitAI specific failure")
         
     runner = StatisticalRunner(n=3)
     result = runner.run(test_fn)

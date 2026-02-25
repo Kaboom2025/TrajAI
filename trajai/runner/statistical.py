@@ -4,14 +4,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Type
-from unitai.core.assertions import UnitAIAssertionError
-from unitai.mock.toolkit import MockToolkit
+from trajai.core.assertions import TrajAIAssertionError
+from trajai.mock.toolkit import MockToolkit
 
 class CostLimitExceeded(Exception):
     """Raised when the LLM API cost exceeds the configured budget."""
     pass
 
-class UnitAIStatisticalError(AssertionError):
+class TrajAIStatisticalError(AssertionError):
     """Raised when a statistical test fails to meet the pass rate threshold."""
     pass
 
@@ -57,7 +57,7 @@ class StatisticalRunner:
             max_workers: Max parallel workers. If None, use config default.
             budget: Cost budget. If None, use config default.
         """
-        from unitai.config import get_config
+        from trajai.config import get_config
         
         config = get_config()
         self.n = n if n is not None else config.default_n
@@ -87,7 +87,7 @@ class StatisticalRunner:
         try:
             test_fn(*args, **run_kwargs)
             passed = True
-        except (AssertionError, UnitAIAssertionError) as e:
+        except (AssertionError, TrajAIAssertionError) as e:
             error_msg = f"{type(e).__name__}: {str(e).splitlines()[0]}"
         except Exception:
             self._stop_event.set()
@@ -209,7 +209,7 @@ def statistical(
             result = runner.run(func, *args, **kwargs)
             
             if result.pass_rate < runner.threshold:
-                raise UnitAIStatisticalError(
+                raise TrajAIStatisticalError(
                     f"Statistical failure: {result.passed_runs}/{result.total_runs} passed "
                     f"({result.pass_rate*100:.1f}%) — required: {runner.threshold*100:.1f}%\n\n"
                     f"{result.summary()}"

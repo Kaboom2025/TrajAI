@@ -7,7 +7,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from langchain_core.messages import AIMessage
-from unitai.mock.toolkit import MockToolkit
+from trajai.mock.toolkit import MockToolkit
 from tests.fixtures.langgraph_agent import (
     FakeToolCallingModel,
     build_react_agent,
@@ -161,7 +161,7 @@ ok("call 1 result",                      result4.get_call("lookup_order", 1).res
 # ─────────────────────────────────────────────────────────────────────────────
 header("Scenario 5 — AdapterNotFoundError for unknown agent")
 
-from unitai.mock.toolkit import AdapterNotFoundError
+from trajai.mock.toolkit import AdapterNotFoundError
 
 toolkit5 = MockToolkit()
 try:

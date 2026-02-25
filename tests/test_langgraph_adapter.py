@@ -13,7 +13,7 @@ import warnings
 
 import pytest
 
-from unitai.mock.toolkit import MockToolkit, UnitAIMockError
+from trajai.mock.toolkit import MockToolkit, TrajAIMockError
 
 # ── LangGraph imports ─────────────────────────────────────────────────────────
 
@@ -24,7 +24,7 @@ with warnings.catch_warnings():
     from langgraph.graph import StateGraph
     from langchain_core.messages import AIMessage, HumanMessage
 
-from unitai.adapters.langgraph import LangGraphAdapter
+from trajai.adapters.langgraph import LangGraphAdapter
 
 from tests.fixtures.langgraph_agent import (
     FakeToolCallingModel,
@@ -240,7 +240,7 @@ class TestExecuteTrajectory:
         assert isinstance(traj.error, RuntimeError)
 
     def test_execute_reraises_mock_errors(self) -> None:
-        """UnitAIMockError subclasses should be re-raised, not captured."""
+        """TrajAIMockError subclasses should be re-raised, not captured."""
         responses = [
             make_tool_call_message("lookup_order", {"order_id": "99"}),
         ]
@@ -249,13 +249,13 @@ class TestExecuteTrajectory:
         toolkit = MockToolkit()
         toolkit.mock(
             "lookup_order",
-            side_effect=UnitAIMockError("intentional mock error"),
+            side_effect=TrajAIMockError("intentional mock error"),
         )
 
         adapter = LangGraphAdapter(toolkit)
         wrapped = adapter.inject_mocks(agent, toolkit)
 
-        with pytest.raises(UnitAIMockError):
+        with pytest.raises(TrajAIMockError):
             adapter.execute(wrapped, "check 99", timeout=30.0)
 
     def test_execute_multi_tool_order(self) -> None:
@@ -293,7 +293,7 @@ class TestToolkitRun:
 
     def test_toolkit_run_adapter_not_found(self) -> None:
         """Passing an unknown agent type should raise AdapterNotFoundError."""
-        from unitai.mock.toolkit import AdapterNotFoundError
+        from trajai.mock.toolkit import AdapterNotFoundError
 
         toolkit = MockToolkit()
 

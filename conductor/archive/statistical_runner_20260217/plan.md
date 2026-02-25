@@ -11,7 +11,7 @@
 - [x] Task: Implement basic `StatisticalRunner` with serial execution and cost accumulation
     - [x] Write tests for deterministic always-pass and always-fail scenarios
     - [x] Write tests for stochastic failure scenarios (e.g., fails 30% of the time)
-    - [x] Implement `StatisticalRunner.run()` with `try/except` for `AssertionError` and `UnitAIAssertionError`
+    - [x] Implement `StatisticalRunner.run()` with `try/except` for `AssertionError` and `TrajAIAssertionError`
     - [x] Implement loop to execute N times, collecting trajectories and accumulating `total_cost` from RunResults
     - [x] Ensure non-assertion exceptions propagate immediately
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Core StatisticalRunner' (Protocol in workflow.md) [checkpoint: Phase 2 Done]
@@ -38,5 +38,5 @@
     - [x] Write tests for `mock_toolkit` parameter detection and per-run instantiation
     - [x] Write tests for non-`mock_toolkit` parameter passthrough (ensuring other args/fixtures are untouched)
     - [x] Implement ` @statistical` using `functools.wraps` and `inspect.signature`
-    - [x] Implement `UnitAIStatisticalError` for implicit assertions when pass rate < threshold
+    - [x] Implement `TrajAIStatisticalError` for implicit assertions when pass rate < threshold
 - [x] Task: Conductor - User Manual Verification 'Phase 5: @statistical Decorator' (Protocol in workflow.md) [checkpoint: Phase 5 Done]

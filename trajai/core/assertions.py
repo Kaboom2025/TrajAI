@@ -4,9 +4,9 @@ import re
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from unitai.core.trajectory import Trajectory
+    from trajai.core.trajectory import Trajectory
 
-class UnitAIAssertionError(AssertionError):
+class TrajAIAssertionError(AssertionError):
     """Raised when a UnitAI assertion fails."""
     pass
 

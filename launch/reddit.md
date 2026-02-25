@@ -15,7 +15,7 @@ So I built **UnitAI** — a testing framework specifically for AI agents.
 Instead of mocking LLM responses (which breaks every time you change a prompt), UnitAI mocks the *tools*. Your agent runs with real LLM calls but deterministic tool responses.
 
 ```python
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 def test_my_agent():
     toolkit = MockToolkit()
@@ -71,7 +71,7 @@ You're asserting on *behavior rates*, not absolutes. "This agent uses the correc
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, MessagesState
 from langgraph.prebuilt import ToolNode
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 # Your LangGraph agent (simplified)
 tools = [lookup_order, process_refund]
@@ -103,15 +103,15 @@ def test_refund_flow():
 ## Install
 
 ```bash
-pip install unitai[langgraph]
+pip install trajai[langgraph]
 ```
 
 ## Links
 
-- GitHub: https://github.com/saalik/unitai
-- Docs: https://github.com/saalik/unitai/tree/main/docs
-- Quick Start: https://github.com/saalik/unitai/blob/main/docs/quickstart.md
-- LangGraph Examples: https://github.com/saalik/unitai/tree/main/examples
+- GitHub: https://github.com/saalik/trajai
+- Docs: https://github.com/saalik/trajai/tree/main/docs
+- Quick Start: https://github.com/saalik/trajai/blob/main/docs/quickstart.md
+- LangGraph Examples: https://github.com/saalik/trajai/tree/main/examples
 
 It's MIT licensed and works with pytest out of the box.
 

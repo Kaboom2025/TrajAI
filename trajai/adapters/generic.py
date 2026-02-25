@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Optional
 
-from unitai.adapters.base import BaseAdapter
-from unitai.core.trajectory import Trajectory, TrajectoryStep
+from trajai.adapters.base import BaseAdapter
+from trajai.core.trajectory import Trajectory, TrajectoryStep
 
 if TYPE_CHECKING:
-    from unitai.mock.toolkit import MockToolkit
+    from trajai.mock.toolkit import MockToolkit
 
 class GenericAdapter(BaseAdapter):
     """Adapter for arbitrary Python callables."""
@@ -44,8 +44,8 @@ class GenericAdapter(BaseAdapter):
                 output = wrapped_agent()
         except Exception as e:
             # Re-raise mock errors immediately
-            from unitai.mock.toolkit import UnitAIMockError
-            if isinstance(e, UnitAIMockError):
+            from trajai.mock.toolkit import TrajAIMockError
+            if isinstance(e, TrajAIMockError):
                 raise
             # Capture partial trajectory on other errors
             return self._build_trajectory(input, error=e)

@@ -1,7 +1,7 @@
 import time
 import pytest
-from unitai.runner.statistical import StatisticalRunner
-from unitai.mock.toolkit import MockToolkit
+from trajai.runner.statistical import StatisticalRunner
+from trajai.mock.toolkit import MockToolkit
 
 def test_parallel_execution_speed():
     """Test that parallel execution is faster than serial for I/O bound tasks."""

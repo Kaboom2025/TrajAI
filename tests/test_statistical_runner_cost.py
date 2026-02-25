@@ -1,6 +1,6 @@
 import pytest
-from unitai.runner.statistical import StatisticalRunner, CostLimitExceeded
-from unitai.mock.toolkit import MockToolkit
+from trajai.runner.statistical import StatisticalRunner, CostLimitExceeded
+from trajai.mock.toolkit import MockToolkit
 
 def test_cost_safety_abort_on_calibration():
     """Test that runner aborts after first run if estimate exceeds budget."""

@@ -9,7 +9,7 @@ The Statistical Runner is the core execution layer of UnitAI designed to handle 
 - **Constructor:** `StatisticalRunner(n=10, threshold=0.95, max_workers=5, budget=5.00)`
 - **Core Method:** `run(test_fn, *args, **kwargs) -> StatisticalResult`
     - Executes `test_fn` N times.
-    - Each execution is wrapped in a `try/except` block to capture `AssertionError` and `UnitAIAssertionError`.
+    - Each execution is wrapped in a `try/except` block to capture `AssertionError` and `TrajAIAssertionError`.
     - Other exceptions (e.g., `TypeError`, `ConnectionError`) should propagate immediately and halt execution.
     - Collects trajectories and results from every run.
     - Uses `concurrent.futures.ThreadPoolExecutor` for parallel execution.
@@ -32,7 +32,7 @@ The Statistical Runner is the core execution layer of UnitAI designed to handle 
 - Transforms a standard test function into a statistical test.
 - Automatically handles the instantiation and execution of the `StatisticalRunner`.
 - **Parameter Detection:** The decorator inspects the wrapped function's signature (via `inspect.signature`). If it contains a `mock_toolkit` parameter, the decorator MUST instantiate a fresh `MockToolkit()` for each of the N runs and pass it as that argument.
-- **Implicit Assertion:** Fails the test (raises `UnitAIStatisticalError`) if the pass rate is below the `threshold`.
+- **Implicit Assertion:** Fails the test (raises `TrajAIStatisticalError`) if the pass rate is below the `threshold`.
 - Integrates with `pytest` by providing a structured failure summary in the output.
 
 ## Non-Functional Requirements

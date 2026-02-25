@@ -29,7 +29,7 @@ This track implements the comprehensive assertion engine for UnitAI. It provides
 
 ### 2. Dual-API on `AgentRunResult`
 - **Boolean API:** Methods like `result.tool_was_called("search")` return `True/False`.
-- **Assert API:** Methods like `result.assert_tool_was_called("search")` raise `UnitAIAssertionError(rich_message)` on failure.
+- **Assert API:** Methods like `result.assert_tool_was_called("search")` raise `TrajAIAssertionError(rich_message)` on failure.
 - Ensure the `assert_*` methods utilize the same underlying pure functions to avoid logic duplication.
 
 ### 3. Trajectory Formatter & Rich Failure Messages
@@ -52,7 +52,7 @@ This track implements the comprehensive assertion engine for UnitAI. It provides
 
 ## Acceptance Criteria
 - All 17+ assertion methods are implemented and return correct booleans.
-- Corresponding `assert_*` methods raise `UnitAIAssertionError` with rich messages.
+- Corresponding `assert_*` methods raise `TrajAIAssertionError` with rich messages.
 - Failure messages include a numbered, typed, and annotated trajectory summary.
 - Smart truncation correctly collapses long trajectories while keeping relevant context.
 - `tool_called_with` correctly distinguishes between exact and partial matches.

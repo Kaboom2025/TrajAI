@@ -85,18 +85,18 @@ unitai/
 │   └── github_action/       # GitHub Action definition
 │       ├── action.yml
 │       └── entrypoint.sh
-└── config.py                # Configuration loading (unitai.toml / pyproject.toml)
+└── config.py                # Configuration loading (trajai.toml / pyproject.toml)
 ```
 
 Install targets:
 
 ```
-pip install unitai                    # Core only
-pip install unitai[langraph]          # + LangGraph adapter
-pip install unitai[crewai]            # + CrewAI adapter
-pip install unitai[openai]            # + OpenAI Agents SDK adapter
-pip install unitai[semantic-kernel]   # + Semantic Kernel adapter
-pip install unitai[all]               # Everything
+pip install trajai                    # Core only
+pip install trajai[langraph]          # + LangGraph adapter
+pip install trajai[crewai]            # + CrewAI adapter
+pip install trajai[openai]            # + OpenAI Agents SDK adapter
+pip install trajai[semantic-kernel]   # + Semantic Kernel adapter
+pip install trajai[all]               # Everything
 ```
 
 ---
@@ -502,7 +502,7 @@ When enabled, the adapter intercepts LLM calls (not tool calls — those are alr
 
 ### 8.3 Cache Storage
 
-Cache files live in `.unitai/cache/` in the project root. Each entry is a JSON file named by the request hash. The cache directory should be gitignored by default.
+Cache files live in `.trajai/cache/` in the project root. Each entry is a JSON file named by the request hash. The cache directory should be gitignored by default.
 
 ### 8.4 Cache Invalidation
 
@@ -518,19 +518,19 @@ If any of these change, the cache misses and a fresh API call is made.
 ### 8.5 Configuration
 
 ```toml
-# unitai.toml or pyproject.toml [tool.unitai]
+# trajai.toml or pyproject.toml [tool.trajai]
 [cache]
 enabled = false          # Off by default
-directory = ".unitai/cache"
+directory = ".trajai/cache"
 ttl_hours = 168          # Cache entries expire after 7 days
 ```
 
 ### 8.6 CLI Control
 
 ```bash
-unitai test --record          # Force fresh API calls, save to cache
-unitai test --replay          # Use cache only, fail if cache misses
-unitai test --no-cache        # Ignore cache entirely (default)
+trajai test --record          # Force fresh API calls, save to cache
+trajai test --replay          # Use cache only, fail if cache misses
+trajai test --no-cache        # Ignore cache entirely (default)
 unitai cache clear             # Delete all cached responses
 unitai cache stats             # Show cache size, hit rate, estimated savings
 ```
@@ -541,10 +541,10 @@ unitai cache stats             # Show cache size, hit rate, estimated savings
 
 ### 9.1 Config File
 
-UnitAI reads from `pyproject.toml` under `[tool.unitai]` or from a standalone `unitai.toml` file.
+UnitAI reads from `pyproject.toml` under `[tool.trajai]` or from a standalone `trajai.toml` file.
 
 ```toml
-[tool.unitai]
+[tool.trajai]
 # Default adapter (auto-detected if not set)
 adapter = "langraph"
 
@@ -563,21 +563,21 @@ strict_mocks = true                # Fail on unmocked tool calls
 
 # Cache
 cache_enabled = false
-cache_directory = ".unitai/cache"
+cache_directory = ".trajai/cache"
 cache_ttl_hours = 168
 
 # Output
-junit_xml = "test-results/unitai.xml"
+junit_xml = "test-results/trajai.xml"
 verbose = false
 ```
 
 ### 9.2 Environment Variables
 
-All config values can be overridden by environment variables prefixed with `UNITAI_`:
+All config values can be overridden by environment variables prefixed with `TRAJAI_`:
 
-- `UNITAI_DEFAULT_N=20`
-- `UNITAI_COST_BUDGET_PER_SUITE=5.00`
-- `UNITAI_MODEL_OVERRIDE=gpt-4o-mini`
+- `TRAJAI_DEFAULT_N=20`
+- `TRAJAI_COST_BUDGET_PER_SUITE=5.00`
+- `TRAJAI_MODEL_OVERRIDE=gpt-4o-mini`
 
 ### 9.3 Per-Test Overrides
 
@@ -597,24 +597,24 @@ def test_critical_payment_flow(mock_toolkit):
 
 ```bash
 # Run all tests
-unitai test
+trajai test
 
 # Run specific test file or function
-unitai test tests/test_refund.py
-unitai test tests/test_refund.py::test_refund_requires_lookup
+trajai test tests/test_refund.py
+trajai test tests/test_refund.py::test_refund_requires_lookup
 
 # Run with statistical override
-unitai test --n=20 --threshold=0.90
+trajai test --n=20 --threshold=0.90
 
 # Run with model override (use cheap model in dev)
-unitai test --model=gpt-4o-mini
+trajai test --model=gpt-4o-mini
 
 # Run with cost cap
-unitai test --budget=2.00
+trajai test --budget=2.00
 
 # Run with cache
-unitai test --record
-unitai test --replay
+trajai test --record
+trajai test --replay
 
 # Cache management
 unitai cache clear
@@ -624,16 +624,16 @@ unitai cache stats
 unitai results
 
 # Init config file
-unitai init
+trajai init
 ```
 
 ### 10.2 Implementation
 
-The CLI is a thin wrapper around pytest. `unitai test` translates to `pytest --unitai` with the appropriate flags. The UnitAI pytest plugin handles discovery, execution, and reporting.
+The CLI is a thin wrapper around pytest. `trajai test` translates to `pytest --unitai` with the appropriate flags. The UnitAI pytest plugin handles discovery, execution, and reporting.
 
 Under the hood:
-- `unitai test` → `pytest -x --tb=short -q --unitai` (plus any extra flags)
-- `unitai test --n=20` → sets `UNITAI_DEFAULT_N=20` env var, then runs pytest
+- `trajai test` → `pytest -x --tb=short -q --unitai` (plus any extra flags)
+- `trajai test --n=20` → sets `TRAJAI_DEFAULT_N=20` env var, then runs pytest
 - JUnit XML output is always generated for CI consumption
 
 ---
@@ -660,15 +660,15 @@ def mock_toolkit():
 ### 11.3 Markers
 
 ```python
-@pytest.mark.unitai_statistical(n=10, threshold=0.95)
+@pytest.mark.trajai_statistical(n=10, threshold=0.95)
 def test_something(mock_toolkit):
     ...
 
-@pytest.mark.unitai_budget(max_cost=0.50)
+@pytest.mark.trajai_budget(max_cost=0.50)
 def test_cheap(mock_toolkit):
     ...
 
-@pytest.mark.unitai_skip_if_no_api_key
+@pytest.mark.trajai_skip_if_no_api_key
 def test_needs_openai(mock_toolkit):
     ...
 ```
@@ -727,15 +727,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install unitai[all]
-      - run: unitai test --budget=5.00
+      - run: pip install trajai[all]
+      - run: trajai test --budget=5.00
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
-          path: test-results/unitai.xml
+          path: test-results/trajai.xml
 ```
 
 ### 12.2 PR Gating
@@ -878,7 +878,7 @@ Generate test cases automatically from agent tool schemas. "Given these tools, g
 5. LangGraph adapter (most popular framework, best trajectory extraction support)
 6. Generic adapter (fallback for unsupported frameworks)
 7. pytest plugin with fixtures and rich failure reporting
-8. CLI (`unitai test`, `unitai init`)
+8. CLI (`trajai test`, `trajai init`)
 9. Configuration via pyproject.toml
 10. JUnit XML output
 11. Cost tracking and budget limits
@@ -910,7 +910,7 @@ Generate test cases automatically from agent tool schemas. "Given these tools, g
 - **CLI command:** `unitai`
 - **Import:** `from unitai import MockToolkit, statistical`
 - **pytest plugin name:** `unitai`
-- **Config section:** `[tool.unitai]`
+- **Config section:** `[tool.trajai]`
 - **Tagline:** "Write tests for your agents like you write tests for your code."
 - **Positioning line:** "Salus catches bad actions at runtime. UnitAI prevents them from ever reaching runtime."
 
@@ -920,7 +920,7 @@ Generate test cases automatically from agent tool schemas. "Given these tools, g
 
 The framework is ready to launch when:
 
-1. A developer can `pip install unitai`, write a test file for a LangGraph agent, and run it with `unitai test` in under 5 minutes.
+1. A developer can `pip install trajai`, write a test file for a LangGraph agent, and run it with `trajai test` in under 5 minutes.
 2. The README includes a copy-pasteable example that works out of the box (with a simple agent included in the repo as a test fixture).
 3. All 17 assertion methods in Section 5 work correctly.
 4. Statistical runner correctly handles non-determinism and reports pass rates.
@@ -1163,7 +1163,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - Final assertion: `assert stats.overall_passed` — fails the test if pass rate < threshold
    - Attach `StatisticalResult` to the test for reporting
 
-6. **pytest marker `@pytest.mark.unitai_statistical`**
+6. **pytest marker `@pytest.mark.trajai_statistical`**
    - Alternative to the decorator, works via the pytest plugin (implemented in Phase 6 but marker registration happens here)
 
 **Tests for this phase:**
@@ -1278,26 +1278,26 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 1. **`pytest_plugin/plugin.py`** — Plugin registration
    - Register via `pytest11` entry point in `pyproject.toml`
-   - Register markers: `unitai_statistical`, `unitai_budget`, `unitai_skip_if_no_api_key`
+   - Register markers: `trajai_statistical`, `trajai_budget`, `trajai_skip_if_no_api_key`
    - Hook into `pytest_collection_modifyitems` to detect UnitAI tests
    - Hook into `pytest_runtest_protocol` to wrap statistical tests
 
 2. **`pytest_plugin/fixtures.py`** — Fixtures
    - `mock_toolkit` fixture: creates fresh MockToolkit, yields it, calls reset after test
-   - `unitai_config` fixture: loads config from pyproject.toml / unitai.toml
+   - `unitai_config` fixture: loads config from pyproject.toml / trajai.toml
 
 3. **Statistical marker integration**
-   - When a test has `@pytest.mark.unitai_statistical(n=10, threshold=0.95)`:
+   - When a test has `@pytest.mark.trajai_statistical(n=10, threshold=0.95)`:
      - The plugin wraps the test function in a StatisticalRunner
      - Runs it N times
      - Reports the StatisticalResult
      - Fails/passes based on threshold
 
 4. **Budget marker integration**
-   - `@pytest.mark.unitai_budget(max_cost=0.50)` → aborts test if cost exceeds limit
+   - `@pytest.mark.trajai_budget(max_cost=0.50)` → aborts test if cost exceeds limit
 
 5. **API key skip marker**
-   - `@pytest.mark.unitai_skip_if_no_api_key` → skips test if `OPENAI_API_KEY` (or relevant key) not set. Prevents CI failures when API keys aren't configured.
+   - `@pytest.mark.trajai_skip_if_no_api_key` → skips test if `OPENAI_API_KEY` (or relevant key) not set. Prevents CI failures when API keys aren't configured.
 
 6. **Rich failure output**
    - Hook into `pytest_assertion_rewrite` or `pytest_runtest_makereport`
@@ -1311,9 +1311,9 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 **Tests for this phase:**
 - pytest discovers and runs a UnitAI test file correctly
 - `mock_toolkit` fixture provides a fresh toolkit and resets after test
-- `unitai_statistical` marker runs test N times and reports pass rate
-- `unitai_budget` marker aborts on cost overrun
-- `unitai_skip_if_no_api_key` skips when key is absent
+- `trajai_statistical` marker runs test N times and reports pass rate
+- `trajai_budget` marker aborts on cost overrun
+- `trajai_skip_if_no_api_key` skips when key is absent
 - Failure output includes trajectory, expected/actual, and cost
 - JUnit XML output is valid XML and contains UnitAI properties
 - Test these by running pytest programmatically via `pytest.main()` in the test suite and inspecting output
@@ -1333,17 +1333,17 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 ### Phase 7: CLI
 
-**Goal:** Implement the `unitai` command-line interface. At the end of this phase, developers run `unitai test` from their terminal and get formatted results with cost summaries.
+**Goal:** Implement the `unitai` command-line interface. At the end of this phase, developers run `trajai test` from their terminal and get formatted results with cost summaries.
 
 **Build order:**
 
 1. **`cli/main.py`** — CLI entrypoint using `argparse` (no click/typer dependency)
    - Subcommands: `test`, `init`, `cache`, `results`
 
-2. **`unitai test`**
+2. **`trajai test`**
    - Translates to `pytest` invocation with UnitAI plugin flags
    - Pass-through flags: `--n`, `--threshold`, `--model`, `--budget`, `--record`, `--replay`, `--no-cache`
-   - Sets corresponding env vars (`UNITAI_DEFAULT_N`, etc.) before invoking pytest
+   - Sets corresponding env vars (`TRAJAI_DEFAULT_N`, etc.) before invoking pytest
    - Appends UnitAI summary block after pytest output:
      ```
      ======================== UnitAI Results ========================
@@ -1353,13 +1353,13 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
      ================================================================
      ```
 
-3. **`unitai init`**
-   - Creates `unitai.toml` with default config values (commented, documented)
+3. **`trajai init`**
+   - Creates `trajai.toml` with default config values (commented, documented)
    - Creates `tests/test_agent_example.py` with a starter test template
-   - Adds `.unitai/` to `.gitignore` if it exists
+   - Adds `.trajai/` to `.gitignore` if it exists
 
 4. **`unitai cache`**
-   - `unitai cache clear` — deletes `.unitai/cache/`
+   - `unitai cache clear` — deletes `.trajai/cache/`
    - `unitai cache stats` — reports cache size, entry count, estimated savings
    - (Cache functionality itself is implemented in Phase 8; CLI commands are wired here, just report "cache not enabled" if Phase 8 isn't complete)
 
@@ -1371,15 +1371,15 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - `[project.scripts]` in `pyproject.toml`: `unitai = "unitai.cli.main:main"`
 
 **Tests for this phase:**
-- `unitai test` invokes pytest and returns correct exit code
-- `unitai init` creates config file and example test
+- `trajai test` invokes pytest and returns correct exit code
+- `trajai init` creates config file and example test
 - `unitai results` parses JUnit XML and displays formatted output
 - CLI passes flags through to pytest correctly (verify via env var inspection)
-- Help text (`unitai --help`, `unitai test --help`) is accurate
+- Help text (`unitai --help`, `trajai test --help`) is accurate
 
 **Success criteria:**
-- [ ] `unitai test` runs the test suite and prints UnitAI summary
-- [ ] `unitai init` scaffolds a working config and example test in a fresh directory
+- [ ] `trajai test` runs the test suite and prints UnitAI summary
+- [ ] `trajai init` scaffolds a working config and example test in a fresh directory
 - [ ] `unitai results` displays last run in readable format
 - [ ] All CLI flags (`--n`, `--threshold`, `--model`, `--budget`) work correctly
 - [ ] Exit codes are correct: 0 for all pass, 1 for any failure
@@ -1404,7 +1404,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 2. **Cache key computation**
    - Hash of: model name, system prompt, user input (full message history), tool definitions (names + schemas), temperature setting
-   - Use SHA-256. Key = hex digest. File = `.unitai/cache/{key}.json`
+   - Use SHA-256. Key = hex digest. File = `.trajai/cache/{key}.json`
 
 3. **CachedResponse format**
    - JSON file containing: the full LLM response object, token counts, model, timestamp, original cache key inputs (for debugging)
@@ -1448,15 +1448,15 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 ### Phase 9: Configuration System
 
-**Goal:** Implement full configuration loading from `pyproject.toml` and `unitai.toml`, with environment variable overrides.
+**Goal:** Implement full configuration loading from `pyproject.toml` and `trajai.toml`, with environment variable overrides.
 
 **Build order:**
 
 1. **`config.py`** — Configuration loader
-   - Load from `pyproject.toml` `[tool.unitai]` section (using `tomllib` from stdlib, Python 3.11+, or `tomli` for 3.10)
-   - Fall back to `unitai.toml` if `pyproject.toml` doesn't have the section
-   - Apply environment variable overrides (`UNITAI_*` prefix)
-   - Return a typed `UnitAIConfig` dataclass
+   - Load from `pyproject.toml` `[tool.trajai]` section (using `tomllib` from stdlib, Python 3.11+, or `tomli` for 3.10)
+   - Fall back to `trajai.toml` if `pyproject.toml` doesn't have the section
+   - Apply environment variable overrides (`TRAJAI_*` prefix)
+   - Return a typed `TrajAIConfig` dataclass
 
 2. **Config schema** — all fields from Section 9.1
    - Validate types and ranges at load time
@@ -1468,7 +1468,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 **Tests for this phase:**
 - Config loads from pyproject.toml correctly
-- Config loads from unitai.toml correctly
+- Config loads from trajai.toml correctly
 - Environment variables override file config
 - Missing config file → all defaults
 - Invalid values → clear error messages
@@ -1492,7 +1492,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 **Build order:**
 
 1. **`ci/github_action/action.yml`** — GitHub Action definition
-   - Composite action that: installs Python, installs unitai, runs `unitai test`
+   - Composite action that: installs Python, installs unitai, runs `trajai test`
    - Inputs: python-version, budget, model-override, extra-args
    - Outputs: pass-count, fail-count, total-cost
    - Uploads JUnit XML as artifact
@@ -1620,7 +1620,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - Finalize `pyproject.toml` metadata (description, classifiers, URLs, license)
    - Test build: `python -m build` → verify wheel and sdist
    - Publish to TestPyPI first, verify install works: `pip install -i https://test.pypi.org/simple/ unitai`
-   - Publish to PyPI: `pip install unitai`
+   - Publish to PyPI: `pip install trajai`
 
 2. **GitHub repo polish**
    - License file (MIT)
@@ -1639,14 +1639,14 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - Product Hunt listing draft
 
 4. **Pre-launch testing**
-   - Fresh machine install test: clone repo, `pip install unitai`, run example — must work first try
+   - Fresh machine install test: clone repo, `pip install trajai`, run example — must work first try
    - Test on Python 3.10, 3.11, 3.12, 3.13
    - Test on macOS, Linux, Windows (via CI matrix)
    - Have 2-3 design partners run the release candidate
 
 **Success criteria:**
-- [ ] `pip install unitai` works from PyPI
-- [ ] `pip install unitai[langraph]` installs with LangGraph adapter
+- [ ] `pip install trajai` works from PyPI
+- [ ] `pip install trajai[langraph]` installs with LangGraph adapter
 - [ ] Fresh install on clean machine → example runs in under 5 minutes
 - [ ] All tests pass on Python 3.10-3.13 on Linux, macOS, Windows
 - [ ] GitHub repo has license, contributing guide, issue templates

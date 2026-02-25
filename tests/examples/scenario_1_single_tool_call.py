@@ -23,7 +23,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from langchain_core.messages import AIMessage
-from unitai.mock.toolkit import MockToolkit
+from trajai.mock.toolkit import MockToolkit
 from tests.fixtures.langgraph_agent import (
     FakeToolCallingModel,
     build_react_agent,

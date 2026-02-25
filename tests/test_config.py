@@ -7,12 +7,12 @@ from pathlib import Path
 
 import pytest
 
-from unitai.config import UnitAIConfig, get_config, reload_config
+from trajai.config import TrajAIConfig, get_config, reload_config
 
 
 def test_config_defaults() -> None:
     """Test that config has sensible defaults."""
-    config = UnitAIConfig()
+    config = TrajAIConfig()
     
     assert config.default_n == 10
     assert config.default_threshold == 0.95
@@ -24,9 +24,9 @@ def test_config_defaults() -> None:
 
 def test_config_env_override() -> None:
     """Test environment variable overrides."""
-    os.environ["UNITAI_DEFAULT_N"] = "20"
-    os.environ["UNITAI_DEFAULT_THRESHOLD"] = "0.90"
-    os.environ["UNITAI_STRICT_MOCKS"] = "false"
+    os.environ["TRAJAI_DEFAULT_N"] = "20"
+    os.environ["TRAJAI_DEFAULT_THRESHOLD"] = "0.90"
+    os.environ["TRAJAI_STRICT_MOCKS"] = "false"
     
     try:
         config = reload_config()
@@ -35,18 +35,17 @@ def test_config_env_override() -> None:
         assert config.strict_mocks is False
     finally:
         # Cleanup
-        os.environ.pop("UNITAI_DEFAULT_N", None)
-        os.environ.pop("UNITAI_DEFAULT_THRESHOLD", None)
-        os.environ.pop("UNITAI_STRICT_MOCKS", None)
+        os.environ.pop("TRAJAI_DEFAULT_N", None)
+        os.environ.pop("TRAJAI_DEFAULT_THRESHOLD", None)
+        os.environ.pop("TRAJAI_STRICT_MOCKS", None)
         reload_config()
 
 
-def test_config_load_from_unitai_toml() -> None:
-    """Test loading config from unitai.toml."""
+def test_config_load_from_trajai_toml() -> None:
+    """Test loading config from trajai.toml."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        toml_path = Path(tmpdir) / "unitai.toml"
+        toml_path = Path(tmpdir) / "trajai.toml"
         toml_path.write_text("""\
-[tool.unitai]
 default_n = 15
 default_threshold = 0.85
 strict_mocks = false
@@ -69,14 +68,14 @@ cache_enabled = true
 
 
 def test_config_load_from_pyproject_toml() -> None:
-    """Test loading config from pyproject.toml [tool.unitai] section."""
+    """Test loading config from pyproject.toml [tool.trajai] section."""
     with tempfile.TemporaryDirectory() as tmpdir:
         pyproject_path = Path(tmpdir) / "pyproject.toml"
         pyproject_path.write_text("""\
 [project]
 name = "test"
 
-[tool.unitai]
+[tool.trajai]
 default_n = 25
 cost_budget_per_test = 2.50
 """)
@@ -96,13 +95,13 @@ cost_budget_per_test = 2.50
 def test_config_env_overrides_file() -> None:
     """Test that environment variables override file config."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        toml_path = Path(tmpdir) / "unitai.toml"
+        toml_path = Path(tmpdir) / "trajai.toml"
         toml_path.write_text("""\
-[tool.unitai]
+[tool.trajai]
 default_n = 10
 """)
         
-        os.environ["UNITAI_DEFAULT_N"] = "30"
+        os.environ["TRAJAI_DEFAULT_N"] = "30"
         
         old_cwd = os.getcwd()
         try:
@@ -113,7 +112,7 @@ default_n = 10
             assert config.default_n == 30
         finally:
             os.chdir(old_cwd)
-            os.environ.pop("UNITAI_DEFAULT_N", None)
+            os.environ.pop("TRAJAI_DEFAULT_N", None)
             reload_config()
 
 
@@ -131,12 +130,12 @@ def test_config_bool_parsing() -> None:
     ]
     
     for value, expected in test_cases:
-        os.environ["UNITAI_STRICT_MOCKS"] = value
+        os.environ["TRAJAI_STRICT_MOCKS"] = value
         try:
             config = reload_config()
             assert config.strict_mocks == expected, f"Failed for value: {value}"
         finally:
-            os.environ.pop("UNITAI_STRICT_MOCKS", None)
+            os.environ.pop("TRAJAI_STRICT_MOCKS", None)
             reload_config()
 
 
@@ -149,12 +148,12 @@ def test_config_get_config_singleton() -> None:
 
 
 def test_config_model_override_alias() -> None:
-    """Test that UNITAI_MODEL is an alias for UNITAI_MODEL_OVERRIDE."""
-    os.environ["UNITAI_MODEL"] = "gpt-4o-mini"
+    """Test that TRAJAI_MODEL is an alias for TRAJAI_MODEL_OVERRIDE."""
+    os.environ["TRAJAI_MODEL"] = "gpt-4o-mini"
     
     try:
         config = reload_config()
         assert config.model_override == "gpt-4o-mini"
     finally:
-        os.environ.pop("UNITAI_MODEL", None)
+        os.environ.pop("TRAJAI_MODEL", None)
         reload_config()

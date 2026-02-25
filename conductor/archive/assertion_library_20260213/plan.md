@@ -27,7 +27,7 @@ This plan covers the implementation of the assertion engine, the trajectory form
 - [x] **Task: Wire APIs to AgentRunResult** 7af1575
     - [ ] Update `unitai/core/result.py`.
     - [ ] Implement the Boolean API (delegating to `assertions.py`).
-    - [ ] Implement the Assert API (`assert_*` methods raising `UnitAIAssertionError`).
+    - [ ] Implement the Assert API (`assert_*` methods raising `TrajAIAssertionError`).
     - [ ] Implement `get_calls` and `get_call` (with descriptive `IndexError`).
 - [x] **Task: Final Verification & Test Suite** 7af1575
     - [ ] Write 25+ unit tests in `tests/test_assertions.py` covering happy paths and all edge cases (missing tools, None output, etc.).

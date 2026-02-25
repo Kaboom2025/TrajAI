@@ -16,8 +16,8 @@ LLM non-determinism, but should succeed 90%+ of the time.
 
 from unittest.mock import MagicMock
 
-from unitai.mock.toolkit import MockToolkit
-from unitai.runner.statistical import StatisticalRunner
+from trajai.mock.toolkit import MockToolkit
+from trajai.runner.statistical import StatisticalRunner
 
 # ---------------------------------------------------------------------------
 # Step 1: Create a flaky agent simulator
@@ -91,7 +91,7 @@ def example_pytest_statistical_test() -> None:
 
     In a real pytest file, you would write:
 
-    @pytest.mark.unitai_statistical(n=10, threshold=0.9)
+    @pytest.mark.trajai_statistical(n=10, threshold=0.9)
     def test_my_agent(mock_toolkit):
         # Mock setup
         mock_toolkit.mock("lookup", return_value={"found": True})
@@ -110,7 +110,7 @@ def example_pytest_statistical_test() -> None:
     """
     print("Example: pytest statistical testing")
     print()
-    print("  @pytest.mark.unitai_statistical(n=10, threshold=0.9)")
+    print("  @pytest.mark.trajai_statistical(n=10, threshold=0.9)")
     print("  def test_my_agent(mock_toolkit):")
     print("      mock_toolkit.mock('lookup', return_value={'found': True})")
     print("      result = mock_toolkit.run(agent, 'find item')")
@@ -159,7 +159,7 @@ def show_ci_integration() -> None:
     print("In your .github/workflows/test.yml:")
     print()
     print("  - name: Run UnitAI tests")
-    print("    run: unitai test --n 10 --threshold 0.9 --budget 5.00")
+    print("    run: trajai test --n 10 --threshold 0.9 --budget 5.00")
     print()
     print("This will:")
     print("- Run all statistical tests 10 times each")
@@ -201,7 +201,7 @@ if __name__ == "__main__":
     print("=" * 70)
     print("Key Takeaways:")
     print("- StatisticalRunner runs tests N times and checks pass rate")
-    print("- Use @pytest.mark.unitai_statistical(n=10, threshold=0.9)")
+    print("- Use @pytest.mark.trajai_statistical(n=10, threshold=0.9)")
     print("- Cost budget prevents expensive test runs")
     print("- JUnit XML includes pass_rate and cost metadata")
     print("- GitHub Actions displays cost in job summary")

@@ -1,6 +1,6 @@
 import pytest
 
-from unitai.core.assertions import (
+from trajai.core.assertions import (
     cost_under,
     duration_under,
     error_is,
@@ -13,7 +13,7 @@ from unitai.core.assertions import (
     succeeded,
     tokens_under,
 )
-from unitai.core.trajectory import Trajectory
+from trajai.core.trajectory import Trajectory
 
 
 @pytest.fixture

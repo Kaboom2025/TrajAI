@@ -9,7 +9,7 @@ I've been building AI agents and kept running into the same problem: there's no 
 UnitAI is a testing framework for AI agents. Mock tools, capture execution trajectories, and assert on what your agent *did* — not just what it said.
 
 ```python
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 def test_refund_flow():
     toolkit = MockToolkit()
@@ -49,13 +49,13 @@ Works with LangGraph, CrewAI, OpenAI Agents SDK, or any Python callable. Tool in
 - Runners: ✅ Statistical testing with cost budgets
 - Adapters: ✅ Generic, LangGraph, CrewAI, OpenAI Agents
 - pytest plugin: ✅ Markers, fixtures, JUnit XML
-- CLI: ✅ `unitai test` command
+- CLI: ✅ `trajai test` command
 - Cache/replay: ✅ Record LLM responses for deterministic re-runs
 
-It's MIT licensed and available on PyPI: `pip install unitai`
+It's MIT licensed and available on PyPI: `pip install trajai`
 
-GitHub: https://github.com/saalik/unitai  
-Docs: https://github.com/saalik/unitai/tree/main/docs
+GitHub: https://github.com/saalik/trajai  
+Docs: https://github.com/saalik/trajai/tree/main/docs
 
 I'd love feedback on the approach. Is this a problem you've run into? How are you testing your agents today?
 

@@ -1,5 +1,5 @@
 """Tests for the chatbot agent."""
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 from agent import chatbot_agent
 

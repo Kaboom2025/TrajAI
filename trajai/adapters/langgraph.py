@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from unitai.adapters.base import BaseAdapter
-from unitai.core.trajectory import Trajectory, TrajectoryStep
+from trajai.adapters.base import BaseAdapter
+from trajai.core.trajectory import Trajectory, TrajectoryStep
 
 if TYPE_CHECKING:
-    from unitai.mock.toolkit import MockToolkit
+    from trajai.mock.toolkit import MockToolkit
 
 try:
     from langgraph.graph import StateGraph
@@ -174,10 +174,10 @@ class LangGraphAdapter(BaseAdapter):
             )
             final_output = self._extract_final_output(result_state)
         except Exception as e:
-            from unitai.mock.toolkit import UnitAIMockError
+            from trajai.mock.toolkit import TrajAIMockError
 
             self._restore_tools(compiled, saved)
-            if isinstance(e, UnitAIMockError):
+            if isinstance(e, TrajAIMockError):
                 raise
             return self._build_trajectory(input, error=e)
         finally:

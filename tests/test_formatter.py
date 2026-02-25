@@ -1,7 +1,7 @@
 import pytest
 
-from unitai.core.formatter import TrajectoryFormatter
-from unitai.core.trajectory import Trajectory, TrajectoryStep
+from trajai.core.formatter import TrajectoryFormatter
+from trajai.core.trajectory import Trajectory, TrajectoryStep
 
 
 @pytest.fixture

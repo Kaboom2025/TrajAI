@@ -3,7 +3,7 @@
 **The open-source testing framework for AI agents.**
 
 [![PyPI version](https://img.shields.io/pypi/v/unitai.svg)](https://pypi.org/project/unitai/)
-[![CI](https://github.com/saalik/unitai/actions/workflows/ci.yml/badge.svg)](https://github.com/saalik/unitai/actions)
+[![CI](https://github.com/saalik/trajai/actions/workflows/ci.yml/badge.svg)](https://github.com/saalik/trajai/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 
@@ -14,12 +14,12 @@ UnitAI lets you write deterministic tests for non-deterministic AI agents. Mock 
 ## Quick Start
 
 ```bash
-pip install unitai
+pip install trajai
 ```
 
 ```python
 # test_agent.py
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 def my_agent(input: str, tools: dict):
     order = tools["lookup_order"]({"order_id": "123"})
@@ -83,7 +83,7 @@ assert result.tool_was_called("search")
 assert result.tool_called_before("search", "send_email")
 assert result.tool_call_count("search", 1)
 
-# Assert API — raises UnitAIAssertionError with formatted trajectory on failure
+# Assert API — raises TrajAIAssertionError with formatted trajectory on failure
 result.assert_tool_was_called("search")
 result.assert_output_contains("report")
 ```
@@ -97,7 +97,7 @@ Every agent run produces a `Trajectory` — a chronological record of all tool c
 Handle LLM non-determinism by running tests multiple times:
 
 ```python
-from unitai.runner import statistical
+from trajai.runner import statistical
 
 @statistical(n=10, threshold=0.9)
 def test_agent_uses_correct_tools():
@@ -113,10 +113,10 @@ def test_agent_uses_correct_tools():
 
 | Framework | Install | Status |
 |-----------|---------|--------|
-| Any Python callable | `pip install unitai` | Stable |
-| LangGraph | `pip install unitai[langgraph]` | Stable |
-| CrewAI | `pip install unitai[crewai]` | Stable |
-| OpenAI Agents SDK | `pip install unitai[openai-agents]` | Stable |
+| Any Python callable | `pip install trajai` | Stable |
+| LangGraph | `pip install trajai[langgraph]` | Stable |
+| CrewAI | `pip install trajai[crewai]` | Stable |
+| OpenAI Agents SDK | `pip install trajai[openai-agents]` | Stable |
 
 Framework-specific adapters handle tool injection and trajectory collection automatically:
 

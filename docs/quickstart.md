@@ -7,15 +7,15 @@ Get from zero to running AI agent tests in 5 minutes.
 ## 1. Install UnitAI
 
 ```bash
-pip install unitai
+pip install trajai
 ```
 
 For framework-specific adapters:
 
 ```bash
-pip install unitai[langgraph]     # LangGraph support
-pip install unitai[crewai]        # CrewAI support
-pip install unitai[openai-agents] # OpenAI Agents SDK support
+pip install trajai[langgraph]     # LangGraph support
+pip install trajai[crewai]        # CrewAI support
+pip install trajai[openai-agents] # OpenAI Agents SDK support
 ```
 
 ## 2. Write Your Agent
@@ -42,7 +42,7 @@ Create a test file using `MockToolkit` to mock the tools and assert on agent beh
 
 ```python
 # test_agent.py
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 from agent import customer_service_agent
 

@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 import pytest
 
-from unitai.cli.main import main
+from trajai.cli.main import main
 
 # ---------------------------------------------------------------------------
 # Help output
@@ -25,7 +25,7 @@ def test_help_output(capsys: pytest.CaptureFixture[str]) -> None:
 
 
 def test_test_help(capsys: pytest.CaptureFixture[str]) -> None:
-    """`unitai test --help` prints test subcommand usage."""
+    """`trajai test --help` prints test subcommand usage."""
     with pytest.raises(SystemExit) as exc_info:
         main(["test", "--help"])
     assert exc_info.value.code == 0
@@ -34,28 +34,28 @@ def test_test_help(capsys: pytest.CaptureFixture[str]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# `unitai test` env var mapping
+# `trajai test` env var mapping
 # ---------------------------------------------------------------------------
 
 
 def test_test_sets_env_vars(monkeypatch: pytest.MonkeyPatch) -> None:
-    """--n, --threshold, --budget flags set the corresponding UNITAI_* env vars."""
+    """--n, --threshold, --budget flags set the corresponding TRAJAI_* env vars."""
     called_with: List[List[str]] = []
 
     def mock_pytest_main(args: List[str]) -> int:
         called_with.append(args)
         return 0
 
-    monkeypatch.delenv("UNITAI_DEFAULT_N", raising=False)
-    monkeypatch.delenv("UNITAI_DEFAULT_THRESHOLD", raising=False)
-    monkeypatch.delenv("UNITAI_COST_BUDGET_PER_TEST", raising=False)
+    monkeypatch.delenv("TRAJAI_DEFAULT_N", raising=False)
+    monkeypatch.delenv("TRAJAI_DEFAULT_THRESHOLD", raising=False)
+    monkeypatch.delenv("TRAJAI_COST_BUDGET_PER_TEST", raising=False)
 
     with patch("pytest.main", side_effect=mock_pytest_main):
         main(["test", "--n", "5", "--threshold", "0.8", "--budget", "2.50"])
 
-    assert os.environ.get("UNITAI_DEFAULT_N") == "5"
-    assert os.environ.get("UNITAI_DEFAULT_THRESHOLD") == "0.8"
-    assert os.environ.get("UNITAI_COST_BUDGET_PER_TEST") == "2.5"
+    assert os.environ.get("TRAJAI_DEFAULT_N") == "5"
+    assert os.environ.get("TRAJAI_DEFAULT_THRESHOLD") == "0.8"
+    assert os.environ.get("TRAJAI_COST_BUDGET_PER_TEST") == "2.5"
 
 
 def test_test_passes_path(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -74,22 +74,22 @@ def test_test_passes_path(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_test_exit_code(monkeypatch: pytest.MonkeyPatch) -> None:
-    """pytest exit code is propagated by `unitai test`."""
+    """pytest exit code is propagated by `trajai test`."""
     with patch("pytest.main", return_value=1):
         code = main(["test"])
     assert code == 1
 
 
 # ---------------------------------------------------------------------------
-# `unitai init`
+# `trajai init`
 # ---------------------------------------------------------------------------
 
 
 def test_init_creates_config(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """`unitai init` creates unitai.toml in the current directory."""
+    """`trajai init` creates trajai.toml in the current directory."""
     monkeypatch.chdir(tmp_path)
     main(["init"])
-    toml_path = tmp_path / "unitai.toml"
+    toml_path = tmp_path / "trajai.toml"
     assert toml_path.exists()
     content = toml_path.read_text()
     assert "default_n" in content
@@ -98,7 +98,7 @@ def test_init_creates_config(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
 def test_init_creates_example_test(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """`unitai init` creates tests/test_agent_example.py."""
+    """`trajai init` creates tests/test_agent_example.py."""
     monkeypatch.chdir(tmp_path)
     main(["init"])
     example = tmp_path / "tests" / "test_agent_example.py"
@@ -108,11 +108,11 @@ def test_init_creates_example_test(
 
 
 def test_init_idempotent(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """`unitai init` doesn't overwrite existing files."""
+    """`trajai init` doesn't overwrite existing files."""
     monkeypatch.chdir(tmp_path)
 
     # Create files with sentinel content
-    toml_path = tmp_path / "unitai.toml"
+    toml_path = tmp_path / "trajai.toml"
     toml_path.write_text("sentinel_content_toml")
 
     tests_dir = tmp_path / "tests"
@@ -129,7 +129,7 @@ def test_init_idempotent(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Non
 def test_init_updates_gitignore(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """`unitai init` appends .unitai/ to existing .gitignore."""
+    """`trajai init` appends .trajai/ to existing .gitignore."""
     monkeypatch.chdir(tmp_path)
     gitignore = tmp_path / ".gitignore"
     gitignore.write_text("*.pyc\n__pycache__/\n")
@@ -137,7 +137,7 @@ def test_init_updates_gitignore(
     main(["init"])
 
     content = gitignore.read_text()
-    assert ".unitai/" in content
+    assert ".trajai/" in content
 
 
 # ---------------------------------------------------------------------------

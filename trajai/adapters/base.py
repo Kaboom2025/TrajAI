@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from unitai.core.trajectory import Trajectory
-    from unitai.mock.toolkit import MockToolkit
+    from trajai.core.trajectory import Trajectory
+    from trajai.mock.toolkit import MockToolkit
 
 class BaseAdapter(ABC):
     """Abstract base class for all framework adapters."""

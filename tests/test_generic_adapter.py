@@ -1,6 +1,6 @@
-from unitai.adapters.generic import GenericAdapter
-from unitai.core.trajectory import Trajectory
-from unitai.mock.toolkit import MockToolkit
+from trajai.adapters.generic import GenericAdapter
+from trajai.core.trajectory import Trajectory
+from trajai.mock.toolkit import MockToolkit
 
 
 def test_generic_adapter_execute() -> None:

@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "unitai"
+name = "trajai"
 dynamic = ["version"]
 description = "The open-source testing framework for AI agents."
 readme = "README.md"
@@ -35,27 +35,27 @@ crewai = ["crewai"]
 openai-agents = ["openai-agents"]
 semantic-kernel = ["semantic-kernel"]
 all = [
-  "unitai[langgraph,crewai,openai-agents,semantic-kernel]",
+  "trajai[langgraph,crewai,openai-agents,semantic-kernel]",
 ]
 
 [project.urls]
-Homepage = "https://github.com/saalik/unitai"
-Documentation = "https://github.com/saalik/unitai/tree/main/docs"
-Repository = "https://github.com/saalik/unitai"
-Issues = "https://github.com/saalik/unitai/issues"
-Changelog = "https://github.com/saalik/unitai/releases"
+Homepage = "https://github.com/saalik/trajai"
+Documentation = "https://github.com/saalik/trajai/tree/main/docs"
+Repository = "https://github.com/saalik/trajai"
+Issues = "https://github.com/saalik/trajai/issues"
+Changelog = "https://github.com/saalik/trajai/releases"
 
 [tool.hatch.version]
-path = "unitai/__init__.py"
+path = "trajai/__init__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["unitai"]
+packages = ["trajai"]
 
 [project.scripts]
-unitai = "unitai.cli.main:main"
+trajai = "trajai.cli.main:main"
 
 [project.entry-points.pytest11]
-unitai = "unitai.pytest_plugin.plugin"
+trajai = "trajai.pytest_plugin.plugin"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

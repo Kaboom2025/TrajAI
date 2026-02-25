@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Optional
 
 if TYPE_CHECKING:
-    from unitai.core.trajectory import Trajectory, TrajectoryStep
+    from trajai.core.trajectory import Trajectory, TrajectoryStep
 
 class TrajectoryFormatter:
     """Generates human-readable summaries of agent trajectories."""

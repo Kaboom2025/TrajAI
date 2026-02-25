@@ -37,7 +37,7 @@ Please provide a minimal code example that reproduces the issue:
 
 ```python
 # Your minimal reproduction code here
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 def my_agent(input: str, tools: dict) -> str:
     ...
@@ -49,11 +49,11 @@ def test_bug():
 
 ## Environment
 
-- **UnitAI version:** [e.g., 0.1.0] (run `pip show unitai`)
+- **UnitAI version:** [e.g., 0.1.0] (run `pip show trajai`)
 - **Python version:** [e.g., 3.12.0] (run `python --version`)
 - **Operating system:** [e.g., macOS 14.0, Ubuntu 22.04, Windows 11]
 - **Framework:** [e.g., LangGraph, CrewAI, generic] and version if applicable
-- **Install method:** [e.g., `pip install unitai`, `pip install unitai[langgraph]`]
+- **Install method:** [e.g., `pip install trajai`, `pip install trajai[langgraph]`]
 
 ## Additional Context
 

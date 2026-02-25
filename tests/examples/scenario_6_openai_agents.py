@@ -20,7 +20,7 @@ pytest.importorskip("agents")
 from agents import Agent
 from agents.tool import FunctionTool
 
-from unitai.mock.toolkit import MockToolkit
+from trajai.mock.toolkit import MockToolkit
 
 # ---------------------------------------------------------------------------
 # Step 1: Define tools as FunctionTool objects

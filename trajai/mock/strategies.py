@@ -4,15 +4,15 @@ from abc import ABC, abstractmethod
 from typing import Any, Callable, Sequence
 
 
-class UnitAIMockError(Exception):
+class TrajAIMockError(Exception):
     """Base class for errors in the UnitAI mock layer."""
     pass
 
-class MockExhaustedError(UnitAIMockError):
+class MockExhaustedError(TrajAIMockError):
     """Raised when a SequenceStrategy is called more times than provided values."""
     pass
 
-class NoMatchingConditionError(UnitAIMockError):
+class NoMatchingConditionError(TrajAIMockError):
     """Raised when a ConditionalStrategy has no matching condition for the input."""
     pass
 

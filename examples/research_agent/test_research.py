@@ -1,7 +1,7 @@
 """Tests for the research agent, including statistical testing."""
-from unitai.core.assertions import cost_under, tokens_under
-from unitai.mock import MockToolkit
-from unitai.runner.statistical import StatisticalRunner
+from trajai.core.assertions import cost_under, tokens_under
+from trajai.mock import MockToolkit
+from trajai.runner.statistical import StatisticalRunner
 
 from agent import quick_search_agent, research_agent
 

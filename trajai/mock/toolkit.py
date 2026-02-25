@@ -3,13 +3,13 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Sequence
 
-from unitai.core.result import MockToolCall
+from trajai.core.result import MockToolCall
 
 if TYPE_CHECKING:
-    from unitai.core.result import AgentRunResult
-    from unitai.core.trajectory import TrajectoryStep
+    from trajai.core.result import AgentRunResult
+    from trajai.core.trajectory import TrajectoryStep
 
-from unitai.mock.strategies import (
+from trajai.mock.strategies import (
     CallableStrategy,
     ConditionalStrategy,
     ErrorStrategy,
@@ -19,21 +19,21 @@ from unitai.mock.strategies import (
 )
 
 
-class UnitAIMockError(Exception):
+class TrajAIMockError(Exception):
     """Base class for errors in the UnitAI mock layer."""
     pass
 
-class UnmockedToolError(UnitAIMockError):
+class UnmockedToolError(TrajAIMockError):
     """Raised when an agent calls a tool that has no mock registered in strict mode."""
     pass
 
-class AgentTimeoutError(UnitAIMockError):
+class AgentTimeoutError(TrajAIMockError):
     """Raised when an agent exceeds the configured timeout."""
     def __init__(self, message: str, partial_result: Optional[AgentRunResult] = None):
         super().__init__(message)
         self.partial_result = partial_result
 
-class AdapterNotFoundError(UnitAIMockError):
+class AdapterNotFoundError(TrajAIMockError):
     """Raised when no adapter can handle the given agent type."""
     pass
 
@@ -94,7 +94,7 @@ class MockToolkit:
             strict: If True, raise UnmockedToolError on unmocked tool calls.
                    If None, use config default.
         """
-        from unitai.config import get_config
+        from trajai.config import get_config
 
         config = get_config()
         self._strict = strict if strict is not None else config.strict_mocks
@@ -154,7 +154,7 @@ class MockToolkit:
         completion_tokens: int = 0,
         cost: float = 0.0,
     ) -> None:
-        from unitai.core.trajectory import TrajectoryStep
+        from trajai.core.trajectory import TrajectoryStep
 
         step = TrajectoryStep(
             step_index=0,  # Will be re-indexed during aggregation
@@ -178,20 +178,20 @@ class MockToolkit:
         import asyncio
         import os
 
-        from unitai.config import get_config
-        from unitai.core.result import AgentRunResult
+        from trajai.config import get_config
+        from trajai.core.result import AgentRunResult
 
         config = get_config()
 
         # Determine cache settings
         if cache is None and config.cache_enabled:
-            from unitai.runner.replay import ReplayCache
+            from trajai.runner.replay import ReplayCache
             cache = ReplayCache(
                 directory=config.cache_directory,
                 ttl_hours=config.cache_ttl_hours,
             )
             # Check environment for cache mode override
-            env_mode = os.environ.get("UNITAI_CACHE_MODE", "auto")
+            env_mode = os.environ.get("TRAJAI_CACHE_MODE", "auto")
             if env_mode != "auto":
                 cache_mode = env_mode
 
@@ -222,7 +222,7 @@ class MockToolkit:
                         error=AgentTimeoutError(f"Agent exceeded {timeout}s timeout"),
                     )
                 else:
-                    from unitai.adapters.generic import GenericAdapter
+                    from trajai.adapters.generic import GenericAdapter
                     partial_traj = GenericAdapter(self)._build_trajectory(
                         str(input),
                         error=AgentTimeoutError(f"Agent exceeded {timeout}s timeout"),
@@ -237,7 +237,7 @@ class MockToolkit:
 
     def _resolve_adapter(self, agent: Any) -> Any:
         try:
-            from unitai.adapters.langgraph import LangGraphAdapter
+            from trajai.adapters.langgraph import LangGraphAdapter
             adapter: Any = LangGraphAdapter(self)
             if adapter.can_handle(agent):
                 return adapter
@@ -245,7 +245,7 @@ class MockToolkit:
             pass
 
         try:
-            from unitai.adapters.openai_agents import OpenAIAgentsAdapter
+            from trajai.adapters.openai_agents import OpenAIAgentsAdapter
             adapter = OpenAIAgentsAdapter(self)
             if adapter.can_handle(agent):
                 return adapter
@@ -253,7 +253,7 @@ class MockToolkit:
             pass
 
         try:
-            from unitai.adapters.crewai import CrewAIAdapter
+            from trajai.adapters.crewai import CrewAIAdapter
             adapter = CrewAIAdapter(self)
             if adapter.can_handle(agent):
                 return adapter
@@ -264,8 +264,8 @@ class MockToolkit:
             f"No adapter found for agent type '{type(agent).__name__}'. "
             "Supported: LangGraph CompiledStateGraph/StateGraph, "
             "OpenAI Agents SDK Agent, CrewAI Crew/Agent. "
-            "Install extras: unitai[langgraph], "
-            "unitai[openai-agents], or unitai[crewai]."
+            "Install extras: trajai[langgraph], "
+            "trajai[openai-agents], or trajai[crewai]."
         )
 
     def run_generic(
@@ -278,8 +278,8 @@ class MockToolkit:
     ) -> AgentRunResult:
         import asyncio
 
-        from unitai.adapters.generic import GenericAdapter
-        from unitai.core.result import AgentRunResult
+        from trajai.adapters.generic import GenericAdapter
+        from trajai.core.result import AgentRunResult
 
         adapter = GenericAdapter(self)
 
@@ -326,8 +326,8 @@ class MockToolkit:
     ) -> AgentRunResult:
         import asyncio
 
-        from unitai.adapters.generic import GenericAdapter
-        from unitai.core.result import AgentRunResult
+        from trajai.adapters.generic import GenericAdapter
+        from trajai.core.result import AgentRunResult
 
         adapter = GenericAdapter(self)
         tools = self.as_dict(strict=strict)

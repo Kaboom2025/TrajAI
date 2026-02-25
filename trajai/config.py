@@ -1,6 +1,6 @@
-"""Configuration loading for UnitAI.
+"""Configuration loading for TrajAI.
 
-Loads configuration from pyproject.toml [tool.unitai] section or unitai.toml,
+Loads configuration from pyproject.toml [tool.trajai] section or trajai.toml,
 with environment variable overrides.
 """
 from __future__ import annotations
@@ -12,8 +12,8 @@ from typing import Optional
 
 
 @dataclass
-class UnitAIConfig:
-    """UnitAI configuration settings."""
+class TrajAIConfig:
+    """TrajAI configuration settings."""
     
     # Statistical runner defaults
     default_n: int = 10
@@ -30,41 +30,41 @@ class UnitAIConfig:
     
     # Cache settings
     cache_enabled: bool = False
-    cache_directory: str = ".unitai/cache"
+    cache_directory: str = ".trajai/cache"
     cache_ttl_hours: float = 168.0  # 7 days
     
     # Output
-    junit_xml: str = "test-results/unitai.xml"
+    junit_xml: str = "test-results/trajai.xml"
     verbose: bool = False
     
     # Adapter (for future use)
     adapter: str = ""
     
     @classmethod
-    def load(cls) -> UnitAIConfig:
+    def load(cls) -> TrajAIConfig:
         """Load configuration from files and environment variables.
         
         Priority order (highest to lowest):
-        1. Environment variables (UNITAI_*)
-        2. unitai.toml
-        3. pyproject.toml [tool.unitai]
+        1. Environment variables (TRAJAI_*)
+        2. trajai.toml
+        3. pyproject.toml [tool.trajai]
         4. Defaults
         """
         config = cls()
         
-        # Try to load from pyproject.toml or unitai.toml
+        # Try to load from pyproject.toml or trajai.toml
         cwd = Path.cwd()
-        unitai_toml = cwd / "unitai.toml"
+        unitai_toml = cwd / "trajai.toml"
         pyproject_toml = cwd / "pyproject.toml"
         
-        # Load from unitai.toml first (if exists)
+        # Load from trajai.toml first (if exists)
         if unitai_toml.exists():
             try:
                 config._load_from_toml(unitai_toml)
             except Exception:
                 pass  # Ignore parse errors, fall back to defaults
         
-        # Load from pyproject.toml [tool.unitai] section (if exists)
+        # Load from pyproject.toml [tool.trajai] section (if exists)
         if pyproject_toml.exists():
             try:
                 config._load_from_pyproject_toml(pyproject_toml)
@@ -90,14 +90,14 @@ class UnitAIConfig:
         with open(toml_path, "rb") as f:
             data = tomllib.load(f)
         
-        unitai_section = data.get("tool", {}).get("unitai", {})
-        if not unitai_section and "unitai" in data:
-            unitai_section = data["unitai"]
+        trajai_section = data.get("tool", {}).get("trajai", {})
+        if not trajai_section and "trajai" in data:
+            trajai_section = data["trajai"]
         
-        self._apply_dict(unitai_section)
+        self._apply_dict(trajai_section)
     
     def _load_from_pyproject_toml(self, pyproject_path: Path) -> None:
-        """Load configuration from pyproject.toml [tool.unitai] section."""
+        """Load configuration from pyproject.toml [tool.trajai] section."""
         try:
             import tomllib  # Python 3.11+
         except ImportError:
@@ -110,8 +110,8 @@ class UnitAIConfig:
         with open(pyproject_path, "rb") as f:
             data = tomllib.load(f)
         
-        unitai_section = data.get("tool", {}).get("unitai", {})
-        self._apply_dict(unitai_section)
+        trajai_section = data.get("tool", {}).get("trajai", {})
+        self._apply_dict(trajai_section)
     
     def _apply_dict(self, data: dict) -> None:
         """Apply configuration from a dictionary."""
@@ -145,20 +145,20 @@ class UnitAIConfig:
     def _apply_env_overrides(self) -> None:
         """Apply environment variable overrides."""
         env_map = {
-            "UNITAI_DEFAULT_N": ("default_n", int),
-            "UNITAI_DEFAULT_THRESHOLD": ("default_threshold", float),
-            "UNITAI_MAX_WORKERS": ("max_workers", int),
-            "UNITAI_COST_BUDGET_PER_TEST": ("cost_budget_per_test", float),
-            "UNITAI_COST_BUDGET_PER_SUITE": ("cost_budget_per_suite", float),
-            "UNITAI_MODEL_OVERRIDE": ("model_override", str),
-            "UNITAI_MODEL": ("model_override", str),  # Alias
-            "UNITAI_STRICT_MOCKS": ("strict_mocks", lambda x: x.lower() in ("true", "1", "yes")),
-            "UNITAI_CACHE_ENABLED": ("cache_enabled", lambda x: x.lower() in ("true", "1", "yes")),
-            "UNITAI_CACHE_DIRECTORY": ("cache_directory", str),
-            "UNITAI_CACHE_TTL_HOURS": ("cache_ttl_hours", float),
-            "UNITAI_JUNIT_XML": ("junit_xml", str),
-            "UNITAI_VERBOSE": ("verbose", lambda x: x.lower() in ("true", "1", "yes")),
-            "UNITAI_ADAPTER": ("adapter", str),
+            "TRAJAI_DEFAULT_N": ("default_n", int),
+            "TRAJAI_DEFAULT_THRESHOLD": ("default_threshold", float),
+            "TRAJAI_MAX_WORKERS": ("max_workers", int),
+            "TRAJAI_COST_BUDGET_PER_TEST": ("cost_budget_per_test", float),
+            "TRAJAI_COST_BUDGET_PER_SUITE": ("cost_budget_per_suite", float),
+            "TRAJAI_MODEL_OVERRIDE": ("model_override", str),
+            "TRAJAI_MODEL": ("model_override", str),  # Alias
+            "TRAJAI_STRICT_MOCKS": ("strict_mocks", lambda x: x.lower() in ("true", "1", "yes")),
+            "TRAJAI_CACHE_ENABLED": ("cache_enabled", lambda x: x.lower() in ("true", "1", "yes")),
+            "TRAJAI_CACHE_DIRECTORY": ("cache_directory", str),
+            "TRAJAI_CACHE_TTL_HOURS": ("cache_ttl_hours", float),
+            "TRAJAI_JUNIT_XML": ("junit_xml", str),
+            "TRAJAI_VERBOSE": ("verbose", lambda x: x.lower() in ("true", "1", "yes")),
+            "TRAJAI_ADAPTER": ("adapter", str),
         }
         
         for env_var, (attr_name, converter) in env_map.items():
@@ -175,19 +175,19 @@ class UnitAIConfig:
 
 
 # Global config instance (lazy-loaded)
-_config: Optional[UnitAIConfig] = None
+_config: Optional[TrajAIConfig] = None
 
 
-def get_config() -> UnitAIConfig:
+def get_config() -> TrajAIConfig:
     """Get the global UnitAI configuration instance."""
     global _config
     if _config is None:
-        _config = UnitAIConfig.load()
+        _config = TrajAIConfig.load()
     return _config
 
 
-def reload_config() -> UnitAIConfig:
+def reload_config() -> TrajAIConfig:
     """Reload configuration from files and environment."""
     global _config
-    _config = UnitAIConfig.load()
+    _config = TrajAIConfig.load()
     return _config

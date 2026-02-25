@@ -58,13 +58,13 @@ class CacheStats:
 class ReplayCache:
     """Manages LLM response caching for deterministic re-runs.
     
-    Cache entries are stored as JSON files in `.unitai/cache/`, keyed by
+    Cache entries are stored as JSON files in `.trajai/cache/`, keyed by
     a hash of the request parameters (model, prompt, tools, etc.).
     """
     
     def __init__(
         self,
-        directory: str | Path = ".unitai/cache",
+        directory: str | Path = ".trajai/cache",
         ttl_hours: float = 168.0,  # 7 days default
     ):
         self.directory = Path(directory)

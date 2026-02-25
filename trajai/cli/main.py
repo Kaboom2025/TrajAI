@@ -12,32 +12,32 @@ def _cmd_test(args: argparse.Namespace) -> int:
     """Run tests via pytest with UnitAI integration."""
     import pytest  # type: ignore[import]
     
-    from unitai.config import get_config
+    from trajai.config import get_config
 
     config = get_config()
 
-    # Map CLI flags to UNITAI_* env vars (highest priority)
+    # Map CLI flags to TRAJAI_* env vars (highest priority)
     if args.n is not None:
-        os.environ["UNITAI_DEFAULT_N"] = str(args.n)
+        os.environ["TRAJAI_DEFAULT_N"] = str(args.n)
     if args.threshold is not None:
-        os.environ["UNITAI_DEFAULT_THRESHOLD"] = str(args.threshold)
+        os.environ["TRAJAI_DEFAULT_THRESHOLD"] = str(args.threshold)
     if args.budget is not None:
-        os.environ["UNITAI_COST_BUDGET_PER_TEST"] = str(args.budget)
+        os.environ["TRAJAI_COST_BUDGET_PER_TEST"] = str(args.budget)
     if args.model is not None:
-        os.environ["UNITAI_MODEL"] = args.model
+        os.environ["TRAJAI_MODEL"] = args.model
     
     # Cache flags
     if args.record:
-        os.environ["UNITAI_CACHE_ENABLED"] = "true"
-        os.environ["UNITAI_CACHE_MODE"] = "record"
+        os.environ["TRAJAI_CACHE_ENABLED"] = "true"
+        os.environ["TRAJAI_CACHE_MODE"] = "record"
     elif args.replay:
-        os.environ["UNITAI_CACHE_ENABLED"] = "true"
-        os.environ["UNITAI_CACHE_MODE"] = "replay"
+        os.environ["TRAJAI_CACHE_ENABLED"] = "true"
+        os.environ["TRAJAI_CACHE_MODE"] = "replay"
     elif args.no_cache:
-        os.environ["UNITAI_CACHE_ENABLED"] = "false"
+        os.environ["TRAJAI_CACHE_ENABLED"] = "false"
     elif config.cache_enabled:
         # Use config default
-        os.environ["UNITAI_CACHE_ENABLED"] = "true"
+        os.environ["TRAJAI_CACHE_ENABLED"] = "true"
 
     pytest_args: List[str] = []
 
@@ -48,7 +48,7 @@ def _cmd_test(args: argparse.Namespace) -> int:
         pytest_args.append("-v")
 
     # JUnit XML output
-    xml_path = args.xml or os.environ.get("UNITAI_JUNIT_XML", config.junit_xml)
+    xml_path = args.xml or os.environ.get("TRAJAI_JUNIT_XML", config.junit_xml)
     Path(xml_path).parent.mkdir(parents=True, exist_ok=True)
     pytest_args += [f"--junitxml={xml_path}"]
 
@@ -56,7 +56,7 @@ def _cmd_test(args: argparse.Namespace) -> int:
 
     # Print summary from JUnit XML after pytest finishes
     try:
-        from unitai.cli.results import display_results
+        from trajai.cli.results import display_results
         display_results(xml_path)
     except Exception:
         pass
@@ -65,16 +65,16 @@ def _cmd_test(args: argparse.Namespace) -> int:
 
 
 def _cmd_init(args: argparse.Namespace) -> int:
-    """Scaffold unitai.toml and an example test file."""
-    from unitai.cli.templates import EXAMPLE_TEST_TEMPLATE, UNITAI_TOML_TEMPLATE
+    """Scaffold trajai.toml and an example test file."""
+    from trajai.cli.templates import EXAMPLE_TEST_TEMPLATE, TRAJAI_TOML_TEMPLATE
 
     cwd = Path.cwd()
     created: List[str] = []
 
-    # unitai.toml
-    toml_path = cwd / "unitai.toml"
+    # trajai.toml
+    toml_path = cwd / "trajai.toml"
     if not toml_path.exists():
-        toml_path.write_text(UNITAI_TOML_TEMPLATE)
+        toml_path.write_text(TRAJAI_TOML_TEMPLATE)
         created.append(str(toml_path))
         print(f"  Created: {toml_path}")
     else:
@@ -91,28 +91,28 @@ def _cmd_init(args: argparse.Namespace) -> int:
     else:
         print(f"  Skipped (exists): {example_path}")
 
-    # .gitignore — append .unitai/ if file exists and entry missing
+    # .gitignore — append .trajai/ if file exists and entry missing
     gitignore_path = cwd / ".gitignore"
     if gitignore_path.exists():
         content = gitignore_path.read_text()
-        if ".unitai/" not in content:
+        if ".trajai/" not in content:
             with open(gitignore_path, "a") as f:
-                f.write("\n# UnitAI cache and artifacts\n.unitai/\n")
-            print(f"  Updated: {gitignore_path} (added .unitai/)")
+                f.write("\n# UnitAI cache and artifacts\n.trajai/\n")
+            print(f"  Updated: {gitignore_path} (added .trajai/)")
         else:
-            print(f"  Skipped (already present): .unitai/ in {gitignore_path}")
+            print(f"  Skipped (already present): .trajai/ in {gitignore_path}")
 
     if created:
-        print("\nDone! Run `unitai test` to execute your tests.")
+        print("\nDone! Run `trajai test` to execute your tests.")
     return 0
 
 
 def _cmd_results(args: argparse.Namespace) -> int:
     """Display results from the last JUnit XML run."""
-    from unitai.cli.results import display_results
+    from trajai.cli.results import display_results
 
     xml_path: str = args.xml or os.environ.get(
-        "UNITAI_JUNIT_XML", "test-results/unitai.xml"
+        "TRAJAI_JUNIT_XML", "test-results/trajai.xml"
     )
     display_results(xml_path)
     return 0
@@ -120,8 +120,8 @@ def _cmd_results(args: argparse.Namespace) -> int:
 
 def _cmd_cache(args: argparse.Namespace) -> int:
     """Cache management."""
-    from unitai.config import get_config
-    from unitai.runner.replay import ReplayCache
+    from trajai.config import get_config
+    from trajai.runner.replay import ReplayCache
     
     config = get_config()
     cache = ReplayCache(
@@ -211,7 +211,7 @@ def build_parser() -> argparse.ArgumentParser:
     results_parser.add_argument(
         "--xml",
         default=None,
-        help="Path to JUnit XML file (default: test-results/unitai.xml).",
+        help="Path to JUnit XML file (default: test-results/trajai.xml).",
     )
 
     # --- cache ---

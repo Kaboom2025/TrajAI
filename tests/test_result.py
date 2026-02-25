@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from unitai.core.result import AgentRunResult, MockToolCall
-from unitai.core.trajectory import Trajectory
+from trajai.core.result import AgentRunResult, MockToolCall
+from trajai.core.trajectory import Trajectory
 
 
 def test_mock_tool_call_creation() -> None:

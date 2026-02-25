@@ -1,6 +1,6 @@
 import pytest
 
-from unitai.core.assertions import (
+from trajai.core.assertions import (
     call_order,
     call_order_contains,
     tool_call_count,
@@ -11,7 +11,7 @@ from unitai.core.assertions import (
     tool_not_called,
     tool_was_called,
 )
-from unitai.core.trajectory import Trajectory, TrajectoryStep
+from trajai.core.trajectory import Trajectory, TrajectoryStep
 
 
 @pytest.fixture

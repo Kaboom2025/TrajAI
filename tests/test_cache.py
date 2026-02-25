@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from unitai.runner.replay import CacheMissError, CachedResponse, ReplayCache
+from trajai.runner.replay import CacheMissError, CachedResponse, ReplayCache
 
 
 def test_cache_key_stability() -> None:

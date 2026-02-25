@@ -5,10 +5,10 @@ Complete reference for all assertion methods available on `AgentRunResult`.
 Every assertion is available in two forms:
 
 - **Boolean API** — Returns `True`/`False`. Use with Python's `assert`.
-- **Assert API** — Raises `UnitAIAssertionError` with a formatted trajectory on failure.
+- **Assert API** — Raises `TrajAIAssertionError` with a formatted trajectory on failure.
 
 ```python
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 toolkit = MockToolkit()
 toolkit.mock("search", return_value={"results": ["doc1"]})
@@ -320,7 +320,7 @@ if result.error:
 These are available as pure functions in `unitai.core.assertions` but are not exposed as methods on `AgentRunResult`. Use them directly with the trajectory:
 
 ```python
-from unitai.core.assertions import cost_under, tokens_under, duration_under, llm_calls_under
+from trajai.core.assertions import cost_under, tokens_under, duration_under, llm_calls_under
 
 passed, message = cost_under(result.trajectory, 0.05)
 passed, message = tokens_under(result.trajectory, 5000)

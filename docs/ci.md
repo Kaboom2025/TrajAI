@@ -30,23 +30,23 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run UnitAI Tests
-        uses: unitai/unitai-action@v1   # or path: ./ci/github_action
+        uses: unitai/trajai-action@v1   # or path: ./ci/github_action
         with:
           python-version: "3.12"
-          junit-xml: test-results/unitai.xml
+          junit-xml: test-results/trajai.xml
 ```
 
 ### With LangGraph and Budget Control
 
 ```yaml
       - name: Run UnitAI Tests
-        uses: unitai/unitai-action@v1
+        uses: unitai/trajai-action@v1
         with:
           python-version: "3.12"
           install-extras: "langgraph"
           budget: "2.00"            # abort if per-test cost exceeds $2.00
           extra-args: "--n 10 --threshold 0.9"
-          junit-xml: test-results/unitai.xml
+          junit-xml: test-results/trajai.xml
 ```
 
 ### Using Action Outputs
@@ -54,7 +54,7 @@ jobs:
 ```yaml
       - name: Run UnitAI Tests
         id: unitai
-        uses: unitai/unitai-action@v1
+        uses: unitai/trajai-action@v1
         with:
           python-version: "3.12"
 
@@ -104,18 +104,18 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install unitai[langgraph]
+          pip install trajai[langgraph]
           pip install -r requirements.txt   # your project deps
 
       - name: Run tests
-        run: unitai test --xml test-results/unitai.xml
+        run: trajai test --xml test-results/trajai.xml
 
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: unitai-test-results
-          path: test-results/unitai.xml
+          path: test-results/trajai.xml
 ```
 
 ---
@@ -129,13 +129,13 @@ agent-tests:
   variables:
     OPENAI_API_KEY: $OPENAI_API_KEY   # set in GitLab CI/CD Settings → Variables
   script:
-    - pip install unitai[langgraph]
+    - pip install trajai[langgraph]
     - pip install -r requirements.txt
-    - unitai test --xml test-results/unitai.xml
+    - trajai test --xml test-results/trajai.xml
   artifacts:
     when: always
     reports:
-      junit: test-results/unitai.xml
+      junit: test-results/trajai.xml
     paths:
       - test-results/
     expire_in: 7 days
@@ -155,15 +155,15 @@ agent-tests:
   image: python:3.12
   variables:
     OPENAI_API_KEY: $OPENAI_API_KEY
-    UNITAI_DEFAULT_N: "5"
-    UNITAI_DEFAULT_THRESHOLD: "0.9"
-    UNITAI_COST_BUDGET_PER_TEST: "1.00"
+    TRAJAI_DEFAULT_N: "5"
+    TRAJAI_DEFAULT_THRESHOLD: "0.9"
+    TRAJAI_COST_BUDGET_PER_TEST: "1.00"
   script:
-    - pip install unitai[langgraph]
-    - unitai test --xml test-results/unitai.xml
+    - pip install trajai[langgraph]
+    - trajai test --xml test-results/trajai.xml
   artifacts:
     reports:
-      junit: test-results/unitai.xml
+      junit: test-results/trajai.xml
 ```
 
 ---
@@ -186,14 +186,14 @@ jobs:
       - run:
           name: Install UnitAI
           command: |
-            pip install unitai[langgraph]
+            pip install trajai[langgraph]
             pip install -r requirements.txt
 
       - run:
           name: Run agent tests
           command: |
             mkdir -p test-results
-            unitai test --xml test-results/unitai.xml
+            trajai test --xml test-results/trajai.xml
 
       - store_test_results:
           path: test-results
@@ -219,16 +219,16 @@ For any CI system that runs shell commands:
 
 ```bash
 # Install
-pip install unitai
+pip install trajai
 
 # Run tests and produce JUnit XML
-unitai test --xml test-results/unitai.xml
+trajai test --xml test-results/trajai.xml
 
 # The exit code is non-zero if tests fail — standard CI behavior
 ```
 
 UnitAI tests are standard pytest tests. Any CI integration that:
-1. Runs `pytest` or `unitai test`
+1. Runs `pytest` or `trajai test`
 2. Reads JUnit XML (optional, for rich reporting)
 
 ...works out of the box.
@@ -237,12 +237,12 @@ UnitAI tests are standard pytest tests. Any CI integration that:
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `UNITAI_DEFAULT_N` | Statistical runner: runs per test | `10` |
-| `UNITAI_DEFAULT_THRESHOLD` | Statistical runner: required pass rate | `0.9` |
-| `UNITAI_COST_BUDGET_PER_TEST` | Abort if per-test cost exceeds this | `1.00` |
-| `UNITAI_CACHE_ENABLED` | Enable LLM response cache | `true` |
-| `UNITAI_CACHE_MODE` | Cache mode: `auto`, `record`, `replay` | `replay` |
-| `UNITAI_JUNIT_XML` | JUnit XML output path | `test-results/unitai.xml` |
+| `TRAJAI_DEFAULT_N` | Statistical runner: runs per test | `10` |
+| `TRAJAI_DEFAULT_THRESHOLD` | Statistical runner: required pass rate | `0.9` |
+| `TRAJAI_COST_BUDGET_PER_TEST` | Abort if per-test cost exceeds this | `1.00` |
+| `TRAJAI_CACHE_ENABLED` | Enable LLM response cache | `true` |
+| `TRAJAI_CACHE_MODE` | Cache mode: `auto`, `record`, `replay` | `replay` |
+| `TRAJAI_JUNIT_XML` | JUnit XML output path | `test-results/trajai.xml` |
 
 ### Caching LLM Responses
 
@@ -250,12 +250,12 @@ For fast, deterministic CI runs (no real LLM calls needed):
 
 ```bash
 # First run: record LLM responses
-unitai test --record --xml test-results/unitai.xml
+trajai test --record --xml test-results/trajai.xml
 
-# Commit .unitai/cache/ to your repo (or save as CI artifact)
+# Commit .trajai/cache/ to your repo (or save as CI artifact)
 
 # Subsequent runs: replay from cache (fast, free)
-unitai test --replay --xml test-results/unitai.xml
+trajai test --replay --xml test-results/trajai.xml
 ```
 
 ---

@@ -1,26 +1,26 @@
 from __future__ import annotations
 
-from unitai.adapters.base import BaseAdapter
-from unitai.adapters.generic import GenericAdapter
+from trajai.adapters.base import BaseAdapter
+from trajai.adapters.generic import GenericAdapter
 
 __all__ = ["BaseAdapter", "GenericAdapter"]
 
 try:
-    from unitai.adapters.langgraph import LangGraphAdapter
+    from trajai.adapters.langgraph import LangGraphAdapter
 
     __all__ = [*__all__, "LangGraphAdapter"]
 except ImportError:
     pass
 
 try:
-    from unitai.adapters.openai_agents import OpenAIAgentsAdapter
+    from trajai.adapters.openai_agents import OpenAIAgentsAdapter
 
     __all__ = [*__all__, "OpenAIAgentsAdapter"]
 except ImportError:
     pass
 
 try:
-    from unitai.adapters.crewai import CrewAIAdapter
+    from trajai.adapters.crewai import CrewAIAdapter
 
     __all__ = [*__all__, "CrewAIAdapter"]
 except ImportError:

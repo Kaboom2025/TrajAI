@@ -1,5 +1,5 @@
 import pytest
-from unitai.runner.statistical import StatisticalResult
+from trajai.runner.statistical import StatisticalResult
 
 def test_statistical_result_initialization():
     """Test that StatisticalResult initializes with correct defaults and computed properties."""

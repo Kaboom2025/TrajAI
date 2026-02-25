@@ -116,7 +116,7 @@ This folder contains practical scenarios demonstrating how to use UnitAI to test
 - `StatisticalRunner` for N-run testing
 - Pass rate thresholds (e.g., 90% success required)
 - Cost budget enforcement
-- `@pytest.mark.unitai_statistical` decorator
+- `@pytest.mark.trajai_statistical` decorator
 - CI integration with cost reporting
 
 **Real-world example:** Flaky agent that should succeed 90%+ of the time.
@@ -211,7 +211,7 @@ for step in result.trajectory.steps:
 ```python
 try:
     result.assert_tool_was_called("lookup_order")
-except UnitAIAssertionError as e:
+except TrajAIAssertionError as e:
     print(e)  # See pretty-printed trajectory on failure
 ```
 

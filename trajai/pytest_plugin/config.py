@@ -8,19 +8,19 @@ from typing import Any, Dict, Optional
 
 
 @dataclass
-class UnitAIConfig:
+class TrajAIConfig:
     default_n: int = 10
     default_threshold: float = 0.95
     max_workers: int = 5
     cost_budget_per_test: float = 1.00
     cost_budget_per_suite: float = 10.00
     strict_mocks: bool = True
-    junit_xml: str = "test-results/unitai.xml"
+    junit_xml: str = "test-results/trajai.xml"
     verbose: bool = False
 
 
 def _read_toml_section(path: Path) -> Dict[str, Any]:
-    """Read [tool.unitai] section from a TOML file."""
+    """Read [tool.trajai] section from a TOML file."""
     try:
         with open(path, "rb") as f:
             data = tomllib.load(f)
@@ -30,25 +30,25 @@ def _read_toml_section(path: Path) -> Dict[str, Any]:
         return {}
 
     if path.name == "pyproject.toml":
-        return data.get("tool", {}).get("unitai", {})
-    # unitai.toml — top-level keys
+        return data.get("tool", {}).get("trajai", {})
+    # trajai.toml — top-level keys
     return data
 
 
-def _apply_env_overrides(config: UnitAIConfig) -> UnitAIConfig:
-    """Override config fields from UNITAI_* environment variables."""
+def _apply_env_overrides(config: TrajAIConfig) -> TrajAIConfig:
+    """Override config fields from TRAJAI_* environment variables."""
     env_map = {
-        "UNITAI_DEFAULT_N": ("default_n", int),
-        "UNITAI_DEFAULT_THRESHOLD": ("default_threshold", float),
-        "UNITAI_MAX_WORKERS": ("max_workers", int),
-        "UNITAI_COST_BUDGET_PER_TEST": ("cost_budget_per_test", float),
-        "UNITAI_COST_BUDGET_PER_SUITE": ("cost_budget_per_suite", float),
-        "UNITAI_STRICT_MOCKS": (
+        "TRAJAI_DEFAULT_N": ("default_n", int),
+        "TRAJAI_DEFAULT_THRESHOLD": ("default_threshold", float),
+        "TRAJAI_MAX_WORKERS": ("max_workers", int),
+        "TRAJAI_COST_BUDGET_PER_TEST": ("cost_budget_per_test", float),
+        "TRAJAI_COST_BUDGET_PER_SUITE": ("cost_budget_per_suite", float),
+        "TRAJAI_STRICT_MOCKS": (
             "strict_mocks",
             lambda v: v.lower() in ("1", "true", "yes"),
         ),
-        "UNITAI_JUNIT_XML": ("junit_xml", str),
-        "UNITAI_VERBOSE": (
+        "TRAJAI_JUNIT_XML": ("junit_xml", str),
+        "TRAJAI_VERBOSE": (
             "verbose",
             lambda v: v.lower() in ("1", "true", "yes"),
         ),
@@ -71,11 +71,11 @@ def _apply_env_overrides(config: UnitAIConfig) -> UnitAIConfig:
     return dataclasses.replace(config, **updates)
 
 
-def _apply_dict(config: UnitAIConfig, data: Dict[str, Any]) -> UnitAIConfig:
-    """Apply a dict of config values onto a UnitAIConfig."""
+def _apply_dict(config: TrajAIConfig, data: Dict[str, Any]) -> TrajAIConfig:
+    """Apply a dict of config values onto a TrajAIConfig."""
     import dataclasses
 
-    field_names = {f.name for f in dataclasses.fields(UnitAIConfig)}
+    field_names = {f.name for f in dataclasses.fields(TrajAIConfig)}
     updates: Dict[str, Any] = {}
 
     type_map: Dict[str, Any] = {
@@ -105,25 +105,25 @@ def _apply_dict(config: UnitAIConfig, data: Dict[str, Any]) -> UnitAIConfig:
     return dataclasses.replace(config, **updates)
 
 
-def load_unitai_config(root: Optional[Path] = None) -> UnitAIConfig:
-    """Load UnitAIConfig from pyproject.toml, unitai.toml, and UNITAI_* env vars.
+def load_trajai_config(root: Optional[Path] = None) -> TrajAIConfig:
+    """Load TrajAIConfig from pyproject.toml, trajai.toml, and TRAJAI_* env vars.
 
-    Priority (highest last): defaults → pyproject.toml → unitai.toml → env vars.
+    Priority (highest last): defaults → pyproject.toml → trajai.toml → env vars.
     """
     if root is None:
         root = Path.cwd()
 
-    config = UnitAIConfig()
+    config = TrajAIConfig()
 
-    # 1. pyproject.toml [tool.unitai]
+    # 1. pyproject.toml [tool.trajai]
     pyproject_data = _read_toml_section(root / "pyproject.toml")
     config = _apply_dict(config, pyproject_data)
 
-    # 2. unitai.toml (overrides pyproject.toml)
-    unitai_toml_data = _read_toml_section(root / "unitai.toml")
-    config = _apply_dict(config, unitai_toml_data)
+    # 2. trajai.toml (overrides pyproject.toml)
+    trajai_toml_data = _read_toml_section(root / "trajai.toml")
+    config = _apply_dict(config, trajai_toml_data)
 
-    # 3. UNITAI_* env vars (highest priority)
+    # 3. TRAJAI_* env vars (highest priority)
     config = _apply_env_overrides(config)
 
     return config

@@ -31,7 +31,7 @@ def _make_test_rows(
 
 class TestWriteGithubStepSummary:
     def _summary(self, path: str) -> str:
-        from unitai.pytest_plugin.plugin import _write_github_step_summary
+        from trajai.pytest_plugin.plugin import _write_github_step_summary
 
         rows = _make_test_rows(
             ("tests/test_foo.py::test_bar", "PASS", "$0.0023", ""),
@@ -44,7 +44,7 @@ class TestWriteGithubStepSummary:
         with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
             path = f.name
         try:
-            from unitai.pytest_plugin.plugin import _write_github_step_summary
+            from trajai.pytest_plugin.plugin import _write_github_step_summary
 
             _write_github_step_summary(path, [], total_cost=0.0, total_tokens=0)
             assert Path(path).exists()
@@ -111,7 +111,7 @@ class TestWriteGithubStepSummary:
         with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
             path = f.name
         try:
-            from unitai.pytest_plugin.plugin import _write_github_step_summary
+            from trajai.pytest_plugin.plugin import _write_github_step_summary
 
             _write_github_step_summary(path, [], total_cost=0.0, total_tokens=0)
             content = Path(path).read_text()
@@ -123,7 +123,7 @@ class TestWriteGithubStepSummary:
         with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
             path = f.name
         try:
-            from unitai.pytest_plugin.plugin import _write_github_step_summary
+            from trajai.pytest_plugin.plugin import _write_github_step_summary
 
             _write_github_step_summary(path, [], total_cost=0.0, total_tokens=1234)
             content = Path(path).read_text()
@@ -139,7 +139,7 @@ class TestWriteGithubStepSummary:
             f.write("# Existing content\n")
             path = f.name
         try:
-            from unitai.pytest_plugin.plugin import _write_github_step_summary
+            from trajai.pytest_plugin.plugin import _write_github_step_summary
 
             _write_github_step_summary(path, [], total_cost=0.0, total_tokens=0)
             content = Path(path).read_text()
@@ -150,7 +150,7 @@ class TestWriteGithubStepSummary:
 
     def test_invalid_path_does_not_raise(self) -> None:
         """OSError on unwritable path should be silently swallowed."""
-        from unitai.pytest_plugin.plugin import _write_github_step_summary
+        from trajai.pytest_plugin.plugin import _write_github_step_summary
 
         _write_github_step_summary("/dev/null/cannot/write/here", [], 0.0, 0)
 
@@ -211,7 +211,7 @@ class TestJUnitXMLFormat:
 
     def test_xml_display_results_parses_correctly(self, tmp_path: Path) -> None:
         """display_results should parse our JUnit XML without error."""
-        from unitai.cli.results import display_results
+        from trajai.cli.results import display_results
 
         xml_path = self._make_junit_xml(tmp_path)
         # Should not raise

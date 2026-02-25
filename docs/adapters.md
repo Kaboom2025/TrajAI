@@ -11,7 +11,7 @@ The generic adapter works with any Python function. You write the agent, you wir
 ### Install
 
 ```bash
-pip install unitai
+pip install trajai
 ```
 
 No extras needed.
@@ -29,7 +29,7 @@ def my_agent(input: str, tools: dict) -> str:
 Test it with `run_callable`:
 
 ```python
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 def test_agent():
     toolkit = MockToolkit()
@@ -72,7 +72,7 @@ Auto-detects `CompiledStateGraph` and `StateGraph` instances. Tools are automati
 ### Install
 
 ```bash
-pip install unitai[langgraph]
+pip install trajai[langgraph]
 ```
 
 ### Usage
@@ -118,7 +118,7 @@ agent = graph.compile()
 Test it with `run()` — UnitAI auto-detects the framework:
 
 ```python
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 def test_langgraph_refund():
     toolkit = MockToolkit()
@@ -153,7 +153,7 @@ Supports `Crew` and `Agent` objects. Tools are replaced using Pydantic `model_co
 ### Install
 
 ```bash
-pip install unitai[crewai]
+pip install trajai[crewai]
 ```
 
 ### Usage
@@ -185,7 +185,7 @@ crew = Crew(
 Test it:
 
 ```python
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 def test_crewai_agent():
     toolkit = MockToolkit()
@@ -219,7 +219,7 @@ Supports `agents.Agent` instances from the `openai-agents` package. Tool injecti
 ### Install
 
 ```bash
-pip install unitai[openai-agents]
+pip install trajai[openai-agents]
 ```
 
 ### Usage
@@ -242,7 +242,7 @@ agent = Agent(
 Test it:
 
 ```python
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 def test_openai_agent():
     toolkit = MockToolkit()

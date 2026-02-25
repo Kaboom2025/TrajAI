@@ -5,13 +5,13 @@ from typing import Any, Dict, Generator, List, Optional
 
 import pytest
 
-from unitai.pytest_plugin.config import UnitAIConfig, load_unitai_config
-from unitai.pytest_plugin.fixtures import _UNITAI_CONFIG_KEY  # noqa: F401
-from unitai.runner.statistical import (
+from trajai.pytest_plugin.config import TrajAIConfig, load_trajai_config
+from trajai.pytest_plugin.fixtures import _TRAJAI_CONFIG_KEY  # noqa: F401
+from trajai.runner.statistical import (
     CostLimitExceeded,
     StatisticalResult,
     StatisticalRunner,
-    UnitAIStatisticalError,
+    TrajAIStatisticalError,
 )
 
 # Stash keys
@@ -28,35 +28,35 @@ _TEST_PASS_RATE_KEY = pytest.StashKey[Optional[float]]()
 
 
 def pytest_configure(config: pytest.Config) -> None:
-    """Register markers and load UnitAIConfig into stash."""
+    """Register markers and load TrajAIConfig into stash."""
     config.addinivalue_line(
         "markers",
-        "unitai_statistical(n=10, threshold=0.95): "
+        "trajai_statistical(n=10, threshold=0.95): "
         "Run the test N times and require at least threshold pass rate.",
     )
     config.addinivalue_line(
         "markers",
-        "unitai_budget(max_cost=1.0): "
+        "trajai_budget(max_cost=1.0): "
         "Abort the test if mock_toolkit cost exceeds max_cost.",
     )
     config.addinivalue_line(
         "markers",
-        "unitai_skip_if_no_api_key(env_var='OPENAI_API_KEY'): "
+        "trajai_skip_if_no_api_key(env_var='OPENAI_API_KEY'): "
         "Skip the test if the given environment variable is not set.",
     )
 
-    unitai_cfg = load_unitai_config()
-    config.stash[_UNITAI_CONFIG_KEY] = unitai_cfg
+    trajai_cfg = load_trajai_config()
+    config.stash[_TRAJAI_CONFIG_KEY] = trajai_cfg
 
 
 def pytest_collection_modifyitems(
     config: pytest.Config, items: List[pytest.Item]
 ) -> None:
-    """Skip tests marked with unitai_skip_if_no_api_key when the env var is absent."""
+    """Skip tests marked with trajai_skip_if_no_api_key when the env var is absent."""
     import os
 
     for item in items:
-        marker = item.get_closest_marker("unitai_skip_if_no_api_key")
+        marker = item.get_closest_marker("trajai_skip_if_no_api_key")
         if marker is None:
             continue
         env_var: str = marker.kwargs.get("env_var", "OPENAI_API_KEY")
@@ -71,18 +71,18 @@ def pytest_collection_modifyitems(
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_call(item: pytest.Item) -> Generator[None, Any, None]:
     """Wrap test execution for statistical and budget markers."""
-    unitai_cfg: UnitAIConfig = item.config.stash[_UNITAI_CONFIG_KEY]
+    trajai_cfg: TrajAIConfig = item.config.stash[_TRAJAI_CONFIG_KEY]
 
-    stat_marker = item.get_closest_marker("unitai_statistical")
-    budget_marker = item.get_closest_marker("unitai_budget")
+    stat_marker = item.get_closest_marker("trajai_statistical")
+    budget_marker = item.get_closest_marker("trajai_budget")
 
     if stat_marker is not None:
-        n: int = stat_marker.kwargs.get("n", unitai_cfg.default_n)
+        n: int = stat_marker.kwargs.get("n", trajai_cfg.default_n)
         threshold: float = stat_marker.kwargs.get(
-            "threshold", unitai_cfg.default_threshold
+            "threshold", trajai_cfg.default_threshold
         )
         budget: float = stat_marker.kwargs.get(
-            "budget", unitai_cfg.cost_budget_per_test
+            "budget", trajai_cfg.cost_budget_per_test
         )
 
         test_fn = item.obj  # type: ignore[attr-defined]
@@ -118,12 +118,12 @@ def pytest_runtest_call(item: pytest.Item) -> Generator[None, Any, None]:
                 f"({pct:.1f}%) — required: {threshold * 100:.1f}%\n\n"
                 f"{stat_result.summary()}"
             )
-            outcome.force_exception(UnitAIStatisticalError(error_msg))
+            outcome.force_exception(TrajAIStatisticalError(error_msg))
         return
 
     if budget_marker is not None:
         max_cost: float = budget_marker.kwargs.get(
-            "max_cost", unitai_cfg.cost_budget_per_test
+            "max_cost", trajai_cfg.cost_budget_per_test
         )
 
         # Get mock_toolkit fixture if present

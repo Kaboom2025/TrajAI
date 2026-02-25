@@ -24,7 +24,7 @@ def _write_conftest(pytester: pytest.Pytester) -> None:
         """
 # Plugin is loaded automatically via pytest11 entry point.
 # Explicitly import fixtures so they're available in this test directory.
-from unitai.pytest_plugin.fixtures import mock_toolkit, unitai_config  # noqa: F401
+from trajai.pytest_plugin.fixtures import mock_toolkit, unitai_config  # noqa: F401
 """
     )
 
@@ -42,7 +42,7 @@ class TestPluginMarkers:
             """
             import pytest
 
-            @pytest.mark.unitai_statistical(n=1, threshold=0.0)
+            @pytest.mark.trajai_statistical(n=1, threshold=0.0)
             def test_marked():
                 pass
             """
@@ -58,7 +58,7 @@ class TestMockToolkitFixture:
         _write_conftest(pytester)
         pytester.makepyfile(
             """
-            from unitai.mock.toolkit import MockToolkit
+            from trajai.mock.toolkit import MockToolkit
 
             def test_fixture_type(mock_toolkit):
                 assert isinstance(mock_toolkit, MockToolkit)
@@ -97,7 +97,7 @@ class TestStatisticalMarker:
             """
             import pytest
 
-            @pytest.mark.unitai_statistical(n=3, threshold=0.5)
+            @pytest.mark.trajai_statistical(n=3, threshold=0.5)
             def test_always_passes():
                 assert 1 == 1
             """
@@ -112,7 +112,7 @@ class TestStatisticalMarker:
             """
             import pytest
 
-            @pytest.mark.unitai_statistical(n=3, threshold=0.5)
+            @pytest.mark.trajai_statistical(n=3, threshold=0.5)
             def test_always_fails():
                 assert 1 == 2, "always fails"
             """
@@ -127,7 +127,7 @@ class TestStatisticalMarker:
             """
             import pytest
 
-            @pytest.mark.unitai_statistical(n=3, threshold=0.9)
+            @pytest.mark.trajai_statistical(n=3, threshold=0.9)
             def test_always_fails():
                 assert False, "nope"
             """
@@ -144,9 +144,9 @@ class TestBudgetMarker:
         pytester.makepyfile(
             """
             import pytest
-            from unitai.core.trajectory import TrajectoryStep
+            from trajai.core.trajectory import TrajectoryStep
 
-            @pytest.mark.unitai_budget(max_cost=0.001)
+            @pytest.mark.trajai_budget(max_cost=0.001)
             def test_expensive(mock_toolkit):
                 # Simulate an expensive LLM call
                 mock_toolkit.record_llm_call(
@@ -167,13 +167,13 @@ class TestSkipIfNoApiKey:
         self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test is skipped when the env var is absent."""
-        monkeypatch.delenv("UNITAI_TEST_KEY_SKIP", raising=False)
+        monkeypatch.delenv("TRAJAI_TEST_KEY_SKIP", raising=False)
         _write_conftest(pytester)
         pytester.makepyfile(
             """
             import pytest
 
-            @pytest.mark.unitai_skip_if_no_api_key(env_var="UNITAI_TEST_KEY_SKIP")
+            @pytest.mark.trajai_skip_if_no_api_key(env_var="TRAJAI_TEST_KEY_SKIP")
             def test_needs_key():
                 pass
             """
@@ -185,13 +185,13 @@ class TestSkipIfNoApiKey:
         self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test runs normally when the env var is present."""
-        monkeypatch.setenv("UNITAI_TEST_KEY_PRESENT", "some-key")
+        monkeypatch.setenv("TRAJAI_TEST_KEY_PRESENT", "some-key")
         _write_conftest(pytester)
         pytester.makepyfile(
             """
             import pytest
 
-            @pytest.mark.unitai_skip_if_no_api_key(env_var="UNITAI_TEST_KEY_PRESENT")
+            @pytest.mark.trajai_skip_if_no_api_key(env_var="TRAJAI_TEST_KEY_PRESENT")
             def test_needs_key():
                 assert True
             """
@@ -204,12 +204,12 @@ class TestFailureOutput:
     def test_failure_output_contains_trajectory(
         self, pytester: pytest.Pytester
     ) -> None:
-        """UnitAIAssertionError failure should show trajectory in output."""
+        """TrajAIAssertionError failure should show trajectory in output."""
         _write_conftest(pytester)
         pytester.makepyfile(
             """
-            from unitai.mock.toolkit import MockToolkit
-            from unitai.core.trajectory import Trajectory
+            from trajai.mock.toolkit import MockToolkit
+            from trajai.core.trajectory import Trajectory
 
             def test_assertion_shows_trajectory(mock_toolkit):
                 mock_toolkit.mock("search", return_value={"result": "ok"})
@@ -225,7 +225,7 @@ class TestFailureOutput:
         )
         result = pytester.runpytest("-v")
         result.assert_outcomes(failed=1)
-        # The UnitAIAssertionError message includes "never called"
+        # The TrajAIAssertionError message includes "never called"
         result.stdout.fnmatch_lines(["*never called*"])
 
 
@@ -252,27 +252,27 @@ class TestJUnitXML:
 
 class TestConfig:
     def test_config_loads_defaults(self) -> None:
-        """UnitAIConfig has correct defaults."""
-        from unitai.pytest_plugin.config import UnitAIConfig
+        """TrajAIConfig has correct defaults."""
+        from trajai.pytest_plugin.config import TrajAIConfig
 
-        cfg = UnitAIConfig()
+        cfg = TrajAIConfig()
         assert cfg.default_n == 10
         assert cfg.default_threshold == 0.95
         assert cfg.max_workers == 5
         assert cfg.cost_budget_per_test == 1.00
         assert cfg.cost_budget_per_suite == 10.00
         assert cfg.strict_mocks is True
-        assert cfg.junit_xml == "test-results/unitai.xml"
+        assert cfg.junit_xml == "test-results/trajai.xml"
         assert cfg.verbose is False
 
     def test_config_env_override(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """UNITAI_DEFAULT_N env var overrides file config."""
-        monkeypatch.setenv("UNITAI_DEFAULT_N", "42")
-        monkeypatch.setenv("UNITAI_DEFAULT_THRESHOLD", "0.80")
+        """TRAJAI_DEFAULT_N env var overrides file config."""
+        monkeypatch.setenv("TRAJAI_DEFAULT_N", "42")
+        monkeypatch.setenv("TRAJAI_DEFAULT_THRESHOLD", "0.80")
 
-        from unitai.pytest_plugin.config import load_unitai_config
+        from trajai.pytest_plugin.config import load_trajai_config
 
-        cfg = load_unitai_config()
+        cfg = load_trajai_config()
         assert cfg.default_n == 42
         assert cfg.default_threshold == 0.80
 

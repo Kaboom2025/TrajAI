@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from unitai.mock.strategies import (
+from trajai.mock.strategies import (
     CallableStrategy,
     ConditionalStrategy,
     ErrorStrategy,

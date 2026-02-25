@@ -1,12 +1,12 @@
 """Statistical runner and replay cache."""
 from __future__ import annotations
 
-from unitai.runner.replay import CacheMissError, CacheStats, ReplayCache
-from unitai.runner.statistical import (
+from trajai.runner.replay import CacheMissError, CacheStats, ReplayCache
+from trajai.runner.statistical import (
     CostLimitExceeded,
     StatisticalResult,
     StatisticalRunner,
-    UnitAIStatisticalError,
+    TrajAIStatisticalError,
     statistical,
 )
 
@@ -17,6 +17,6 @@ __all__ = [
     "ReplayCache",
     "StatisticalResult",
     "StatisticalRunner",
-    "UnitAIStatisticalError",
+    "TrajAIStatisticalError",
     "statistical",
 ]

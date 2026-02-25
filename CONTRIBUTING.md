@@ -9,7 +9,7 @@ Thanks for your interest in contributing to UnitAI! This guide covers how to set
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/saalik/unitai.git
+git clone https://github.com/saalik/trajai.git
 cd unitai
 ```
 
@@ -133,10 +133,10 @@ def assert_my_assertion(self, ...) -> None:
 
 ## Reporting Bugs
 
-Use the [bug report template](https://github.com/saalik/unitai/issues/new?template=bug_report.md) on GitHub. Include:
+Use the [bug report template](https://github.com/saalik/trajai/issues/new?template=bug_report.md) on GitHub. Include:
 
 - Python version and OS
-- UnitAI version (`pip show unitai`)
+- UnitAI version (`pip show trajai`)
 - Minimal reproduction steps
 - Expected vs actual behavior
 
@@ -144,4 +144,4 @@ Use the [bug report template](https://github.com/saalik/unitai/issues/new?templa
 
 ## Requesting Features
 
-Use the [feature request template](https://github.com/saalik/unitai/issues/new?template=feature_request.md) on GitHub.
+Use the [feature request template](https://github.com/saalik/trajai/issues/new?template=feature_request.md) on GitHub.

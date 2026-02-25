@@ -1,6 +1,6 @@
 import pytest
-from unitai.runner.statistical import statistical, UnitAIStatisticalError
-from unitai.mock.toolkit import MockToolkit
+from trajai.runner.statistical import statistical, TrajAIStatisticalError
+from trajai.mock.toolkit import MockToolkit
 
 def test_decorator_basic_pass():
     """Test that decorator passes when threshold is met."""
@@ -22,7 +22,7 @@ def test_decorator_basic_fail():
         if state <= 2:
             assert False, "Forced failure"
             
-    with pytest.raises(UnitAIStatisticalError) as excinfo:
+    with pytest.raises(TrajAIStatisticalError) as excinfo:
         test_fn()
         
     assert "3/5 passed (60.0%)" in str(excinfo.value)

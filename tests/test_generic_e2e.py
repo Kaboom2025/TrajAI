@@ -1,7 +1,7 @@
 import pytest
 
 from tests.fixtures.simple_agent import metadata_agent, simple_tool_agent
-from unitai.mock.toolkit import MockToolkit, UnmockedToolError
+from trajai.mock.toolkit import MockToolkit, UnmockedToolError
 
 
 def test_e2e_tool_calls() -> None:

@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from unitai.core.trajectory import Trajectory, TrajectoryStep
+from trajai.core.trajectory import Trajectory, TrajectoryStep
 
 
 def test_trajectory_step_creation() -> None:

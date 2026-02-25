@@ -151,7 +151,7 @@ cython_debug/
 .vscode/
 
 # UnitAI
-.unitai/
+.trajai/
 
 # Conductor
 conductor/setup_state.json

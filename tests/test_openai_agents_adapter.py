@@ -15,7 +15,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from unitai.mock.toolkit import MockToolkit, UnitAIMockError
+from trajai.mock.toolkit import MockToolkit, TrajAIMockError
 
 # Skip entire module if openai-agents is not installed
 pytest.importorskip("agents")
@@ -25,7 +25,7 @@ from tests.fixtures.openai_agents_agent import (  # noqa: E402
     LOOKUP_ORDER_TOOL,
     build_agent,
 )
-from unitai.adapters.openai_agents import OpenAIAgentsAdapter  # noqa: E402
+from trajai.adapters.openai_agents import OpenAIAgentsAdapter  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -238,8 +238,8 @@ class TestExecute:
         wrapped = adapter.inject_mocks(agent, toolkit)
 
         with patch("unitai.adapters.openai_agents.Runner") as mock_runner:
-            mock_runner.run_sync.side_effect = UnitAIMockError("intentional mock error")
-            with pytest.raises(UnitAIMockError):
+            mock_runner.run_sync.side_effect = TrajAIMockError("intentional mock error")
+            with pytest.raises(TrajAIMockError):
                 adapter.execute(wrapped, "check", timeout=30.0)
 
 
@@ -261,7 +261,7 @@ class TestToolkitRun:
         assert result.output == "Hello from mock!"
 
     def test_toolkit_run_adapter_not_found_for_unknown_type(self) -> None:
-        from unitai.mock.toolkit import AdapterNotFoundError
+        from trajai.mock.toolkit import AdapterNotFoundError
 
         toolkit = MockToolkit()
         with pytest.raises(AdapterNotFoundError):

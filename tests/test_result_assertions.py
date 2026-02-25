@@ -1,8 +1,8 @@
 import pytest
 
-from unitai.core.assertions import UnitAIAssertionError
-from unitai.core.result import AgentRunResult, MockToolCall
-from unitai.core.trajectory import Trajectory, TrajectoryStep
+from trajai.core.assertions import TrajAIAssertionError
+from trajai.core.result import AgentRunResult, MockToolCall
+from trajai.core.trajectory import Trajectory, TrajectoryStep
 
 
 @pytest.fixture
@@ -29,7 +29,7 @@ def test_result_assert_api_success(sample_trajectory: Trajectory) -> None:
 
 def test_result_assert_api_failure(sample_trajectory: Trajectory) -> None:
     result = AgentRunResult(sample_trajectory)
-    with pytest.raises(UnitAIAssertionError) as excinfo:
+    with pytest.raises(TrajAIAssertionError) as excinfo:
         result.assert_tool_was_called("missing")
 
     assert "Tool 'missing' was never called." in str(excinfo.value)
@@ -93,19 +93,19 @@ def test_result_llm_calls_property() -> None:
 def test_result_assert_output_not_contains(sample_trajectory: Trajectory) -> None:
     result = AgentRunResult(sample_trajectory)
     result.assert_output_not_contains("goodbye")
-    with pytest.raises(UnitAIAssertionError):
+    with pytest.raises(TrajAIAssertionError):
         result.assert_output_not_contains("Hello")
 
 
 def test_result_assert_tool_call_count(sample_trajectory: Trajectory) -> None:
     result = AgentRunResult(sample_trajectory)
     result.assert_tool_call_count("search", 1)
-    with pytest.raises(UnitAIAssertionError):
+    with pytest.raises(TrajAIAssertionError):
         result.assert_tool_call_count("search", 2)
 
 
 def test_result_assert_output_equals(sample_trajectory: Trajectory) -> None:
     result = AgentRunResult(sample_trajectory)
     result.assert_output_equals("Hello world")
-    with pytest.raises(UnitAIAssertionError):
+    with pytest.raises(TrajAIAssertionError):
         result.assert_output_equals("wrong")

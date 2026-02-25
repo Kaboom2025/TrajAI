@@ -14,7 +14,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from unitai.mock.toolkit import MockToolkit, UnitAIMockError
+from trajai.mock.toolkit import MockToolkit, TrajAIMockError
 
 # Skip entire module if crewai is not installed
 pytest.importorskip("crewai")
@@ -28,7 +28,7 @@ from tests.fixtures.crewai_agent import (  # noqa: E402
     build_agent,
     build_crew,
 )
-from unitai.adapters.crewai import CrewAIAdapter, _make_mock_tool  # noqa: E402
+from trajai.adapters.crewai import CrewAIAdapter, _make_mock_tool  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -256,8 +256,8 @@ class TestExecute:
         wrapped = adapter.inject_mocks(agent, toolkit)
 
         with patch("unitai.adapters.crewai.Crew") as mock_crew:
-            mock_crew.return_value.kickoff.side_effect = UnitAIMockError("intentional")
-            with pytest.raises(UnitAIMockError):
+            mock_crew.return_value.kickoff.side_effect = TrajAIMockError("intentional")
+            with pytest.raises(TrajAIMockError):
                 adapter.execute(wrapped, "do task", timeout=30.0)
 
     def test_execute_records_tool_calls(self) -> None:

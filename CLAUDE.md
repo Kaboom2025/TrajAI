@@ -110,7 +110,7 @@ pip install -e ".[all]"
 - Phase 4: Statistical Runner (handle non-determinism with N runs + pass rate threshold)
 - Phase 5: LangGraph Adapter (framework-specific tool injection + trajectory collection)
 - Phase 6: pytest Plugin (fixtures, markers, rich failure reporting)
-- Phase 7: CLI (`unitai test` command)
+- Phase 7: CLI (`trajai test` command)
 - Phase 8: Record/Replay Cache (cache LLM responses for deterministic re-runs)
 
 ## Important Implementation Notes
@@ -118,7 +118,7 @@ pip install -e ".[all]"
 ### Adding New Assertions
 1. Add pure function to `core/assertions.py` with signature: `(Trajectory, ...) -> tuple[bool, str]`
 2. Add boolean method to `AgentRunResult` that calls the assertion function
-3. Optionally add assert method that raises `UnitAIAssertionError` via `_check()`
+3. Optionally add assert method that raises `TrajAIAssertionError` via `_check()`
 4. Write tests in `tests/test_assertions_*.py` using hand-crafted trajectories
 
 ### Mock Tool Response Strategies
@@ -135,8 +135,8 @@ All trajectory collection happens through adapters:
 3. Adapters aggregate all steps chronologically and create final `Trajectory` object
 
 ### Exception Handling
-- All UnitAI-specific exceptions inherit from `UnitAIMockError` (in `mock/toolkit.py`)
-- Assertion failures use `UnitAIAssertionError` (in `core/assertions.py`)
+- All UnitAI-specific exceptions inherit from `TrajAIMockError` (in `mock/toolkit.py`)
+- Assertion failures use `TrajAIAssertionError` (in `core/assertions.py`)
 - Original agent exceptions are preserved in `Trajectory.error` field
 - Timeout handling uses `asyncio.wait_for()` and returns partial trajectories
 
@@ -181,7 +181,7 @@ The `conductor/` directory contains project planning and tracking:
 
 - **Python 3.12+** required (uses `tomllib`, modern type hints)
 - **Zero runtime dependencies** for core package (stdlib only)
-- **Framework adapters as extras**: `pip install unitai[langraph]`, etc.
+- **Framework adapters as extras**: `pip install trajai[langraph]`, etc.
 - **pytest integration**: UnitAI registers as a pytest plugin
 - **MIT License**
 - **No hosted service required**: Fully local, only needs user's own LLM API keys

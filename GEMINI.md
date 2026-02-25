@@ -20,25 +20,25 @@ UnitAI is a Python-based testing framework for AI agents. It allows developers t
 ### Installation
 ```bash
 # Core only
-pip install unitai
+pip install trajai
 
 # With specific adapters
-pip install unitai[langraph]
-pip install unitai[crewai]
-pip install unitai[all]
+pip install trajai[langraph]
+pip install trajai[crewai]
+pip install trajai[all]
 ```
 
 ### Running Tests
 UnitAI tests are typically run via the `unitai` CLI, which wraps `pytest`.
 ```bash
 # Run all tests
-unitai test
+trajai test
 
 # Run with statistical override
-unitai test --n=20 --threshold=0.90
+trajai test --n=20 --threshold=0.90
 
 # Run with specific model or budget
-unitai test --model=gpt-4o-mini --budget=2.00
+trajai test --model=gpt-4o-mini --budget=2.00
 ```
 
 ### Development Commands

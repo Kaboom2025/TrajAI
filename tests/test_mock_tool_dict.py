@@ -1,6 +1,6 @@
 from typing import Any, Callable
 
-from unitai.mock.toolkit import MockToolDict, UnmockedToolError
+from trajai.mock.toolkit import MockToolDict, UnmockedToolError
 
 
 def test_mock_tool_dict_strict_mode() -> None:

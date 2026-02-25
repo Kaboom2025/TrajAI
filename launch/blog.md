@@ -65,7 +65,7 @@ You care about *behavior*, not text output.
 This is what UnitAI does differently. Instead of mocking the LLM (fragile) or hitting real APIs (slow, expensive), you mock the *tools*.
 
 ```python
-from unitai.mock import MockToolkit
+from trajai.mock import MockToolkit
 
 def test_refund_agent():
     toolkit = MockToolkit()
@@ -112,7 +112,7 @@ You see exactly what happened, step by step.
 True. And UnitAI handles this with statistical testing:
 
 ```python
-from unitai.runner import statistical
+from trajai.runner import statistical
 
 @statistical(n=10, threshold=0.9)
 def test_agent_uses_correct_tools():
@@ -153,7 +153,7 @@ We have 50+ agent tests covering refund flows, order lookup, support escalation,
 UnitAI is open source (MIT license) and available on PyPI:
 
 ```bash
-pip install unitai
+pip install trajai
 ```
 
 5-minute quickstart: [link to docs]  

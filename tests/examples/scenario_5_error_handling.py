@@ -30,7 +30,7 @@ Real-world example:
 import warnings
 warnings.filterwarnings("ignore")
 
-from unitai.mock.toolkit import MockToolkit, AdapterNotFoundError
+from trajai.mock.toolkit import MockToolkit, AdapterNotFoundError
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -138,7 +138,7 @@ print("          pytest.skip(f'Adapter not found: {e}')")
 # ─────────────────────────────────────────────────────────────────────────────
 print_section("Pattern: pytest.raises() (in actual tests)")
 print("  import pytest")
-print("  from unitai.mock.toolkit import AdapterNotFoundError")
+print("  from trajai.mock.toolkit import AdapterNotFoundError")
 print("  ")
 print("  def test_unsupported_agent():")
 print("      toolkit = MockToolkit()")

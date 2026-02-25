@@ -3,8 +3,8 @@ from typing import Any
 
 import pytest
 
-from unitai.core.result import AgentRunResult
-from unitai.mock.toolkit import AgentTimeoutError, MockToolkit
+from trajai.core.result import AgentRunResult
+from trajai.mock.toolkit import AgentTimeoutError, MockToolkit
 
 
 def test_run_generic_basic() -> None:

@@ -3,9 +3,9 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Any, Dict, List, Optional, Union
 
-from unitai.core import assertions
-from unitai.core.formatter import TrajectoryFormatter
-from unitai.core.trajectory import Trajectory
+from trajai.core import assertions
+from trajai.core.formatter import TrajectoryFormatter
+from trajai.core.trajectory import Trajectory
 
 
 @dataclass(frozen=True)
@@ -197,4 +197,4 @@ class AgentRunResult:
             formatter = TrajectoryFormatter()
             traj_summary = formatter.format(self.trajectory, highlights=highlights)
             error_msg = f"{message}\n\n{traj_summary}"
-            raise assertions.UnitAIAssertionError(error_msg)
+            raise assertions.TrajAIAssertionError(error_msg)
