@@ -10,7 +10,7 @@ from typing import List, Optional
 
 def _cmd_test(args: argparse.Namespace) -> int:
     """Run tests via pytest with TrajAI integration."""
-    import pytest  # type: ignore[import]
+    import pytest
 
     from trajai.config import get_config
 

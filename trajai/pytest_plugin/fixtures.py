@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Generator
+
 import pytest
 
 from trajai.mock.toolkit import MockToolkit
@@ -10,10 +12,10 @@ _TRAJAI_CONFIG_KEY = pytest.StashKey[TrajAIConfig]()
 
 
 @pytest.fixture
-def mock_toolkit() -> MockToolkit:  # type: ignore[misc]
+def mock_toolkit() -> Generator[MockToolkit, None, None]:
     """Provides a fresh MockToolkit instance. Resets on teardown."""
     toolkit = MockToolkit()
-    yield toolkit  # type: ignore[misc]
+    yield toolkit
     toolkit.reset()
 
 

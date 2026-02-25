@@ -92,8 +92,8 @@ def pytest_runtest_call(item: pytest.Item) -> Generator[None, Any, None]:
         if hasattr(item, "funcargs"):
             sig = inspect.signature(test_fn)
             for param_name, _param in sig.parameters.items():
-                if param_name != "mock_toolkit" and param_name in item.funcargs:  # type: ignore[attr-defined]
-                    kwargs[param_name] = item.funcargs[param_name]  # type: ignore[attr-defined]
+                if param_name != "mock_toolkit" and param_name in item.funcargs:
+                    kwargs[param_name] = item.funcargs[param_name]
 
         runner = StatisticalRunner(n=n, threshold=threshold, budget=budget)
         stat_result = runner.run(test_fn, **kwargs)
@@ -128,8 +128,8 @@ def pytest_runtest_call(item: pytest.Item) -> Generator[None, Any, None]:
 
         # Get mock_toolkit fixture if present
         toolkit = None
-        if hasattr(item, "funcargs") and "mock_toolkit" in item.funcargs:  # type: ignore[attr-defined]
-            toolkit = item.funcargs["mock_toolkit"]  # type: ignore[attr-defined]
+        if hasattr(item, "funcargs") and "mock_toolkit" in item.funcargs:
+            toolkit = item.funcargs["mock_toolkit"]
 
         outcome = yield  # run the actual test
 
@@ -150,7 +150,7 @@ def pytest_runtest_call(item: pytest.Item) -> Generator[None, Any, None]:
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(
-    item: pytest.Item, call: pytest.CallInfo[None]  # type: ignore[type-arg]
+    item: pytest.Item, call: pytest.CallInfo[None]
 ) -> Generator[None, Any, None]:
     """Append cost/token/duration metadata to failure reports."""
     outcome = yield

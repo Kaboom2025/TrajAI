@@ -4,7 +4,7 @@ import os
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 
 @dataclass
@@ -30,28 +30,26 @@ def _read_toml_section(path: Path) -> Dict[str, Any]:
         return {}
 
     if path.name == "pyproject.toml":
-        return data.get("tool", {}).get("trajai", {})
+        result: Dict[str, Any] = data.get("tool", {}).get("trajai", {})
+        return result
     # trajai.toml — top-level keys
-    return data
+    return dict(data)
 
 
 def _apply_env_overrides(config: TrajAIConfig) -> TrajAIConfig:
     """Override config fields from TRAJAI_* environment variables."""
-    env_map = {
+    def _bool(v: str) -> bool:
+        return v.lower() in ("1", "true", "yes")
+
+    env_map: Dict[str, tuple[str, Callable[[str], Any]]] = {
         "TRAJAI_DEFAULT_N": ("default_n", int),
         "TRAJAI_DEFAULT_THRESHOLD": ("default_threshold", float),
         "TRAJAI_MAX_WORKERS": ("max_workers", int),
         "TRAJAI_COST_BUDGET_PER_TEST": ("cost_budget_per_test", float),
         "TRAJAI_COST_BUDGET_PER_SUITE": ("cost_budget_per_suite", float),
-        "TRAJAI_STRICT_MOCKS": (
-            "strict_mocks",
-            lambda v: v.lower() in ("1", "true", "yes"),
-        ),
+        "TRAJAI_STRICT_MOCKS": ("strict_mocks", _bool),
         "TRAJAI_JUNIT_XML": ("junit_xml", str),
-        "TRAJAI_VERBOSE": (
-            "verbose",
-            lambda v: v.lower() in ("1", "true", "yes"),
-        ),
+        "TRAJAI_VERBOSE": ("verbose", _bool),
     }
 
     updates: Dict[str, Any] = {}

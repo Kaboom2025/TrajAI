@@ -8,7 +8,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Any, Callable, Optional
 
 
 @dataclass
@@ -82,7 +82,7 @@ class TrajAIConfig:
             import tomllib  # Python 3.11+
         except ImportError:
             try:
-                import tomli as tomllib  # type: ignore[import]
+                import tomli as tomllib  # type: ignore[import-not-found, no-redef]
             except ImportError:
                 # No TOML parser available - skip file loading
                 return
@@ -102,7 +102,7 @@ class TrajAIConfig:
             import tomllib  # Python 3.11+
         except ImportError:
             try:
-                import tomli as tomllib  # type: ignore[import]
+                import tomli as tomllib  # type: ignore[no-redef]
             except ImportError:
                 # No TOML parser available - skip file loading
                 return
@@ -113,7 +113,7 @@ class TrajAIConfig:
         trajai_section = data.get("tool", {}).get("trajai", {})
         self._apply_dict(trajai_section)
 
-    def _apply_dict(self, data: dict) -> None:
+    def _apply_dict(self, data: dict[str, Any]) -> None:
         """Apply configuration from a dictionary."""
         if "default_n" in data:
             self.default_n = int(data["default_n"])
@@ -144,7 +144,10 @@ class TrajAIConfig:
 
     def _apply_env_overrides(self) -> None:
         """Apply environment variable overrides."""
-        env_map = {
+        def _bool(x: str) -> bool:
+            return x.lower() in ("true", "1", "yes")
+
+        env_map: dict[str, tuple[str, Callable[[str], Any]]] = {
             "TRAJAI_DEFAULT_N": ("default_n", int),
             "TRAJAI_DEFAULT_THRESHOLD": ("default_threshold", float),
             "TRAJAI_MAX_WORKERS": ("max_workers", int),
@@ -152,16 +155,12 @@ class TrajAIConfig:
             "TRAJAI_COST_BUDGET_PER_SUITE": ("cost_budget_per_suite", float),
             "TRAJAI_MODEL_OVERRIDE": ("model_override", str),
             "TRAJAI_MODEL": ("model_override", str),  # Alias
-            "TRAJAI_STRICT_MOCKS": (
-                "strict_mocks", lambda x: x.lower() in ("true", "1", "yes")
-            ),
-            "TRAJAI_CACHE_ENABLED": (
-                "cache_enabled", lambda x: x.lower() in ("true", "1", "yes")
-            ),
+            "TRAJAI_STRICT_MOCKS": ("strict_mocks", _bool),
+            "TRAJAI_CACHE_ENABLED": ("cache_enabled", _bool),
             "TRAJAI_CACHE_DIRECTORY": ("cache_directory", str),
             "TRAJAI_CACHE_TTL_HOURS": ("cache_ttl_hours", float),
             "TRAJAI_JUNIT_XML": ("junit_xml", str),
-            "TRAJAI_VERBOSE": ("verbose", lambda x: x.lower() in ("true", "1", "yes")),
+            "TRAJAI_VERBOSE": ("verbose", _bool),
             "TRAJAI_ADAPTER": ("adapter", str),
         }
 
@@ -169,10 +168,7 @@ class TrajAIConfig:
             value = os.environ.get(env_var)
             if value is not None:
                 try:
-                    if callable(converter) and converter.__name__ == "<lambda>":
-                        setattr(self, attr_name, converter(value))
-                    else:
-                        setattr(self, attr_name, converter(value))
+                    setattr(self, attr_name, converter(value))
                 except (ValueError, TypeError):
                     # Invalid value - skip this override
                     pass
