@@ -155,3 +155,8 @@ cython_debug/
 
 # Conductor
 conductor/setup_state.json
+
+# Local development files
+CLAUDE.md
+GEMINI.md
+.cursorignore
