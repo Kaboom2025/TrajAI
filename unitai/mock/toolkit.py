@@ -89,13 +89,13 @@ class MockTool:
 class MockToolkit:
     def __init__(self, strict: bool | None = None) -> None:
         """Initialize MockToolkit.
-        
+
         Args:
             strict: If True, raise UnmockedToolError on unmocked tool calls.
                    If None, use config default.
         """
         from unitai.config import get_config
-        
+
         config = get_config()
         self._strict = strict if strict is not None else config.strict_mocks
         self._tools: dict[str, MockTool] = {}
@@ -133,7 +133,7 @@ class MockToolkit:
 
     def as_dict(self, strict: bool | None = None) -> Dict[str, Any]:
         """Get mock tools as a dictionary.
-        
+
         Args:
             strict: If None, use instance default (from config).
         """
@@ -168,9 +168,9 @@ class MockToolkit:
         self._recorded_llm_calls.append(step)
 
     def run(
-        self, 
-        agent: Any, 
-        input: Any, 
+        self,
+        agent: Any,
+        input: Any,
         timeout: float = 60.0,
         cache: Optional[Any] = None,
         cache_mode: str = "auto",
@@ -178,11 +178,11 @@ class MockToolkit:
         import asyncio
         import os
 
-        from unitai.core.result import AgentRunResult
         from unitai.config import get_config
+        from unitai.core.result import AgentRunResult
 
         config = get_config()
-        
+
         # Determine cache settings
         if cache is None and config.cache_enabled:
             from unitai.runner.replay import ReplayCache
@@ -202,9 +202,9 @@ class MockToolkit:
             try:
                 trajectory = await asyncio.wait_for(
                     asyncio.to_thread(
-                        adapter.execute, 
-                        wrapped, 
-                        str(input), 
+                        adapter.execute,
+                        wrapped,
+                        str(input),
                         timeout,
                         cache,
                         cache_mode,
@@ -213,11 +213,20 @@ class MockToolkit:
                 )
                 return AgentRunResult(trajectory=trajectory)
             except asyncio.TimeoutError:
-                from unitai.adapters.langgraph import LangGraphAdapter
-                partial_traj = LangGraphAdapter(self)._build_trajectory(
-                    str(input),
-                    error=AgentTimeoutError(f"Agent exceeded {timeout}s timeout"),
-                )
+                # Use the resolved adapter's _build_trajectory if available,
+                # otherwise fall back to a generic minimal trajectory builder.
+                build_fn = getattr(adapter, "_build_trajectory", None)
+                if build_fn is not None:
+                    partial_traj = build_fn(
+                        str(input),
+                        error=AgentTimeoutError(f"Agent exceeded {timeout}s timeout"),
+                    )
+                else:
+                    from unitai.adapters.generic import GenericAdapter
+                    partial_traj = GenericAdapter(self)._build_trajectory(
+                        str(input),
+                        error=AgentTimeoutError(f"Agent exceeded {timeout}s timeout"),
+                    )
                 partial_result = AgentRunResult(trajectory=partial_traj)
                 raise AgentTimeoutError(
                     f"Agent exceeded {timeout}s timeout",
@@ -229,7 +238,23 @@ class MockToolkit:
     def _resolve_adapter(self, agent: Any) -> Any:
         try:
             from unitai.adapters.langgraph import LangGraphAdapter
-            adapter = LangGraphAdapter(self)
+            adapter: Any = LangGraphAdapter(self)
+            if adapter.can_handle(agent):
+                return adapter
+        except ImportError:
+            pass
+
+        try:
+            from unitai.adapters.openai_agents import OpenAIAgentsAdapter
+            adapter = OpenAIAgentsAdapter(self)
+            if adapter.can_handle(agent):
+                return adapter
+        except ImportError:
+            pass
+
+        try:
+            from unitai.adapters.crewai import CrewAIAdapter
+            adapter = CrewAIAdapter(self)
             if adapter.can_handle(agent):
                 return adapter
         except ImportError:
@@ -237,8 +262,10 @@ class MockToolkit:
 
         raise AdapterNotFoundError(
             f"No adapter found for agent type '{type(agent).__name__}'. "
-            "Supported types: LangGraph CompiledStateGraph/StateGraph. "
-            "Make sure to install the required extras (e.g. pip install unitai[langgraph])."
+            "Supported: LangGraph CompiledStateGraph/StateGraph, "
+            "OpenAI Agents SDK Agent, CrewAI Crew/Agent. "
+            "Install extras: unitai[langgraph], "
+            "unitai[openai-agents], or unitai[crewai]."
         )
 
     def run_generic(
@@ -261,9 +288,9 @@ class MockToolkit:
                 # Wrap synchronous agent in a thread to avoid blocking the event loop
                 trajectory = await asyncio.wait_for(
                     asyncio.to_thread(
-                        adapter.execute, 
-                        callable_agent, 
-                        "generic", 
+                        adapter.execute,
+                        callable_agent,
+                        "generic",
                         timeout,
                         cache,
                         cache_mode,
@@ -309,9 +336,9 @@ class MockToolkit:
             try:
                 trajectory = await asyncio.wait_for(
                     asyncio.to_thread(
-                        adapter.execute, 
-                        fn, 
-                        str(input), 
+                        adapter.execute,
+                        fn,
+                        str(input),
                         timeout,
                         cache,
                         cache_mode,

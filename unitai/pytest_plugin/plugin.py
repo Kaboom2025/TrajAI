@@ -195,7 +195,9 @@ def pytest_runtest_logreport(report: pytest.TestReport) -> None:
 def pytest_terminal_summary(
     terminalreporter: Any, exitstatus: int, config: pytest.Config
 ) -> None:
-    """Print aggregate UnitAI summary."""
+    """Print aggregate UnitAI summary and write GitHub Actions step summary."""
+    import os
+
     total_cost = 0.0
     total_tokens = 0
 
@@ -203,11 +205,18 @@ def pytest_terminal_summary(
         terminalreporter.stats.get("passed", [])
         + terminalreporter.stats.get("failed", [])
     )
+
+    # Collect per-test metadata for the step summary table
+    test_rows: List[tuple[str, str, str, str]] = []  # (name, status, cost, pass_rate)
     for report in all_reports:
+        cost_str = ""
+        pass_rate_str = ""
         for key, value in report.user_properties:
             if key == "unitai_cost":
                 try:
-                    total_cost += float(str(value).lstrip("$"))
+                    cost_val = float(str(value).lstrip("$"))
+                    total_cost += cost_val
+                    cost_str = f"${cost_val:.4f}"
                 except (ValueError, AttributeError):
                     pass
             elif key == "unitai_tokens":
@@ -215,9 +224,65 @@ def pytest_terminal_summary(
                     total_tokens += int(value)
                 except (ValueError, TypeError):
                     pass
+            elif key == "unitai_pass_rate":
+                pass_rate_str = str(value)
+
+        passed_reports = terminalreporter.stats.get("passed", [])
+        status = "PASS" if report in passed_reports else "FAIL"
+        test_rows.append((report.nodeid, status, cost_str, pass_rate_str))
 
     if total_cost > 0 or total_tokens > 0:
         terminalreporter.write_sep("=", "UnitAI Summary")
         terminalreporter.write_line(f"  Total cost:   ${total_cost:.4f}")
         if total_tokens:
             terminalreporter.write_line(f"  Total tokens: {total_tokens}")
+
+    # Write GitHub Actions step summary
+    step_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if step_summary_path:
+        _write_github_step_summary(
+            step_summary_path, test_rows, total_cost, total_tokens
+        )
+
+
+def _write_github_step_summary(
+    path: str,
+    test_rows: List[tuple[str, str, str, str]],
+    total_cost: float,
+    total_tokens: int,
+) -> None:
+    """Write a Markdown cost summary to the GitHub Actions step summary file."""
+    try:
+        lines: List[str] = []
+        lines.append("## UnitAI Test Summary\n")
+
+        if test_rows:
+            lines.append("| Test | Status | Cost | Pass Rate |")
+            lines.append("|------|--------|------|-----------|")
+            for nodeid, status, cost_str, pass_rate_str in test_rows:
+                # Shorten long nodeids for readability
+                short_name = nodeid.split("::")[-1] if "::" in nodeid else nodeid
+                status_icon = "✅" if status == "PASS" else "❌"
+                lines.append(
+                    f"| `{short_name}` | {status_icon} {status} "
+                    f"| {cost_str or '—'} | {pass_rate_str or '—'} |"
+                )
+            lines.append("")
+
+        passed = sum(1 for _, s, _, _ in test_rows if s == "PASS")
+        failed = sum(1 for _, s, _, _ in test_rows if s == "FAIL")
+        total_str = (
+            f"**Total:** {len(test_rows)} tests"
+            f" — {passed} passed, {failed} failed"
+        )
+        lines.append(total_str)
+        if total_cost > 0:
+            lines.append(f"**Total LLM cost:** ${total_cost:.4f}")
+        if total_tokens > 0:
+            lines.append(f"**Total tokens:** {total_tokens}")
+        lines.append("")
+
+        with open(path, "a", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+    except OSError:
+        pass

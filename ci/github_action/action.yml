@@ -1,0 +1,91 @@
+name: Run UnitAI Tests
+description: >
+  Composite action that installs Python, installs UnitAI, runs `unitai test`,
+  and uploads the JUnit XML artifact.
+
+inputs:
+  python-version:
+    description: Python version to use.
+    required: false
+    default: "3.12"
+  budget:
+    description: Per-test cost budget in USD (e.g. "1.00"). Omit to use config default.
+    required: false
+    default: ""
+  model-override:
+    description: LLM model override (e.g. "gpt-4o-mini"). Omit to use config default.
+    required: false
+    default: ""
+  extra-args:
+    description: Additional arguments to pass to `unitai test` (e.g. "--n 5 --threshold 0.9").
+    required: false
+    default: ""
+  test-path:
+    description: Path to the test file or directory (omit for auto-discovery).
+    required: false
+    default: ""
+  junit-xml:
+    description: Path for the JUnit XML output file.
+    required: false
+    default: "test-results/unitai.xml"
+  install-extras:
+    description: >
+      Comma-separated list of unitai extras to install
+      (e.g. "langgraph,openai-agents"). Omit for core only.
+    required: false
+    default: ""
+  upload-artifact:
+    description: Whether to upload the JUnit XML as a GitHub Actions artifact.
+    required: false
+    default: "true"
+
+outputs:
+  pass-count:
+    description: Number of passing tests.
+    value: ${{ steps.run-tests.outputs.pass-count }}
+  fail-count:
+    description: Number of failing tests.
+    value: ${{ steps.run-tests.outputs.fail-count }}
+  total-cost:
+    description: Total LLM cost incurred by the test run (USD).
+    value: ${{ steps.run-tests.outputs.total-cost }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install UnitAI
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        EXTRAS="${{ inputs.install-extras }}"
+        if [ -n "$EXTRAS" ]; then
+          pip install "unitai[$EXTRAS]"
+        else
+          pip install unitai
+        fi
+
+    - name: Run UnitAI tests
+      id: run-tests
+      shell: bash
+      env:
+        UNITAI_JUNIT_XML: ${{ inputs.junit-xml }}
+      run: |
+        bash "${{ github.action_path }}/entrypoint.sh" \
+          "${{ inputs.test-path }}" \
+          "${{ inputs.budget }}" \
+          "${{ inputs.model-override }}" \
+          "${{ inputs.junit-xml }}" \
+          "${{ inputs.extra-args }}"
+
+    - name: Upload JUnit XML artifact
+      if: ${{ inputs.upload-artifact == 'true' && always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: unitai-test-results
+        path: ${{ inputs.junit-xml }}
+        if-no-files-found: warn

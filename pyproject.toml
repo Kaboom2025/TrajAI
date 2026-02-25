@@ -23,10 +23,10 @@ dependencies = []
 [project.optional-dependencies]
 langgraph = ["langgraph"]
 crewai = ["crewai"]
-openai = ["openai"]
+openai-agents = ["openai-agents"]
 semantic-kernel = ["semantic-kernel"]
 all = [
-  "unitai[langgraph,crewai,openai,semantic-kernel]",
+  "unitai[langgraph,crewai,openai-agents,semantic-kernel]",
 ]
 
 [project.urls]

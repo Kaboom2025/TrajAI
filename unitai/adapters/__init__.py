@@ -11,3 +11,17 @@ try:
     __all__ = [*__all__, "LangGraphAdapter"]
 except ImportError:
     pass
+
+try:
+    from unitai.adapters.openai_agents import OpenAIAgentsAdapter
+
+    __all__ = [*__all__, "OpenAIAgentsAdapter"]
+except ImportError:
+    pass
+
+try:
+    from unitai.adapters.crewai import CrewAIAdapter
+
+    __all__ = [*__all__, "CrewAIAdapter"]
+except ImportError:
+    pass
