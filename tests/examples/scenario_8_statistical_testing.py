@@ -14,11 +14,10 @@ Real-world use case: Testing an agent that sometimes misses edge cases due to
 LLM non-determinism, but should succeed 90%+ of the time.
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from unitai.mock.toolkit import MockToolkit
 from unitai.runner.statistical import StatisticalRunner
-
 
 # ---------------------------------------------------------------------------
 # Step 1: Create a flaky agent simulator
@@ -65,7 +64,7 @@ def test_agent_with_statistical_runner() -> None:
     try:
         result = runner.run(agent_test)
 
-        print(f"✓ Statistical test completed")
+        print("✓ Statistical test completed")
         print(f"  Total runs: {result.total_runs}")
         print(f"  Passed: {result.passed_runs}")
         print(f"  Failed: {result.failed_runs}")
@@ -143,7 +142,7 @@ def test_with_cost_budget() -> None:
     result = runner.run(expensive_test)
 
     print("✓ Cost budget enforcement example")
-    print(f"  Budget: $0.50")
+    print("  Budget: $0.50")
     print(f"  Actual cost: ${result.total_cost:.4f}")
     print(f"  Status: {'Within budget' if result.total_cost <= 0.50 else 'Exceeded'}")
 

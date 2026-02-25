@@ -22,7 +22,6 @@ from agents.tool import FunctionTool
 
 from unitai.mock.toolkit import MockToolkit
 
-
 # ---------------------------------------------------------------------------
 # Step 1: Define tools as FunctionTool objects
 # ---------------------------------------------------------------------------
@@ -136,8 +135,12 @@ def test_openai_agent_refund_flow() -> None:
     agent = create_support_agent()
     toolkit = MockToolkit()
 
-    toolkit.mock("lookup_order", return_value={"id": "ORDER-456", "status": "delivered"})
-    toolkit.mock("process_refund", return_value={"success": True, "order_id": "ORDER-456"})
+    toolkit.mock(
+        "lookup_order", return_value={"id": "ORDER-456", "status": "delivered"}
+    )
+    toolkit.mock(
+        "process_refund", return_value={"success": True, "order_id": "ORDER-456"}
+    )
 
     try:
         result = toolkit.run(

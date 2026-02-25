@@ -6,9 +6,10 @@ build-backend = "hatchling.build"
 name = "unitai"
 dynamic = ["version"]
 description = "The open-source testing framework for AI agents."
-requires-python = ">=3.12"
+readme = "README.md"
+requires-python = ">=3.10"
 license = "MIT"
-keywords = ["ai", "agents", "testing", "pytest"]
+keywords = ["ai", "agents", "testing", "pytest", "llm", "langchain", "crewai", "openai"]
 authors = [
   { name = "Saalik", email = "saalik@example.com" },
 ]
@@ -16,7 +17,15 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Framework :: Pytest",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Typing :: Typed",
 ]
 dependencies = []
 
@@ -31,6 +40,10 @@ all = [
 
 [project.urls]
 Homepage = "https://github.com/saalik/unitai"
+Documentation = "https://github.com/saalik/unitai/tree/main/docs"
+Repository = "https://github.com/saalik/unitai"
+Issues = "https://github.com/saalik/unitai/issues"
+Changelog = "https://github.com/saalik/unitai/releases"
 
 [tool.hatch.version]
 path = "unitai/__init__.py"

@@ -77,6 +77,52 @@ This folder contains practical scenarios demonstrating how to use UnitAI to test
 
 ---
 
+### 6. `scenario_6_openai_agents.py` (Phase 11)
+**What it simulates:** Testing agents built with the OpenAI Agents SDK.
+
+**Use case:** Integrating UnitAI with OpenAI's native agent framework for mocking FunctionTool calls.
+
+**Key assertions demonstrated:**
+- Auto-detection of `agents.Agent` objects
+- FunctionTool replacement without mutating the original agent
+- Multi-step workflows with OpenAI Agents
+- LLM metadata extraction from `RunResult`
+
+**Real-world example:** Customer support agent using OpenAI Agents SDK.
+
+---
+
+### 7. `scenario_7_crewai.py` (Phase 11)
+**What it simulates:** Testing CrewAI agents and crews.
+
+**Use case:** Mocking BaseTool instances in CrewAI agents for deterministic testing.
+
+**Key assertions demonstrated:**
+- Auto-detection of `Crew` and `Agent` objects
+- BaseTool replacement via `model_copy()`
+- Testing multi-agent crews with shared tools
+- Crew.kickoff() result extraction
+
+**Real-world example:** Market research crew analyzing competitors.
+
+---
+
+### 8. `scenario_8_statistical_testing.py` (Phase 4)
+**What it simulates:** Running tests multiple times to handle LLM non-determinism.
+
+**Use case:** Testing agents where behavior varies across runs, requiring statistical pass rate thresholds.
+
+**Key assertions demonstrated:**
+- `StatisticalRunner` for N-run testing
+- Pass rate thresholds (e.g., 90% success required)
+- Cost budget enforcement
+- `@pytest.mark.unitai_statistical` decorator
+- CI integration with cost reporting
+
+**Real-world example:** Flaky agent that should succeed 90%+ of the time.
+
+---
+
 ## How to Run
 
 Run all examples:
@@ -105,6 +151,9 @@ If you're new to UnitAI, we recommend studying the scenarios in this order:
 3. **Scenario 3** — Understand negative assertions (tools NOT called)
 4. **Scenario 4** — See advanced mocking with sequences and repeated calls
 5. **Scenario 5** — Learn error handling patterns
+6. **Scenario 6** — OpenAI Agents SDK integration (if using OpenAI Agents)
+7. **Scenario 7** — CrewAI integration (if using CrewAI)
+8. **Scenario 8** — Statistical testing for handling LLM non-determinism
 
 ---
 

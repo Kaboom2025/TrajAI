@@ -8,25 +8,38 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.12"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install ruff mypy pytest
         pip install -e .
+    
     - name: Lint with ruff
       run: ruff check .
+    
     - name: Type check with mypy
       run: mypy .
+    
     - name: Run tests
-      run: pytest
+      run: pytest -v
+    
+    - name: Run example tests
+      run: |
+        cd examples/generic_chatbot && pytest test_chatbot.py -v
+        cd ../refund_agent && pytest test_refund.py -v
+        cd ../research_agent && pytest test_research.py -v

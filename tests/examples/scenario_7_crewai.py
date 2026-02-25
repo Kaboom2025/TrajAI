@@ -24,7 +24,6 @@ from pydantic import BaseModel, Field
 
 from unitai.mock.toolkit import MockToolkit
 
-
 # ---------------------------------------------------------------------------
 # Step 1: Define tools as BaseTool subclasses
 # ---------------------------------------------------------------------------
@@ -45,7 +44,11 @@ class CompanyLookupTool(BaseTool):  # type: ignore[misc]
 
     def _run(self, company_name: str) -> str:
         # Real implementation would query a database or API
-        return f'{{"name": "{company_name}", "industry": "Technology", "size": "Large"}}'
+        result = (
+            f'{{"name": "{company_name}", "industry": "Technology", '
+            f'"size": "Large"}}'
+        )
+        return result
 
 
 class MarketAnalysisInput(BaseModel):
@@ -188,8 +191,8 @@ def test_crewai_tool_not_called() -> None:
         assert result.tool_not_called("analyze_market")
 
         print("✓ CrewAI Agent correctly skipped unnecessary tool")
-        print(f"  Called: lookup_company")
-        print(f"  Not called: analyze_market")
+        print("  Called: lookup_company")
+        print("  Not called: analyze_market")
 
     except Exception as e:
         print(f"⚠ CrewAI selective tool test skipped: {e}")
