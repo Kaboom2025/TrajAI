@@ -1,4 +1,4 @@
-"""Tests for the UnitAI CLI (Phase 7)."""
+"""Tests for the TrajAI CLI (Phase 7)."""
 from __future__ import annotations
 
 import os
@@ -21,7 +21,7 @@ def test_help_output(capsys: pytest.CaptureFixture[str]) -> None:
         main(["--help"])
     assert exc_info.value.code == 0
     out = capsys.readouterr().out
-    assert "unitai" in out.lower()
+    assert "trajai" in out.lower()
 
 
 def test_test_help(capsys: pytest.CaptureFixture[str]) -> None:
@@ -141,7 +141,7 @@ def test_init_updates_gitignore(
 
 
 # ---------------------------------------------------------------------------
-# `unitai results`
+# `trajai results`
 # ---------------------------------------------------------------------------
 
 
@@ -157,16 +157,16 @@ def test_results_no_file(
 
 
 # ---------------------------------------------------------------------------
-# `unitai cache`
+# `trajai cache`
 # ---------------------------------------------------------------------------
 
 
 def test_cache_placeholder(capsys: pytest.CaptureFixture[str]) -> None:
-    """Cache commands print placeholder message."""
+    """Cache commands produce output."""
     main(["cache", "clear"])
     out = capsys.readouterr().out
-    assert "Phase 8" in out
+    assert "Cache" in out or "cache" in out.lower()
 
     main(["cache", "stats"])
     out = capsys.readouterr().out
-    assert "Phase 8" in out
+    assert "Cache" in out or "cache" in out.lower()

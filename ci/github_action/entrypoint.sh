@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# UnitAI GitHub Action entrypoint script.
+# TrajAI GitHub Action entrypoint script.
 # Usage: entrypoint.sh [test-path] [budget] [model-override] [junit-xml] [extra-args]
 set -euo pipefail
 
@@ -30,7 +30,7 @@ if [ -n "$EXTRA_ARGS" ]; then
     CMD="$CMD $EXTRA_ARGS"
 fi
 
-echo "[UnitAI] Running: $CMD"
+echo "[TrajAI] Running: $CMD"
 set +e
 eval "$CMD"
 EXIT_CODE=$?
@@ -42,7 +42,7 @@ FAIL_COUNT=0
 TOTAL_COST="0.0000"
 
 if [ -f "$JUNIT_XML" ]; then
-    # Extract tests, failures, errors counts using Python (available since we installed unitai)
+    # Extract tests, failures, errors counts using Python (available since we installed trajai)
     COUNTS=$(python3 - <<'PYEOF'
 import sys
 import xml.etree.ElementTree as ET
@@ -71,7 +71,7 @@ try:
                 failures += 1
             # Extract cost from properties
             for prop in testcase.iter("property"):
-                if prop.get("name") == "unitai_cost":
+                if prop.get("name") == "trajai_cost":
                     try:
                         total_cost += float(str(prop.get("value", "0")).lstrip("$"))
                     except (ValueError, AttributeError):
@@ -100,6 +100,6 @@ if [ -n "${GITHUB_OUTPUT:-}" ]; then
     echo "total-cost=${TOTAL_COST}" >> "$GITHUB_OUTPUT"
 fi
 
-echo "[UnitAI] Results: ${PASS_COUNT} passed, ${FAIL_COUNT} failed, cost=\$${TOTAL_COST}"
+echo "[TrajAI] Results: ${PASS_COUNT} passed, ${FAIL_COUNT} failed, cost=\$${TOTAL_COST}"
 
 exit $EXIT_CODE

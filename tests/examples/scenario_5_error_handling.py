@@ -3,17 +3,17 @@ Scenario 5: Error Handling - Adapter Not Found
 ===============================================
 
 What it simulates:
-    Attempting to use UnitAI with an agent framework that isn't supported yet.
-    UnitAI provides clear, actionable error messages when it can't auto-detect
+    Attempting to use TrajAI with an agent framework that isn't supported yet.
+    TrajAI provides clear, actionable error messages when it can't auto-detect
     an agent type.
 
 Use case:
-    Understanding how UnitAI handles unsupported agent types and what to do about it.
+    Understanding how TrajAI handles unsupported agent types and what to do about it.
     This teaches:
     - How to catch and handle AdapterNotFoundError
     - What frameworks are currently supported
     - How to write tests that expect exceptions
-    - Error handling patterns in UnitAI
+    - Error handling patterns in TrajAI
 
 Key concepts demonstrated:
     - AdapterNotFoundError exception
@@ -23,7 +23,7 @@ Key concepts demonstrated:
 
 Real-world example:
     Developer tries to test an agent using a custom framework or a framework
-    that UnitAI hasn't added an adapter for yet. UnitAI provides a clear error
+    that TrajAI hasn't added an adapter for yet. TrajAI provides a clear error
     instead of silently failing.
 """
 
@@ -63,7 +63,7 @@ toolkit = MockToolkit()
 
 # Define a custom, unsupported agent type
 class CustomUnsupportedAgent:
-    """A hypothetical agent type that UnitAI doesn't have an adapter for yet."""
+    """A hypothetical agent type that TrajAI doesn't have an adapter for yet."""
     def __init__(self):
         self.name = "CustomUnsupportedAgent"
 
@@ -93,7 +93,7 @@ except AdapterNotFoundError as e:
 # Understanding the error
 # ─────────────────────────────────────────────────────────────────────────────
 print_section("What This Error Means")
-print("  UnitAI tried to run an agent but couldn't identify its framework.")
+print("  TrajAI tried to run an agent but couldn't identify its framework.")
 print("  This happens when:")
 print("    ✗ The agent framework isn't supported yet")
 print("    ✗ The adapter for that framework isn't installed")

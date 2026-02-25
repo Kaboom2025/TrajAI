@@ -1,4 +1,4 @@
-"""Parse and display JUnit XML results produced by pytest + UnitAI plugin."""
+"""Parse and display JUnit XML results produced by pytest + TrajAI plugin."""
 from __future__ import annotations
 
 import xml.etree.ElementTree as ET
@@ -10,13 +10,13 @@ def display_results(junit_xml_path: str) -> None:
     """Parse JUnit XML and print a formatted results table."""
     path = Path(junit_xml_path)
     if not path.exists():
-        print(f"[UnitAI] No results file found at: {junit_xml_path}")
+        print(f"[TrajAI] No results file found at: {junit_xml_path}")
         return
 
     try:
         tree = ET.parse(path)
     except ET.ParseError as exc:
-        print(f"[UnitAI] Failed to parse results file: {exc}")
+        print(f"[TrajAI] Failed to parse results file: {exc}")
         return
 
     root = tree.getroot()
@@ -28,11 +28,11 @@ def display_results(junit_xml_path: str) -> None:
     elif root.tag == "testsuite":
         suites = [root]
     else:
-        print(f"[UnitAI] Unexpected XML root element: {root.tag}")
+        print(f"[TrajAI] Unexpected XML root element: {root.tag}")
         return
 
     print("\n" + "=" * 70)
-    print("  UnitAI Test Results")
+    print("  TrajAI Test Results")
     print("=" * 70)
 
     total_tests = 0
@@ -65,13 +65,13 @@ def display_results(junit_xml_path: str) -> None:
             else:
                 status = "PASS"
 
-            # Extract UnitAI properties
+            # Extract TrajAI properties
             props: dict[str, str] = {}
             for prop_elem in testcase.iter("property"):
                 prop_name = prop_elem.get("name", "")
                 prop_value = prop_elem.get("value", "")
-                if prop_name.startswith("unitai_"):
-                    props[prop_name[7:]] = prop_value  # strip "unitai_" prefix
+                if prop_name.startswith("trajai_"):
+                    props[prop_name[7:]] = prop_value  # strip "trajai_" prefix
 
             # Format row
             time_part = f" ({time_str}s)" if time_str else ""

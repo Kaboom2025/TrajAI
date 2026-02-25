@@ -26,7 +26,7 @@ class CrewAIAdapter(BaseAdapter):
     - ``crewai.Agent`` — wraps in a single-task crew and kickoffs
 
     Tool injection replaces ``BaseTool`` instances on all agents with mock
-    wrappers that call UnitAI mocks. The original objects are not mutated;
+    wrappers that call TrajAI mocks. The original objects are not mutated;
     Pydantic ``model_copy()`` is used to create modified copies.
     """
 
@@ -237,7 +237,7 @@ def _extract_crew_output(crew_output: Any) -> str | None:
 
 
 def _make_mock_tool(tool_name: str, mock_obj: Any) -> Any:
-    """Create a CrewAI BaseTool subclass that delegates _run to a UnitAI mock."""
+    """Create a CrewAI BaseTool subclass that delegates _run to a TrajAI mock."""
     if not HAS_CREWAI:
         raise ImportError("crewai is not installed")
 

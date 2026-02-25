@@ -1,9 +1,9 @@
 # Product Guidelines
 
-These guidelines define the standards for documentation, development, and user experience for the UnitAI framework.
+These guidelines define the standards for documentation, development, and user experience for the TrajAI framework.
 
 ## 1. Documentation & Prose Style
-*   **Tone:** Professional, precise, and technical. UnitAI is a tool for engineers; the documentation should respect their time and expertise.
+*   **Tone:** Professional, precise, and technical. TrajAI is a tool for engineers; the documentation should respect their time and expertise.
 *   **Clarity over Cleverness:** Avoid jargon or overly complex metaphors. Use straightforward language to explain technical concepts.
 *   **Action-Oriented:** Documentation should focus on "How to" and "Why," providing clear examples for every feature.
 
@@ -18,11 +18,11 @@ These guidelines define the standards for documentation, development, and user e
 *   **Cost Efficiency:** Encourage development patterns that minimize unnecessary LLM API calls, such as using the record/replay cache.
 
 ## 4. User Experience (UX) & CLI
-*   **CLI-First:** The `unitai` command should be the primary interface for running tests, providing a clean wrapper over `pytest`.
+*   **CLI-First:** The `trajai` command should be the primary interface for running tests, providing a clean wrapper over `pytest`.
 *   **Actionable Errors:** When a test fails, provide rich, structured output showing exactly what happened in the trajectory versus what was expected.
-*   **Zero Configuration:** UnitAI should work out of the box with sensible defaults, while allowing deep customization via `pyproject.toml`.
+*   **Zero Configuration:** TrajAI should work out of the box with sensible defaults, while allowing deep customization via `pyproject.toml`.
 
 ## 5. Architectural Principles
 *   **Minimal Core:** Keep the core framework lightweight and free of heavy dependencies.
-*   **Adapter Pattern:** Use adapters to bridge the gap between UnitAI and specific agent frameworks (LangGraph, CrewAI, etc.), keeping the core logic decoupled.
+*   **Adapter Pattern:** Use adapters to bridge the gap between TrajAI and specific agent frameworks (LangGraph, CrewAI, etc.), keeping the core logic decoupled.
 *   **Transparency:** Every step the agent takes should be visible and queryable in the resulting trajectory.

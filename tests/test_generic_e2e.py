@@ -6,7 +6,7 @@ from trajai.mock.toolkit import MockToolkit, UnmockedToolError
 
 def test_e2e_tool_calls() -> None:
     toolkit = MockToolkit()
-    toolkit.mock("search", return_value="UnitAI repository")
+    toolkit.mock("search", return_value="TrajAI repository")
     toolkit.mock("calculator", return_value="42")
 
     # Test search flow
@@ -14,7 +14,7 @@ def test_e2e_tool_calls() -> None:
         fn=simple_tool_agent,
         input="search: Who is the best?"
     )
-    assert result.output == "Found: UnitAI repository"
+    assert result.output == "Found: TrajAI repository"
     assert len(result.trajectory.steps) == 1
     assert result.trajectory.steps[0].tool_name == "search"
     assert result.trajectory.steps[0].tool_args == {"q": "Who is the best?"}

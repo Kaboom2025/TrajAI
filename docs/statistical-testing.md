@@ -1,6 +1,6 @@
 # Statistical Testing
 
-LLMs are non-deterministic. The same agent with the same input might call different tools, in a different order, or produce different output across runs. UnitAI's statistical testing lets you assert on *rates* instead of absolutes: "this agent uses the correct tools at least 90% of the time."
+LLMs are non-deterministic. The same agent with the same input might call different tools, in a different order, or produce different output across runs. TrajAI's statistical testing lets you assert on *rates* instead of absolutes: "this agent uses the correct tools at least 90% of the time."
 
 ---
 
@@ -95,7 +95,7 @@ Failure Modes:
 
 ## Cost Budget Protection
 
-Statistical tests run the same test many times, which means many LLM API calls. UnitAI protects against runaway costs:
+Statistical tests run the same test many times, which means many LLM API calls. TrajAI protects against runaway costs:
 
 1. **Calibration run.** The first run executes serially. Its cost is multiplied by N to estimate total cost.
 2. **Pre-flight check.** If the estimated total exceeds the budget, the test aborts immediately with `CostLimitExceeded`.

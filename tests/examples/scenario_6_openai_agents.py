@@ -1,11 +1,11 @@
 """Scenario 6: OpenAI Agents SDK Integration
 
-This scenario demonstrates using UnitAI with the OpenAI Agents SDK.
+This scenario demonstrates using TrajAI with the OpenAI Agents SDK.
 
 Key concepts:
 - Auto-detection of OpenAI Agent framework
 - Mock injection without mutating the original agent
-- FunctionTool replacement with UnitAI mocks
+- FunctionTool replacement with TrajAI mocks
 - LLM metadata extraction from RunResult
 
 Real-world use case: Testing an OpenAI Agents SDK agent that processes
@@ -93,7 +93,7 @@ def create_support_agent() -> Agent:  # type: ignore[type-arg]
 
 
 # ---------------------------------------------------------------------------
-# Step 3: Test with UnitAI
+# Step 3: Test with TrajAI
 # ---------------------------------------------------------------------------
 
 
@@ -105,7 +105,7 @@ def test_openai_agent_lookup_order() -> None:
     # Mock the lookup_order tool
     toolkit.mock("lookup_order", return_value={"id": "ORDER-123", "status": "shipped"})
 
-    # Run the agent (UnitAI auto-detects it's an OpenAI Agent)
+    # Run the agent (TrajAI auto-detects it's an OpenAI Agent)
     # Note: This will raise if openai-agents or a real API key is not available.
     # In CI, you'd mock the Runner.run_sync call or use record/replay cache.
     try:
@@ -179,8 +179,8 @@ if __name__ == "__main__":
 
     print("=" * 70)
     print("Key Takeaways:")
-    print("- UnitAI auto-detects OpenAI Agents SDK agents")
+    print("- TrajAI auto-detects OpenAI Agents SDK agents")
     print("- FunctionTool instances are replaced with mocks (no mutation)")
-    print("- All standard UnitAI assertions work with OpenAI Agents")
+    print("- All standard TrajAI assertions work with OpenAI Agents")
     print("- LLM metadata is extracted from RunResult.raw_responses")
     print("=" * 70)

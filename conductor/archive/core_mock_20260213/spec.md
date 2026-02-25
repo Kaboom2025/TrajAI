@@ -1,7 +1,7 @@
 # Track Specification: Phase 1 - Core Data Model & Mock Primitives
 
 ## Overview
-This track focuses on building the foundational data structures and the mock tool system for UnitAI. It establishes the core objects that represent agent trajectories and the primary API for developer-facing mocks. This phase is critical as it defines the data model that all subsequent features (assertions, adapters, runners) will operate on.
+This track focuses on building the foundational data structures and the mock tool system for TrajAI. It establishes the core objects that represent agent trajectories and the primary API for developer-facing mocks. This phase is critical as it defines the data model that all subsequent features (assertions, adapters, runners) will operate on.
 
 ## Functional Requirements
 
@@ -11,7 +11,7 @@ This track focuses on building the foundational data structures and the mock too
 - Configure `pyproject.toml` with package metadata, build configuration (using Hatch), and dev dependencies (`pytest`, `ruff`, `mypy`, `pre-commit`).
 - Set up a basic GitHub Actions workflow for linting, type checking, and testing.
 
-### 2. Core Data Models (`unitai.core`)
+### 2. Core Data Models (`trajai.core`)
 - **`Trajectory` & `TrajectoryStep`:**
     - Implement as Python `dataclasses` (no external dependencies).
     - `TrajectoryStep` types: `tool_call`, `llm_call`, `state_change`.
@@ -28,7 +28,7 @@ This track focuses on building the foundational data structures and the mock too
     - Exposes properties: `output`, `total_cost`, `duration`, `error`, `succeeded`, `failed`.
     - Assertion methods will be stubbed (raising `NotImplementedError`) in this phase.
 
-### 3. Mock Layer (`unitai.mock`)
+### 3. Mock Layer (`trajai.mock`)
 - **Response Strategies:**
     - `StaticStrategy`: Returns a fixed value.
     - `SequenceStrategy`: Returns values in order; raises `MockExhaustedError` with a diagnostic message upon depletion.

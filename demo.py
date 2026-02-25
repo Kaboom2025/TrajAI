@@ -1,5 +1,5 @@
 """
-UnitAI Phase 5 Demo — LangGraph Adapter
+TrajAI Phase 5 Demo — LangGraph Adapter
 ========================================
 Run with:  python demo.py
 """

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-UnitAI is an open-source testing framework for AI agents. It enables developers to write deterministic assertions about agent behavior by mocking tools, capturing execution trajectories, and supporting statistical pass/fail thresholds for handling LLM non-determinism.
+TrajAI is an open-source testing framework for AI agents. It enables developers to write deterministic assertions about agent behavior by mocking tools, capturing execution trajectories, and supporting statistical pass/fail thresholds for handling LLM non-determinism.
 
 **Core principle:** Agents run locally with real LLM calls but mocked tools. Tests assert on what the agent *did* (tool calls, order, arguments) not just what it *said*.
 
@@ -67,13 +67,13 @@ pip install -e ".[all]"
 
 ### Key Components
 
-#### `unitai/core/`
+#### `trajai/core/`
 - **`trajectory.py`**: Core data model. `Trajectory` contains ordered `TrajectoryStep` objects representing agent actions. Fully serializable to JSON.
 - **`result.py`**: `AgentRunResult` wraps a trajectory and provides both boolean API (`tool_was_called()`) and assert API (`assert_tool_was_called()`) for testing.
 - **`assertions.py`**: Pure functions that take a `Trajectory` and return `(bool, str)` tuples. All assertion logic lives here.
 - **`formatter.py`**: `TrajectoryFormatter` pretty-prints trajectories for failure messages.
 
-#### `unitai/mock/`
+#### `trajai/mock/`
 - **`toolkit.py`**: `MockToolkit` is the primary user-facing API. Registers mocks, executes agents, collects trajectories.
   - `mock(name, return_value=..., side_effect=..., sequence=..., conditional=...)` registers a tool
   - `run_generic(callable)` executes a generic agent (Phase 2)
@@ -81,7 +81,7 @@ pip install -e ".[all]"
   - `run(agent, input)` will auto-detect framework adapters (Phase 5+)
 - **`strategies.py`**: Response strategy implementations (`StaticStrategy`, `SequenceStrategy`, `ConditionalStrategy`, `ErrorStrategy`, `CallableStrategy`)
 
-#### `unitai/adapters/`
+#### `trajai/adapters/`
 - **`base.py`**: `BaseAdapter` abstract interface defining `can_handle()`, `inject_mocks()`, `execute()`, `extract_tools()`
 - **`generic.py`**: `GenericAdapter` for framework-agnostic agents. User manually wires mock tools.
 - Framework-specific adapters (LangGraph, CrewAI, OpenAI Agents, Semantic Kernel) planned for future phases.
@@ -106,7 +106,7 @@ pip install -e ".[all]"
 - ✅ Phase 2: Generic Adapter & Agent Execution
 - ✅ Phase 3: Assertion Library
 
-**Next Phases** (see `unitai-spec.md` Section 19 for full plan):
+**Next Phases** (see `trajai-spec.md` Section 19 for full plan):
 - Phase 4: Statistical Runner (handle non-determinism with N runs + pass rate threshold)
 - Phase 5: LangGraph Adapter (framework-specific tool injection + trajectory collection)
 - Phase 6: pytest Plugin (fixtures, markers, rich failure reporting)
@@ -135,7 +135,7 @@ All trajectory collection happens through adapters:
 3. Adapters aggregate all steps chronologically and create final `Trajectory` object
 
 ### Exception Handling
-- All UnitAI-specific exceptions inherit from `TrajAIMockError` (in `mock/toolkit.py`)
+- All TrajAI-specific exceptions inherit from `TrajAIMockError` (in `mock/toolkit.py`)
 - Assertion failures use `TrajAIAssertionError` (in `core/assertions.py`)
 - Original agent exceptions are preserved in `Trajectory.error` field
 - Timeout handling uses `asyncio.wait_for()` and returns partial trajectories
@@ -161,7 +161,7 @@ def test_agent_behavior():
 
 ## Development Workflow
 
-The project follows a **bottom-up, phase-by-phase** development approach. Each phase produces working, testable code before moving to the next. See `unitai-spec.md` Section 19 for the complete 13-phase development plan.
+The project follows a **bottom-up, phase-by-phase** development approach. Each phase produces working, testable code before moving to the next. See `trajai-spec.md` Section 19 for the complete 13-phase development plan.
 
 ### Conductor System
 The `conductor/` directory contains project planning and tracking:
@@ -182,13 +182,13 @@ The `conductor/` directory contains project planning and tracking:
 - **Python 3.12+** required (uses `tomllib`, modern type hints)
 - **Zero runtime dependencies** for core package (stdlib only)
 - **Framework adapters as extras**: `pip install trajai[langraph]`, etc.
-- **pytest integration**: UnitAI registers as a pytest plugin
+- **pytest integration**: TrajAI registers as a pytest plugin
 - **MIT License**
 - **No hosted service required**: Fully local, only needs user's own LLM API keys
 
 ## Key Files to Reference
 
-- `unitai-spec.md`: Complete technical specification (70+ pages)
+- `trajai-spec.md`: Complete technical specification (70+ pages)
 - `GEMINI.md`: Project context for Gemini (legacy, less comprehensive than this file)
 - `pyproject.toml`: Package metadata, build config, tool configuration
 - `conductor/workflow.md`: Detailed development workflow guidelines

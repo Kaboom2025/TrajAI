@@ -1,7 +1,7 @@
 # Specification: Statistical Runner
 
 ## Overview
-The Statistical Runner is the core execution layer of UnitAI designed to handle the inherent non-determinism of LLM-based agents. It allows developers to execute a test function multiple times and assert on a success threshold (pass rate), providing aggregated failure reports and cost-safety guards.
+The Statistical Runner is the core execution layer of TrajAI designed to handle the inherent non-determinism of LLM-based agents. It allows developers to execute a test function multiple times and assert on a success threshold (pass rate), providing aggregated failure reports and cost-safety guards.
 
 ## Functional Requirements
 

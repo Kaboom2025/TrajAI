@@ -1,6 +1,6 @@
 # Research Agent Example
 
-A research agent with multiple tools, tested with UnitAI including statistical testing for handling LLM non-determinism.
+A research agent with multiple tools, tested with TrajAI including statistical testing for handling LLM non-determinism.
 
 ## What This Shows
 

@@ -56,7 +56,7 @@ class TestWriteGithubStepSummary:
             path = f.name
         try:
             content = self._summary(path)
-            assert "## UnitAI Test Summary" in content
+            assert "## TrajAI Test Summary" in content
         finally:
             os.unlink(path)
 
@@ -144,7 +144,7 @@ class TestWriteGithubStepSummary:
             _write_github_step_summary(path, [], total_cost=0.0, total_tokens=0)
             content = Path(path).read_text()
             assert "# Existing content" in content
-            assert "## UnitAI Test Summary" in content
+            assert "## TrajAI Test Summary" in content
         finally:
             os.unlink(path)
 
@@ -166,23 +166,23 @@ class TestJUnitXMLFormat:
         xml_content = """\
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-  <testsuite name="unitai" tests="2" errors="0" failures="1" skipped="0">
+  <testsuite name="trajai" tests="2" errors="0" failures="1" skipped="0">
     <testcase classname="tests.test_foo" name="test_pass" time="1.23">
       <properties>
-        <property name="unitai_cost" value="$0.0023"/>
+        <property name="trajai_cost" value="$0.0023"/>
       </properties>
     </testcase>
     <testcase classname="tests.test_foo" name="test_fail" time="0.45">
       <failure message="AssertionError">tool not called</failure>
       <properties>
-        <property name="unitai_cost" value="$0.0010"/>
-        <property name="unitai_pass_rate" value="70.0%"/>
+        <property name="trajai_cost" value="$0.0010"/>
+        <property name="trajai_pass_rate" value="70.0%"/>
       </properties>
     </testcase>
   </testsuite>
 </testsuites>
 """
-        xml_path = tmp_path / "unitai.xml"
+        xml_path = tmp_path / "trajai.xml"
         xml_path.write_text(xml_content)
         return xml_path
 
@@ -198,16 +198,16 @@ class TestJUnitXMLFormat:
         testcases = list(tree.getroot().iter("testcase"))
         assert len(testcases) == 2
 
-    def test_xml_unitai_properties_readable(self, tmp_path: Path) -> None:
+    def test_xml_trajai_properties_readable(self, tmp_path: Path) -> None:
         xml_path = self._make_junit_xml(tmp_path)
         tree = ET.parse(str(xml_path))
         props: dict[str, str] = {}
         for prop in tree.getroot().iter("property"):
             name = prop.get("name", "")
-            if name.startswith("unitai_"):
+            if name.startswith("trajai_"):
                 props[name] = prop.get("value", "")
-        assert "unitai_cost" in props
-        assert "unitai_pass_rate" in props
+        assert "trajai_cost" in props
+        assert "trajai_pass_rate" in props
 
     def test_xml_display_results_parses_correctly(self, tmp_path: Path) -> None:
         """display_results should parse our JUnit XML without error."""

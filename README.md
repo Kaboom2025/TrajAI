@@ -1,13 +1,13 @@
-# UnitAI
+# TrajAI
 
 **The open-source testing framework for AI agents.**
 
-[![PyPI version](https://img.shields.io/pypi/v/unitai.svg)](https://pypi.org/project/unitai/)
+[![PyPI version](https://img.shields.io/pypi/v/trajai.svg)](https://pypi.org/project/trajai/)
 [![CI](https://github.com/saalik/trajai/actions/workflows/ci.yml/badge.svg)](https://github.com/saalik/trajai/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 
-UnitAI lets you write deterministic tests for non-deterministic AI agents. Mock tools, capture execution trajectories, and assert on what your agent *did* — not just what it said.
+TrajAI lets you write deterministic tests for non-deterministic AI agents. Mock tools, capture execution trajectories, and assert on what your agent *did* — not just what it said.
 
 ---
 
@@ -46,11 +46,11 @@ pytest test_agent.py -v
 
 ---
 
-## Why UnitAI?
+## Why TrajAI?
 
 Testing AI agents is hard. LLMs are non-deterministic, tool calls have side effects, and there's no standard way to assert on agent behavior. Teams end up with fragile integration tests that hit real APIs, cost money, and break randomly.
 
-UnitAI fixes this:
+TrajAI fixes this:
 
 - **Mock tools, not LLMs.** Your agent runs with real LLM calls but mocked tools. No side effects, deterministic tool responses.
 - **Assert on behavior.** Test *what* the agent did (which tools it called, in what order, with what arguments) — not just its final text output.

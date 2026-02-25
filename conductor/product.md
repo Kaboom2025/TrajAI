@@ -1,12 +1,12 @@
 # Initial Concept
 
-UnitAI — The open-source testing framework for AI agents. "Write tests for your agents like you write tests for your code."
-UnitAI is a Python testing framework that lets developers write deterministic assertions about AI agent behavior. It provides mock infrastructure for agent tools, captures the full trajectory of agent actions during a test run, and supports statistical pass/fail thresholds to handle LLM non-determinism.
+TrajAI — The open-source testing framework for AI agents. "Write tests for your agents like you write tests for your code."
+TrajAI is a Python testing framework that lets developers write deterministic assertions about AI agent behavior. It provides mock infrastructure for agent tools, captures the full trajectory of agent actions during a test run, and supports statistical pass/fail thresholds to handle LLM non-determinism.
 
 # Product Definition
 
 ## Vision & Goals
-UnitAI aims to bring the rigor of traditional software testing to the world of AI agents. By focusing on deterministic assertions of agent trajectories, it enables developers to move beyond "vibe checks" and build robust, reliable agentic systems.
+TrajAI aims to bring the rigor of traditional software testing to the world of AI agents. By focusing on deterministic assertions of agent trajectories, it enables developers to move beyond "vibe checks" and build robust, reliable agentic systems.
 
 **Primary Goals:**
 - **Deterministic Assertions:** Provide a robust API for asserting on tool calls, their order, and their arguments.

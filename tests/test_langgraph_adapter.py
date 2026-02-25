@@ -214,7 +214,7 @@ class TestExecuteTrajectory:
     def test_execute_captures_error(self) -> None:
         """Non-mock errors during execution should be stored in trajectory.error."""
 
-        # Make a model that raises a non-UnitAI error
+        # Make a model that raises a non-TrajAI error
         from langchain_core.language_models.chat_models import BaseChatModel
         from langchain_core.outputs import ChatResult
 

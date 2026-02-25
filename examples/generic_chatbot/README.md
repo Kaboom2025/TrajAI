@@ -1,6 +1,6 @@
 # Generic Chatbot Example
 
-A simple chatbot agent tested with UnitAI. Demonstrates basic mocking, assertions, and negative testing.
+A simple chatbot agent tested with TrajAI. Demonstrates basic mocking, assertions, and negative testing.
 
 ## What This Shows
 

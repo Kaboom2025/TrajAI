@@ -44,7 +44,7 @@ python tests/examples/scenario_2_two_tool_calls_sequence.py
 - Get a quick visual overview of all scenarios
 - See everything at once (takes ~3 min to run)
 - Share a demo with colleagues
-- Understand the breadth of UnitAI capabilities
+- Understand the breadth of TrajAI capabilities
 
 ### Use Individual Example Files if you want to:
 - Study one scenario deeply

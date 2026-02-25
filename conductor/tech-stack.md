@@ -1,6 +1,6 @@
 # Tech Stack
 
-This document outlines the core technologies and tools used to build and maintain the UnitAI framework.
+This document outlines the core technologies and tools used to build and maintain the TrajAI framework.
 
 ## 1. Core Language & Runtime
 *   **Language:** Python 3.12+
@@ -8,7 +8,7 @@ This document outlines the core technologies and tools used to build and maintai
 
 ## 2. Testing & Quality Assurance
 *   **Framework:** `pytest`
-*   **Rationale:** `pytest` offers a rich ecosystem of plugins and a simple, expressive syntax. UnitAI will leverage its plugin architecture to provide custom markers, fixtures, and failure reporting.
+*   **Rationale:** `pytest` offers a rich ecosystem of plugins and a simple, expressive syntax. TrajAI will leverage its plugin architecture to provide custom markers, fixtures, and failure reporting.
 *   **Linting:** `ruff`
 *   **Type Checking:** `mypy`
 

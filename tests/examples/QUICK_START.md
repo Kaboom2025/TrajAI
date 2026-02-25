@@ -1,6 +1,6 @@
-# UnitAI Examples — Quick Start
+# TrajAI Examples — Quick Start
 
-Welcome! This folder has 5 hands-on scenarios showing how to test AI agents with UnitAI.
+Welcome! This folder has 5 hands-on scenarios showing how to test AI agents with TrajAI.
 
 ## 🚀 Run All Examples
 

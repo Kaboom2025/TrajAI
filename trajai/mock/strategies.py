@@ -5,7 +5,7 @@ from typing import Any, Callable, Sequence
 
 
 class TrajAIMockError(Exception):
-    """Base class for errors in the UnitAI mock layer."""
+    """Base class for errors in the TrajAI mock layer."""
     pass
 
 class MockExhaustedError(TrajAIMockError):

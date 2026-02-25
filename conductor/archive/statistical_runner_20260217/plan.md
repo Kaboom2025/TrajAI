@@ -3,7 +3,7 @@
 ## Phase 1: StatisticalResult Data Model and Failure Mode Grouping
 - [x] Task: Define `StatisticalResult` and formatting logic
     - [x] Write tests for `StatisticalResult` summary formatting and failure mode grouping
-    - [x] Implement `StatisticalResult` dataclass in `unitai/runner/statistical.py`
+    - [x] Implement `StatisticalResult` dataclass in `trajai/runner/statistical.py`
     - [x] Implement `summary()` method with exact-match grouping for assertion errors
 - [x] Task: Conductor - User Manual Verification 'Phase 1: StatisticalResult Data Model' (Protocol in workflow.md) [checkpoint: Phase 1 Done]
 

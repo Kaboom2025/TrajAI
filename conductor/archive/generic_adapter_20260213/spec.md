@@ -1,12 +1,12 @@
 # Track Specification: Phase 2 - Generic Adapter & Agent Execution
 
 ## Overview
-This track implements the bridge between the UnitAI mock layer and actual agent code. It establishes the `BaseAdapter` interface and the `GenericAdapter`, allowing for the testing of framework-less agent code. Key features include automatic trajectory recording through tool-call aggregation, robust timeout handling via `asyncio`, and a strict mode to catch unmocked tool calls.
+This track implements the bridge between the TrajAI mock layer and actual agent code. It establishes the `BaseAdapter` interface and the `GenericAdapter`, allowing for the testing of framework-less agent code. Key features include automatic trajectory recording through tool-call aggregation, robust timeout handling via `asyncio`, and a strict mode to catch unmocked tool calls.
 
 ## Functional Requirements
 
 ### 1. Adapter Infrastructure
-- **`BaseAdapter` Interface:** Define the abstract base class in `unitai.adapters.base` with methods: `can_handle`, `inject_mocks`, `execute`, and `extract_tools`.
+- **`BaseAdapter` Interface:** Define the abstract base class in `trajai.adapters.base` with methods: `can_handle`, `inject_mocks`, `execute`, and `extract_tools`.
 - **`GenericAdapter` Implementation:** Implement the fallback adapter that handles arbitrary callables.
 
 ### 2. Trajectory Collection Mechanism

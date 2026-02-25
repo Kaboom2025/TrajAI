@@ -1,4 +1,4 @@
-"""Tests for the UnitAI pytest plugin (Phase 6).
+"""Tests for the TrajAI pytest plugin (Phase 6).
 
 Uses pytest's pytester fixture to run sub-processes and inspect results.
 """
@@ -24,7 +24,7 @@ def _write_conftest(pytester: pytest.Pytester) -> None:
         """
 # Plugin is loaded automatically via pytest11 entry point.
 # Explicitly import fixtures so they're available in this test directory.
-from trajai.pytest_plugin.fixtures import mock_toolkit, unitai_config  # noqa: F401
+from trajai.pytest_plugin.fixtures import mock_toolkit, trajai_config  # noqa: F401
 """
     )
 

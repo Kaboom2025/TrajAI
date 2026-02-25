@@ -23,7 +23,7 @@ class OpenAIAgentsAdapter(BaseAdapter):
 
     Supports any ``agents.Agent`` instance. Tool injection works by replacing
     ``FunctionTool`` objects in a shallow copy of the agent with wrapper tools
-    that call the UnitAI mocks. The original agent is never mutated.
+    that call the TrajAI mocks. The original agent is never mutated.
     """
 
     def __init__(self, toolkit: "MockToolkit") -> None:

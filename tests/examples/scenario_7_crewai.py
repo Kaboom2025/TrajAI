@@ -1,10 +1,10 @@
 """Scenario 7: CrewAI Integration
 
-This scenario demonstrates using UnitAI with CrewAI crews and agents.
+This scenario demonstrates using TrajAI with CrewAI crews and agents.
 
 Key concepts:
 - Auto-detection of CrewAI Crew and Agent objects
-- BaseTool replacement with UnitAI mocks
+- BaseTool replacement with TrajAI mocks
 - Testing multi-agent crews with shared tools
 - Crew.kickoff() result extraction
 
@@ -107,7 +107,7 @@ def create_research_crew(agent: CrewAgent, task_description: str) -> Crew:
 
 
 # ---------------------------------------------------------------------------
-# Step 3: Test with UnitAI
+# Step 3: Test with TrajAI
 # ---------------------------------------------------------------------------
 
 
@@ -122,7 +122,7 @@ def test_crewai_agent_company_lookup() -> None:
         return_value={"name": "Acme Corp", "industry": "Technology", "size": "Large"},
     )
 
-    # Run the agent (UnitAI auto-detects it's a CrewAI Agent)
+    # Run the agent (TrajAI auto-detects it's a CrewAI Agent)
     try:
         result = toolkit.run(agent, "Research Acme Corp")
 
@@ -218,9 +218,9 @@ if __name__ == "__main__":
 
     print("=" * 70)
     print("Key Takeaways:")
-    print("- UnitAI auto-detects CrewAI Crew and Agent objects")
+    print("- TrajAI auto-detects CrewAI Crew and Agent objects")
     print("- BaseTool instances are replaced with mocks (via model_copy)")
     print("- Both single agents and full crews can be tested")
-    print("- All standard UnitAI assertions work with CrewAI")
+    print("- All standard TrajAI assertions work with CrewAI")
     print("- Tool extraction works across multi-agent crews")
     print("=" * 70)

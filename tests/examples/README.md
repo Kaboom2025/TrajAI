@@ -1,6 +1,6 @@
-# UnitAI Examples
+# TrajAI Examples
 
-This folder contains practical scenarios demonstrating how to use UnitAI to test agent behavior. Each scenario is a self-contained example that you can run, study, and adapt to your own use cases.
+This folder contains practical scenarios demonstrating how to use TrajAI to test agent behavior. Each scenario is a self-contained example that you can run, study, and adapt to your own use cases.
 
 ## Scenarios
 
@@ -65,9 +65,9 @@ This folder contains practical scenarios demonstrating how to use UnitAI to test
 ---
 
 ### 5. `scenario_5_error_handling.py`
-**What it simulates:** Attempting to use UnitAI with an agent framework that isn't supported yet.
+**What it simulates:** Attempting to use TrajAI with an agent framework that isn't supported yet.
 
-**Use case:** Understanding how UnitAI handles unsupported agent types and what the error message looks like.
+**Use case:** Understanding how TrajAI handles unsupported agent types and what the error message looks like.
 
 **Key assertions demonstrated:**
 - Exception handling with `try/except`
@@ -80,7 +80,7 @@ This folder contains practical scenarios demonstrating how to use UnitAI to test
 ### 6. `scenario_6_openai_agents.py` (Phase 11)
 **What it simulates:** Testing agents built with the OpenAI Agents SDK.
 
-**Use case:** Integrating UnitAI with OpenAI's native agent framework for mocking FunctionTool calls.
+**Use case:** Integrating TrajAI with OpenAI's native agent framework for mocking FunctionTool calls.
 
 **Key assertions demonstrated:**
 - Auto-detection of `agents.Agent` objects
@@ -144,7 +144,7 @@ python -m pytest tests/examples/ -v
 
 ## Learning Path
 
-If you're new to UnitAI, we recommend studying the scenarios in this order:
+If you're new to TrajAI, we recommend studying the scenarios in this order:
 
 1. **Scenario 1** — Start here to understand basic mock setup and assertions
 2. **Scenario 2** — Learn multi-step workflows and ordering constraints
@@ -194,7 +194,7 @@ assert result.tool_call_count("lookup", 2)
 After working through these examples:
 - See `demo.py` for the full runnable version of all scenarios
 - Check `CLAUDE.md` for detailed API documentation
-- Read `unitai-spec.md` Section 8 for assertion library reference
+- Read `trajai-spec.md` Section 8 for assertion library reference
 - Explore `tests/` for unit tests of individual features
 
 ---

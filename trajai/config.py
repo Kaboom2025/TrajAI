@@ -54,13 +54,13 @@ class TrajAIConfig:
         
         # Try to load from pyproject.toml or trajai.toml
         cwd = Path.cwd()
-        unitai_toml = cwd / "trajai.toml"
+        trajai_toml = cwd / "trajai.toml"
         pyproject_toml = cwd / "pyproject.toml"
         
         # Load from trajai.toml first (if exists)
-        if unitai_toml.exists():
+        if trajai_toml.exists():
             try:
-                config._load_from_toml(unitai_toml)
+                config._load_from_toml(trajai_toml)
             except Exception:
                 pass  # Ignore parse errors, fall back to defaults
         
@@ -179,7 +179,7 @@ _config: Optional[TrajAIConfig] = None
 
 
 def get_config() -> TrajAIConfig:
-    """Get the global UnitAI configuration instance."""
+    """Get the global TrajAI configuration instance."""
     global _config
     if _config is None:
         _config = TrajAIConfig.load()

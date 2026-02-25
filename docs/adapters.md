@@ -1,6 +1,6 @@
 # Framework Adapters
 
-UnitAI supports multiple AI agent frameworks through adapters. Each adapter handles tool injection (replacing real tools with mocks) and trajectory collection (recording what the agent did).
+TrajAI supports multiple AI agent frameworks through adapters. Each adapter handles tool injection (replacing real tools with mocks) and trajectory collection (recording what the agent did).
 
 ---
 
@@ -115,7 +115,7 @@ graph.add_edge("tools", "agent")
 agent = graph.compile()
 ```
 
-Test it with `run()` — UnitAI auto-detects the framework:
+Test it with `run()` — TrajAI auto-detects the framework:
 
 ```python
 from trajai.mock import MockToolkit
@@ -133,7 +133,7 @@ def test_langgraph_refund():
 
 ### How It Works
 
-1. UnitAI finds all `ToolNode` instances in the graph.
+1. TrajAI finds all `ToolNode` instances in the graph.
 2. For each tool with a registered mock, the real `StructuredTool` is swapped with a mock wrapper.
 3. The agent runs normally with real LLM calls but mocked tool responses.
 4. After execution, original tools are restored (the original graph is never mutated).
@@ -196,7 +196,7 @@ def test_crewai_agent():
     assert result.tool_was_called("lookup_order")
 ```
 
-You can also pass a single `Agent` instead of a `Crew` — UnitAI wraps it in a minimal crew automatically.
+You can also pass a single `Agent` instead of a `Crew` — TrajAI wraps it in a minimal crew automatically.
 
 ### How It Works
 
@@ -256,7 +256,7 @@ def test_openai_agent():
 ### How It Works
 
 1. The agent is shallow-copied via `copy.copy()`.
-2. `FunctionTool` objects with matching mock names get async `on_invoke_tool` wrappers that delegate to UnitAI mocks.
+2. `FunctionTool` objects with matching mock names get async `on_invoke_tool` wrappers that delegate to TrajAI mocks.
 3. `Runner.run_sync()` executes the agent.
 4. LLM metadata (model, tokens) is extracted from `run_result.raw_responses`.
 
@@ -269,7 +269,7 @@ def test_openai_agent():
 
 ## Auto-Detection
 
-When you call `toolkit.run(agent, input)`, UnitAI checks adapters in this order:
+When you call `toolkit.run(agent, input)`, TrajAI checks adapters in this order:
 
 1. **LangGraph** — Is it a `CompiledStateGraph` or `StateGraph`?
 2. **OpenAI Agents** — Is it an `agents.Agent`?

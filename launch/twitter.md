@@ -24,7 +24,7 @@ You can't assert on that with traditional testing.
 
 ## Tweet 3 (Solution)
 
-UnitAI mocks the tools, not the LLM.
+TrajAI mocks the tools, not the LLM.
 
 Your agent runs with real LLM calls but deterministic tool responses.
 
@@ -53,7 +53,7 @@ What you get:
 
 LLMs are still non-deterministic.
 
-UnitAI handles this: run the test N times, assert on pass rate.
+TrajAI handles this: run the test N times, assert on pass rate.
 
 "This agent calls the right tools 90% of the time" is a valid test.
 
@@ -65,7 +65,7 @@ def test_agent():
 
 ## Tweet 6 (Status)
 
-UnitAI is:
+TrajAI is:
 • Open source (MIT)
 • Available on PyPI: `pip install trajai`
 • Production-ready

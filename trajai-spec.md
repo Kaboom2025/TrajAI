@@ -1,4 +1,4 @@
-# UnitAI — Technical Specification v0.1
+# TrajAI — Technical Specification v0.1
 
 > The open-source testing framework for AI agents.
 > "Write tests for your agents like you write tests for your code."
@@ -7,9 +7,9 @@
 
 ## 1. Overview
 
-### 1.1 What UnitAI Is
+### 1.1 What TrajAI Is
 
-UnitAI is a Python testing framework that lets developers write deterministic assertions about AI agent behavior. It provides mock infrastructure for agent tools, captures the full trajectory of agent actions during a test run, and supports statistical pass/fail thresholds to handle LLM non-determinism.
+TrajAI is a Python testing framework that lets developers write deterministic assertions about AI agent behavior. It provides mock infrastructure for agent tools, captures the full trajectory of agent actions during a test run, and supports statistical pass/fail thresholds to handle LLM non-determinism.
 
 ### 1.2 Core Principle
 
@@ -18,7 +18,7 @@ The agent runs locally in the developer's test process. Real tools are replaced 
 ### 1.3 What a Test Looks Like
 
 ```python
-from unitai import AgentTestCase, MockToolkit, assert_trajectory
+from trajai import AgentTestCase, MockToolkit, assert_trajectory
 
 def test_refund_requires_order_lookup():
     toolkit = MockToolkit()
@@ -42,7 +42,7 @@ def test_refund_requires_order_lookup():
 - Python 3.10+. No other language support in v0.1.
 - MIT license.
 - Zero required dependencies beyond the Python standard library for the core. Framework adapters (LangGraph, CrewAI, etc.) are optional extras.
-- Must work as a pytest plugin. Tests are discovered and run by pytest natively. `unitai` commands are thin wrappers around pytest.
+- Must work as a pytest plugin. Tests are discovered and run by pytest natively. `trajai` commands are thin wrappers around pytest.
 - Must not require any hosted service, account, or API key (beyond the user's own LLM key).
 - Must produce JUnit XML output for CI integration.
 
@@ -51,7 +51,7 @@ def test_refund_requires_order_lookup():
 ## 2. Package Structure
 
 ```
-unitai/
+trajai/
 ├── __init__.py              # Public API surface
 ├── core/
 │   ├── __init__.py
@@ -265,7 +265,7 @@ toolkit.mock("lookup_order", side_effect=smart_lookup)
 
 ### 4.4 Auto-Detection of Framework
 
-When `toolkit.run()` is called without an explicit adapter, UnitAI inspects the agent object to determine which framework it belongs to:
+When `toolkit.run()` is called without an explicit adapter, TrajAI inspects the agent object to determine which framework it belongs to:
 
 - If it's a `StateGraph` or `CompiledGraph` → LangGraph adapter
 - If it's a `Crew` or `Agent` from `crewai` → CrewAI adapter
@@ -345,7 +345,7 @@ for step in result.trajectory.steps:
 
 ### 5.6 Custom Assertions
 
-Users can write arbitrary Python assertions over the trajectory. UnitAI doesn't restrict them to built-in assertion methods — the trajectory data model is fully public.
+Users can write arbitrary Python assertions over the trajectory. TrajAI doesn't restrict them to built-in assertion methods — the trajectory data model is fully public.
 
 ---
 
@@ -419,7 +419,7 @@ my_custom_agent = MyAgent(tools=tools)
 result = toolkit.run_generic(lambda: my_custom_agent.execute("find restaurants"))
 ```
 
-The `run_generic` method accepts a callable that runs the agent. The toolkit records all mock invocations that occur during the callable's execution. The user is responsible for wiring the mocks into their agent — UnitAI just provides the mocks and records the trajectory.
+The `run_generic` method accepts a callable that runs the agent. The toolkit records all mock invocations that occur during the callable's execution. The user is responsible for wiring the mocks into their agent — TrajAI just provides the mocks and records the trajectory.
 
 ---
 
@@ -435,7 +435,7 @@ Two ways to use it:
 
 **Decorator:**
 ```python
-from unitai import statistical
+from trajai import statistical
 
 @statistical(n=10, threshold=0.95)
 def test_refund_flow(mock_toolkit):
@@ -447,7 +447,7 @@ def test_refund_flow(mock_toolkit):
 
 **Explicit:**
 ```python
-from unitai import StatisticalRunner
+from trajai import StatisticalRunner
 
 runner = StatisticalRunner(n=20, threshold=0.90)
 stats = runner.run(test_fn, mock_toolkit, agent, "refund order #123")
@@ -491,7 +491,7 @@ Before executing, the runner estimates total cost: `estimated_cost = n * estimat
 
 ### 8.1 Purpose
 
-For deterministic re-runs and cost savings, UnitAI can cache LLM responses. First run hits the real API. Subsequent runs replay cached responses.
+For deterministic re-runs and cost savings, TrajAI can cache LLM responses. First run hits the real API. Subsequent runs replay cached responses.
 
 ### 8.2 How It Works
 
@@ -531,8 +531,8 @@ ttl_hours = 168          # Cache entries expire after 7 days
 trajai test --record          # Force fresh API calls, save to cache
 trajai test --replay          # Use cache only, fail if cache misses
 trajai test --no-cache        # Ignore cache entirely (default)
-unitai cache clear             # Delete all cached responses
-unitai cache stats             # Show cache size, hit rate, estimated savings
+trajai cache clear             # Delete all cached responses
+trajai cache stats             # Show cache size, hit rate, estimated savings
 ```
 
 ---
@@ -541,7 +541,7 @@ unitai cache stats             # Show cache size, hit rate, estimated savings
 
 ### 9.1 Config File
 
-UnitAI reads from `pyproject.toml` under `[tool.trajai]` or from a standalone `trajai.toml` file.
+TrajAI reads from `pyproject.toml` under `[tool.trajai]` or from a standalone `trajai.toml` file.
 
 ```toml
 [tool.trajai]
@@ -617,11 +617,11 @@ trajai test --record
 trajai test --replay
 
 # Cache management
-unitai cache clear
-unitai cache stats
+trajai cache clear
+trajai cache stats
 
 # Show last run results
-unitai results
+trajai results
 
 # Init config file
 trajai init
@@ -629,10 +629,10 @@ trajai init
 
 ### 10.2 Implementation
 
-The CLI is a thin wrapper around pytest. `trajai test` translates to `pytest --unitai` with the appropriate flags. The UnitAI pytest plugin handles discovery, execution, and reporting.
+The CLI is a thin wrapper around pytest. `trajai test` translates to `pytest --trajai` with the appropriate flags. The TrajAI pytest plugin handles discovery, execution, and reporting.
 
 Under the hood:
-- `trajai test` → `pytest -x --tb=short -q --unitai` (plus any extra flags)
+- `trajai test` → `pytest -x --tb=short -q --trajai` (plus any extra flags)
 - `trajai test --n=20` → sets `TRAJAI_DEFAULT_N=20` env var, then runs pytest
 - JUnit XML output is always generated for CI consumption
 
@@ -642,7 +642,7 @@ Under the hood:
 
 ### 11.1 Registration
 
-UnitAI registers as a pytest plugin via the `pytest11` entry point in `pyproject.toml`. Tests are discovered normally by pytest — any file matching `test_*.py` that imports from `unitai` is a UnitAI test.
+TrajAI registers as a pytest plugin via the `pytest11` entry point in `pyproject.toml`. Tests are discovered normally by pytest — any file matching `test_*.py` that imports from `trajai` is a TrajAI test.
 
 ### 11.2 Fixtures
 
@@ -675,7 +675,7 @@ def test_needs_openai(mock_toolkit):
 
 ### 11.4 Failure Reporting
 
-When an assertion fails, UnitAI provides rich output:
+When an assertion fails, TrajAI provides rich output:
 
 ```
 FAILED test_refund.py::test_refund_requires_lookup
@@ -740,14 +740,14 @@ jobs:
 
 ### 12.2 PR Gating
 
-UnitAI produces JUnit XML natively. Any CI system that reads JUnit XML (GitHub Actions, GitLab CI, Jenkins, CircleCI) can gate PRs on UnitAI results with zero additional configuration.
+TrajAI produces JUnit XML natively. Any CI system that reads JUnit XML (GitHub Actions, GitLab CI, Jenkins, CircleCI) can gate PRs on TrajAI results with zero additional configuration.
 
 ### 12.3 Cost Reporting in CI
 
 The CLI outputs a cost summary at the end of each run:
 
 ```
-======================== UnitAI Results ========================
+======================== TrajAI Results ========================
 12 passed, 1 failed, 2 skipped in 34.2s
 Total cost: $0.47 | Total tokens: 52,340 | LLM calls: 38
 Budget remaining: $4.53 / $5.00
@@ -786,7 +786,7 @@ Subscribe to the graph's state channel. Diff state before/after each node to cap
 **Tool injection approach:**
 CrewAI tools implement `BaseTool` with a `_run` method. The adapter:
 1. Iterates over agents in the Crew and their `tools` lists.
-2. Creates `MockCrewAITool` instances that subclass `BaseTool` and route calls through UnitAI's mock layer.
+2. Creates `MockCrewAITool` instances that subclass `BaseTool` and route calls through TrajAI's mock layer.
 3. Replaces each agent's tools list with the mocked versions.
 
 **Trajectory extraction:**
@@ -799,7 +799,7 @@ CrewAI supports verbose output and callbacks. The adapter uses the task executio
 **Tool injection approach:**
 OpenAI Agents define tools as `FunctionTool` objects with a callable. The adapter:
 1. Iterates the agent's tools list.
-2. Creates replacement `FunctionTool` instances where the callable is routed through UnitAI's mock layer.
+2. Creates replacement `FunctionTool` instances where the callable is routed through TrajAI's mock layer.
 3. Preserves the tool's name, description, and parameter schema.
 
 **Trajectory extraction:**
@@ -812,7 +812,7 @@ Use the `Runner` with `run_sync()` or `Runner.run()`. The SDK emits `RunItem` ev
 **Tool injection approach:**
 SK uses plugins containing `KernelFunction` instances. The adapter:
 1. Lists all registered plugins and their functions.
-2. Creates mock `KernelFunction` instances that route through UnitAI's mock layer.
+2. Creates mock `KernelFunction` instances that route through TrajAI's mock layer.
 3. Registers mock functions under the same plugin/function names, overwriting originals.
 
 **Trajectory extraction:**
@@ -824,7 +824,7 @@ SK supports function invocation filters (`FunctionInvocationFilter`). The adapte
 
 ### 14.1 Agent Timeout
 
-If the agent exceeds the timeout (default 60s), UnitAI:
+If the agent exceeds the timeout (default 60s), TrajAI:
 1. Cancels the execution (via thread interrupt or asyncio cancellation).
 2. Records a partial trajectory up to the timeout point.
 3. Sets `result.error` to `AgentTimeoutError`.
@@ -832,18 +832,18 @@ If the agent exceeds the timeout (default 60s), UnitAI:
 
 ### 14.2 Agent Infinite Loop
 
-If the agent calls the same tool repeatedly (e.g., retrying endlessly), UnitAI detects this when a single tool is called more than `max_tool_calls` times (default: 50). Terminates the run with `AgentLoopDetectedError`.
+If the agent calls the same tool repeatedly (e.g., retrying endlessly), TrajAI detects this when a single tool is called more than `max_tool_calls` times (default: 50). Terminates the run with `AgentLoopDetectedError`.
 
 ### 14.3 LLM API Errors
 
-If the LLM API returns an error (rate limit, auth failure, server error), UnitAI:
+If the LLM API returns an error (rate limit, auth failure, server error), TrajAI:
 1. Does NOT retry (that's the agent's responsibility if it has retry logic).
 2. Records the error in the trajectory.
 3. Sets `result.error` to the original exception.
 
 ### 14.4 Async Agents
 
-Many frameworks support async execution. UnitAI's `toolkit.run()` detects if the agent's execution method is async and uses `asyncio.run()` or integrates with the existing event loop. The public API remains synchronous — tests are always sync functions that block until the agent completes.
+Many frameworks support async execution. TrajAI's `toolkit.run()` detects if the agent's execution method is async and uses `asyncio.run()` or integrates with the existing event loop. The public API remains synchronous — tests are always sync functions that block until the agent completes.
 
 ---
 
@@ -857,7 +857,7 @@ Testing agent-to-agent interactions. The Trajectory model supports this by addin
 ### 15.2 Snapshot Testing
 Record a "golden" trajectory and assert that future runs match it (with configurable tolerance). Useful for regression testing. Trajectories are already serializable — snapshot files would be JSON.
 
-### 15.3 UnitAI Cloud
+### 15.3 TrajAI Cloud
 Hosted service for: CI/CD integration without self-hosting, historical test results + regression dashboards, team collaboration, hosted LLM judge for semantic assertions ("assert output is helpful and polite"). The core framework MUST remain fully functional without the cloud service.
 
 ### 15.4 LLM-as-Judge Assertions
@@ -890,7 +890,7 @@ Generate test cases automatically from agent tool schemas. "Given these tools, g
 1. OpenAI Agents SDK adapter
 2. CrewAI adapter
 3. Record/replay cache
-4. `unitai results` command
+4. `trajai results` command
 
 ### Deferred to v0.2
 1. Semantic Kernel adapter
@@ -898,21 +898,21 @@ Generate test cases automatically from agent tool schemas. "Given these tools, g
 3. Snapshot testing
 4. LLM-as-judge assertions
 5. Scenario generation
-6. UnitAI Cloud
+6. TrajAI Cloud
 
 ---
 
 ## 17. Naming & Branding
 
-- **Package name:** `unitai`
-- **PyPI:** `unitai`
-- **GitHub:** `unitai-dev/unitai` (or `saalik/unitai` initially)
-- **CLI command:** `unitai`
-- **Import:** `from unitai import MockToolkit, statistical`
-- **pytest plugin name:** `unitai`
+- **Package name:** `trajai`
+- **PyPI:** `trajai`
+- **GitHub:** `trajai-dev/trajai` (or `saalik/trajai` initially)
+- **CLI command:** `trajai`
+- **Import:** `from trajai import MockToolkit, statistical`
+- **pytest plugin name:** `trajai`
 - **Config section:** `[tool.trajai]`
 - **Tagline:** "Write tests for your agents like you write tests for your code."
-- **Positioning line:** "Salus catches bad actions at runtime. UnitAI prevents them from ever reaching runtime."
+- **Positioning line:** "Salus catches bad actions at runtime. TrajAI prevents them from ever reaching runtime."
 
 ---
 
@@ -941,7 +941,7 @@ Build bottom-up. Each phase produces a working, testable artifact. No phase depe
 
 The dependency chain is: **Data Model → Mocks → Trajectory Collection → Assertions → Runner → Adapters → pytest Plugin → CLI → CI → Docs/Launch**.
 
-Every phase includes its own tests. UnitAI tests itself — the framework's own test suite is written with pytest and validates each component in isolation before integration.
+Every phase includes its own tests. TrajAI tests itself — the framework's own test suite is written with pytest and validates each component in isolation before integration.
 
 ---
 
@@ -1032,11 +1032,11 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - Calls OpenAI's API with tool definitions
    - Executes tool calls against the provided dict
    - Returns a final response
-   - This agent lives in `tests/fixtures/simple_agent.py` and is used throughout UnitAI's own test suite
+   - This agent lives in `tests/fixtures/simple_agent.py` and is used throughout TrajAI's own test suite
 
 5. **Token/cost tracking**
    - During execution, intercept or parse LLM responses for `usage.prompt_tokens`, `usage.completion_tokens`
-   - For the generic adapter: the user must pass token info manually, or UnitAI estimates from the mock tool call count (rough heuristic). Full tracking comes with framework adapters.
+   - For the generic adapter: the user must pass token info manually, or TrajAI estimates from the mock tool call count (rough heuristic). Full tracking comes with framework adapters.
    - Store in Trajectory's `total_tokens` and `total_cost` fields
    - Cost estimation: maintain a simple model→price lookup table (e.g., gpt-4o = $2.50/1M input, $10/1M output)
 
@@ -1272,19 +1272,19 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 ### Phase 6: pytest Plugin & Failure Reporting
 
-**Goal:** Make UnitAI a first-class pytest citizen. At the end of this phase, tests written with UnitAI are discovered, run, and reported by pytest with rich failure output. The statistical marker works. Fixtures are available.
+**Goal:** Make TrajAI a first-class pytest citizen. At the end of this phase, tests written with TrajAI are discovered, run, and reported by pytest with rich failure output. The statistical marker works. Fixtures are available.
 
 **Build order:**
 
 1. **`pytest_plugin/plugin.py`** — Plugin registration
    - Register via `pytest11` entry point in `pyproject.toml`
    - Register markers: `trajai_statistical`, `trajai_budget`, `trajai_skip_if_no_api_key`
-   - Hook into `pytest_collection_modifyitems` to detect UnitAI tests
+   - Hook into `pytest_collection_modifyitems` to detect TrajAI tests
    - Hook into `pytest_runtest_protocol` to wrap statistical tests
 
 2. **`pytest_plugin/fixtures.py`** — Fixtures
    - `mock_toolkit` fixture: creates fresh MockToolkit, yields it, calls reset after test
-   - `unitai_config` fixture: loads config from pyproject.toml / trajai.toml
+   - `trajai_config` fixture: loads config from pyproject.toml / trajai.toml
 
 3. **Statistical marker integration**
    - When a test has `@pytest.mark.trajai_statistical(n=10, threshold=0.95)`:
@@ -1301,26 +1301,26 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 6. **Rich failure output**
    - Hook into `pytest_assertion_rewrite` or `pytest_runtest_makereport`
-   - When a UnitAI assertion fails, inject the formatted trajectory, expected/actual values, and cost/duration into the failure report
+   - When a TrajAI assertion fails, inject the formatted trajectory, expected/actual values, and cost/duration into the failure report
    - For statistical failures, inject the summary (pass rate, failure modes)
 
 7. **JUnit XML enrichment**
-   - Attach UnitAI metadata (cost, tokens, duration, pass_rate) as properties on the JUnit XML test case elements
+   - Attach TrajAI metadata (cost, tokens, duration, pass_rate) as properties on the JUnit XML test case elements
    - Ensures CI dashboards can display agent-specific metrics
 
 **Tests for this phase:**
-- pytest discovers and runs a UnitAI test file correctly
+- pytest discovers and runs a TrajAI test file correctly
 - `mock_toolkit` fixture provides a fresh toolkit and resets after test
 - `trajai_statistical` marker runs test N times and reports pass rate
 - `trajai_budget` marker aborts on cost overrun
 - `trajai_skip_if_no_api_key` skips when key is absent
 - Failure output includes trajectory, expected/actual, and cost
-- JUnit XML output is valid XML and contains UnitAI properties
+- JUnit XML output is valid XML and contains TrajAI properties
 - Test these by running pytest programmatically via `pytest.main()` in the test suite and inspecting output
 
 **Success criteria:**
-- [ ] `pytest --co` discovers UnitAI test files and lists test functions
-- [ ] `pytest test_refund.py` runs UnitAI tests and reports results normally
+- [ ] `pytest --co` discovers TrajAI test files and lists test functions
+- [ ] `pytest test_refund.py` runs TrajAI tests and reports results normally
 - [ ] Statistical marker runs test N times and reports pass rate in output
 - [ ] Failure output shows the full trajectory, assertion details, and cost
 - [ ] JUnit XML contains valid test results parseable by CI tools
@@ -1333,7 +1333,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 ### Phase 7: CLI
 
-**Goal:** Implement the `unitai` command-line interface. At the end of this phase, developers run `trajai test` from their terminal and get formatted results with cost summaries.
+**Goal:** Implement the `trajai` command-line interface. At the end of this phase, developers run `trajai test` from their terminal and get formatted results with cost summaries.
 
 **Build order:**
 
@@ -1341,12 +1341,12 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - Subcommands: `test`, `init`, `cache`, `results`
 
 2. **`trajai test`**
-   - Translates to `pytest` invocation with UnitAI plugin flags
+   - Translates to `pytest` invocation with TrajAI plugin flags
    - Pass-through flags: `--n`, `--threshold`, `--model`, `--budget`, `--record`, `--replay`, `--no-cache`
    - Sets corresponding env vars (`TRAJAI_DEFAULT_N`, etc.) before invoking pytest
-   - Appends UnitAI summary block after pytest output:
+   - Appends TrajAI summary block after pytest output:
      ```
-     ======================== UnitAI Results ========================
+     ======================== TrajAI Results ========================
      12 passed, 1 failed, 2 skipped in 34.2s
      Total cost: $0.47 | Total tokens: 52,340 | LLM calls: 38
      Budget remaining: $4.53 / $5.00
@@ -1358,29 +1358,29 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - Creates `tests/test_agent_example.py` with a starter test template
    - Adds `.trajai/` to `.gitignore` if it exists
 
-4. **`unitai cache`**
-   - `unitai cache clear` — deletes `.trajai/cache/`
-   - `unitai cache stats` — reports cache size, entry count, estimated savings
+4. **`trajai cache`**
+   - `trajai cache clear` — deletes `.trajai/cache/`
+   - `trajai cache stats` — reports cache size, entry count, estimated savings
    - (Cache functionality itself is implemented in Phase 8; CLI commands are wired here, just report "cache not enabled" if Phase 8 isn't complete)
 
-5. **`unitai results`**
+5. **`trajai results`**
    - Reads the last JUnit XML output file
    - Pretty-prints results: pass/fail per test, cost per test, total cost, failure summaries
 
 6. **Entry point registration**
-   - `[project.scripts]` in `pyproject.toml`: `unitai = "unitai.cli.main:main"`
+   - `[project.scripts]` in `pyproject.toml`: `trajai = "trajai.cli.main:main"`
 
 **Tests for this phase:**
 - `trajai test` invokes pytest and returns correct exit code
 - `trajai init` creates config file and example test
-- `unitai results` parses JUnit XML and displays formatted output
+- `trajai results` parses JUnit XML and displays formatted output
 - CLI passes flags through to pytest correctly (verify via env var inspection)
-- Help text (`unitai --help`, `trajai test --help`) is accurate
+- Help text (`trajai --help`, `trajai test --help`) is accurate
 
 **Success criteria:**
-- [ ] `trajai test` runs the test suite and prints UnitAI summary
+- [ ] `trajai test` runs the test suite and prints TrajAI summary
 - [ ] `trajai init` scaffolds a working config and example test in a fresh directory
-- [ ] `unitai results` displays last run in readable format
+- [ ] `trajai results` displays last run in readable format
 - [ ] All CLI flags (`--n`, `--threshold`, `--model`, `--budget`) work correctly
 - [ ] Exit codes are correct: 0 for all pass, 1 for any failure
 - [ ] 8+ new tests (cumulative: 97+)
@@ -1417,7 +1417,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 5. **TTL and invalidation**
    - Each cache entry has a timestamp. Entries older than `ttl_hours` are ignored (treated as miss).
-   - `unitai cache clear` deletes all entries.
+   - `trajai cache clear` deletes all entries.
 
 6. **CLI integration**
    - `--record`: force fresh API calls, save all responses to cache
@@ -1439,7 +1439,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 - [ ] Second run with `--replay` makes zero API calls, returns identical trajectory
 - [ ] Cache key correctly changes when prompt, model, or tools change
 - [ ] TTL expiration works
-- [ ] `unitai cache stats` reports accurate cache size and hit count
+- [ ] `trajai cache stats` reports accurate cache size and hit count
 - [ ] 10+ new tests (cumulative: 107+)
 
 **Estimated effort:** 2-3 days
@@ -1487,12 +1487,12 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 ### Phase 10: CI Integration & GitHub Action
 
-**Goal:** Ship a ready-to-use GitHub Action and CI documentation. At the end of this phase, a team can add UnitAI to their CI pipeline with a copy-paste YAML block.
+**Goal:** Ship a ready-to-use GitHub Action and CI documentation. At the end of this phase, a team can add TrajAI to their CI pipeline with a copy-paste YAML block.
 
 **Build order:**
 
 1. **`ci/github_action/action.yml`** — GitHub Action definition
-   - Composite action that: installs Python, installs unitai, runs `trajai test`
+   - Composite action that: installs Python, installs trajai, runs `trajai test`
    - Inputs: python-version, budget, model-override, extra-args
    - Outputs: pass-count, fail-count, total-cost
    - Uploads JUnit XML as artifact
@@ -1515,7 +1515,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 - Cost summary format is correct
 
 **Success criteria:**
-- [ ] A test repo using the GitHub Action runs UnitAI tests and reports results
+- [ ] A test repo using the GitHub Action runs TrajAI tests and reports results
 - [ ] JUnit XML artifact is uploaded and visible in GitHub Actions UI
 - [ ] Cost summary appears in the GitHub Actions job summary
 - [ ] CI docs cover GitHub Actions, GitLab CI, and CircleCI
@@ -1560,14 +1560,14 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 ### Phase 12: Documentation & Examples
 
-**Goal:** Write all documentation needed for launch. At the end of this phase, a developer encountering UnitAI for the first time can go from zero to running tests in 5 minutes.
+**Goal:** Write all documentation needed for launch. At the end of this phase, a developer encountering TrajAI for the first time can go from zero to running tests in 5 minutes.
 
 **Build order:**
 
 1. **README.md**
    - Hero section: one-sentence description + tagline
    - 30-second install + run example (copy-pasteable, works out of the box)
-   - Why UnitAI exists (the problem, positioned against Salus/Sentrial)
+   - Why TrajAI exists (the problem, positioned against Salus/Sentrial)
    - Core concepts: MockToolkit, Trajectory, Assertions, Statistical Runner
    - Quick links to full docs
    - Badges: PyPI version, tests passing, license
@@ -1600,7 +1600,7 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
    - Each example is self-contained with its own README, agent code, and test file
 
 **Success criteria:**
-- [ ] A developer unfamiliar with UnitAI can follow the README and run a test in under 5 minutes (validated by having 2-3 people try it)
+- [ ] A developer unfamiliar with TrajAI can follow the README and run a test in under 5 minutes (validated by having 2-3 people try it)
 - [ ] All assertion methods are documented with examples
 - [ ] All three example suites run successfully
 - [ ] Docs are free of broken links and outdated API references
@@ -1612,14 +1612,14 @@ Every phase includes its own tests. UnitAI tests itself — the framework's own 
 
 ### Phase 13: Launch Preparation
 
-**Goal:** Package, publish, and prepare all launch materials. At the end of this phase, UnitAI is live on PyPI and ready for public announcement.
+**Goal:** Package, publish, and prepare all launch materials. At the end of this phase, TrajAI is live on PyPI and ready for public announcement.
 
 **Build order:**
 
 1. **Package publishing**
    - Finalize `pyproject.toml` metadata (description, classifiers, URLs, license)
    - Test build: `python -m build` → verify wheel and sdist
-   - Publish to TestPyPI first, verify install works: `pip install -i https://test.pypi.org/simple/ unitai`
+   - Publish to TestPyPI first, verify install works: `pip install -i https://test.pypi.org/simple/ trajai`
    - Publish to PyPI: `pip install trajai`
 
 2. **GitHub repo polish**

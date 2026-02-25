@@ -1,4 +1,4 @@
-# r/LangChain Post: UnitAI — Testing Framework for AI Agents
+# r/LangChain Post: TrajAI — Testing Framework for AI Agents
 
 **Title:** I built a testing framework for LangGraph/LangChain agents (mocks tools, not LLMs)
 
@@ -8,11 +8,11 @@ Hey r/LangChain,
 
 I've been working with LangGraph for a while and kept running into the same problem: testing agents is really hard. You either write integration tests that hit real APIs (slow, expensive, flaky) or you just... ship and hope.
 
-So I built **UnitAI** — a testing framework specifically for AI agents.
+So I built **TrajAI** — a testing framework specifically for AI agents.
 
 ## The Core Idea
 
-Instead of mocking LLM responses (which breaks every time you change a prompt), UnitAI mocks the *tools*. Your agent runs with real LLM calls but deterministic tool responses.
+Instead of mocking LLM responses (which breaks every time you change a prompt), TrajAI mocks the *tools*. Your agent runs with real LLM calls but deterministic tool responses.
 
 ```python
 from trajai.mock import MockToolkit
@@ -38,11 +38,11 @@ When you test an agent, you don't really care about the exact text it produces. 
 - With the right arguments?
 - Did it skip tools when it should?
 
-UnitAI captures all of that in a `Trajectory` object and gives you assertion methods to check everything.
+TrajAI captures all of that in a `Trajectory` object and gives you assertion methods to check everything.
 
 ## LangGraph Support
 
-For LangGraph, UnitAI automatically:
+For LangGraph, TrajAI automatically:
 
 1. Finds all `ToolNode` instances in your graph
 2. Replaces tools with mock wrappers
@@ -53,7 +53,7 @@ Just call `toolkit.run(compiled_graph, input)` and it works.
 
 ## Handling Non-Determinism
 
-LLMs are non-deterministic. Sometimes your agent calls tools in a slightly different order. UnitAI handles this with statistical testing:
+LLMs are non-deterministic. Sometimes your agent calls tools in a slightly different order. TrajAI handles this with statistical testing:
 
 ```python
 @statistical(n=10, threshold=0.9)

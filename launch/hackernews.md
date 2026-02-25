@@ -1,12 +1,12 @@
-# Show HN: UnitAI — Testing Framework for AI Agents
+# Show HN: TrajAI — Testing Framework for AI Agents
 
 Hi HN,
 
-I've been building AI agents and kept running into the same problem: there's no good way to test them. You either write integration tests that hit real APIs (slow, expensive, non-deterministic) or you just... don't test them at all. So I built UnitAI.
+I've been building AI agents and kept running into the same problem: there's no good way to test them. You either write integration tests that hit real APIs (slow, expensive, non-deterministic) or you just... don't test them at all. So I built TrajAI.
 
 **What is it?**
 
-UnitAI is a testing framework for AI agents. Mock tools, capture execution trajectories, and assert on what your agent *did* — not just what it said.
+TrajAI is a testing framework for AI agents. Mock tools, capture execution trajectories, and assert on what your agent *did* — not just what it said.
 
 ```python
 from trajai.mock import MockToolkit
@@ -27,11 +27,11 @@ def test_refund_flow():
 
 At first I tried mocking LLM responses. It broke constantly — prompt changes, model updates, temperature variations all caused failures. The real behavior you care about is: did the agent call the right tools in the right order with the right arguments?
 
-So UnitAI mocks the tools, not the LLM. Your agent runs with real LLM calls but deterministic tool responses. No side effects, fast tests, and you're asserting on actual behavior.
+So TrajAI mocks the tools, not the LLM. Your agent runs with real LLM calls but deterministic tool responses. No side effects, fast tests, and you're asserting on actual behavior.
 
 **Handling non-determinism:**
 
-Even with mocked tools, LLMs are still non-deterministic. UnitAI includes a statistical test runner: run the test N times, assert on pass rate. "This agent calls the right tools 90% of the time" is a valid, useful test.
+Even with mocked tools, LLMs are still non-deterministic. TrajAI includes a statistical test runner: run the test N times, assert on pass rate. "This agent calls the right tools 90% of the time" is a valid, useful test.
 
 ```python
 @statistical(n=10, threshold=0.9)

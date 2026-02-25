@@ -72,13 +72,13 @@ def test_runner_with_mock_toolkit_cost():
     
     assert result.total_cost == 0.20
 
-def test_runner_unitaiassertionerror_captured():
+def test_runner_trajaiassertionerror_captured():
     """Test that TrajAIAssertionError is also captured as a failure."""
     def test_fn():
-        raise TrajAIAssertionError("UnitAI specific failure")
+        raise TrajAIAssertionError("TrajAI specific failure")
         
     runner = StatisticalRunner(n=3)
     result = runner.run(test_fn)
     
     assert result.failed_runs == 3
-    assert "UnitAI specific failure" in list(result.failure_modes.keys())[0]
+    assert "TrajAI specific failure" in list(result.failure_modes.keys())[0]

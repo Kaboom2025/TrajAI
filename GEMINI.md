@@ -1,11 +1,11 @@
-# UnitAI - Project Context
+# TrajAI - Project Context
 
 ## Project Overview
-UnitAI is a Python-based testing framework for AI agents. It allows developers to write deterministic assertions about agent behavior by mocking tools, capturing the full trajectory of agent actions, and supporting statistical pass/fail thresholds to handle LLM non-determinism.
+TrajAI is a Python-based testing framework for AI agents. It allows developers to write deterministic assertions about agent behavior by mocking tools, capturing the full trajectory of agent actions, and supporting statistical pass/fail thresholds to handle LLM non-determinism.
 
 ### Key Technologies
 - **Language:** Python 3.10+
-- **Testing Framework:** pytest (UnitAI acts as a pytest plugin)
+- **Testing Framework:** pytest (TrajAI acts as a pytest plugin)
 - **Supported Agent Frameworks (Planned):** LangGraph, CrewAI, OpenAI Agents SDK, Semantic Kernel.
 - **Architecture:**
   - `core/`: Trajectory data models and assertion logic.
@@ -13,7 +13,7 @@ UnitAI is a Python-based testing framework for AI agents. It allows developers t
   - `runner/`: Statistical runner for non-deterministic tests and record/replay caching.
   - `adapters/`: Framework-specific logic for injecting mocks and extracting trajectories.
   - `pytest_plugin/`: Integration with pytest via fixtures and markers.
-  - `cli/`: Command-line interface (`unitai` command).
+  - `cli/`: Command-line interface (`trajai` command).
 
 ## Building and Running
 
@@ -29,7 +29,7 @@ pip install trajai[all]
 ```
 
 ### Running Tests
-UnitAI tests are typically run via the `unitai` CLI, which wraps `pytest`.
+TrajAI tests are typically run via the `trajai` CLI, which wraps `pytest`.
 ```bash
 # Run all tests
 trajai test

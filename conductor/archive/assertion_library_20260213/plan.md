@@ -2,9 +2,9 @@
 
 This plan covers the implementation of the assertion engine, the trajectory formatter, and the integration of both boolean and raising assertion APIs on `AgentRunResult`.
 
-## Phase 1: Pure Assertion Functions (`unitai.core.assertions`)
+## Phase 1: Pure Assertion Functions (`trajai.core.assertions`)
 - [x] **Task: Implement Tool Call Assertions** b648280
-    - [ ] Create `unitai/core/assertions.py`.
+    - [ ] Create `trajai/core/assertions.py`.
     - [ ] Implement `tool_was_called`, `tool_not_called`, `tool_call_count`.
     - [ ] Implement `tool_called_with` (exact) and `tool_called_with_partial` (subset).
     - [ ] Implement `tool_called_before` and `tool_called_immediately_before` (ignoring non-tool steps).
@@ -17,7 +17,7 @@ This plan covers the implementation of the assertion engine, the trajectory form
 
 ## Phase 2: Trajectory Formatter & Rich Messages
 - [x] **Task: Implement TrajectoryFormatter** 2a0d175
-    - [ ] Create `unitai/core/formatter.py`.
+    - [ ] Create `trajai/core/formatter.py`.
     - [ ] Implement basic formatting: numbered steps, typed markers, truncated values.
     - [ ] Implement diagnostic highlighting with arrows (`←`) and annotations.
     - [ ] Implement smart truncation logic for trajectories >20 steps.
@@ -25,7 +25,7 @@ This plan covers the implementation of the assertion engine, the trajectory form
 
 ## Phase 3: AgentRunResult Integration & Final Verification
 - [x] **Task: Wire APIs to AgentRunResult** 7af1575
-    - [ ] Update `unitai/core/result.py`.
+    - [ ] Update `trajai/core/result.py`.
     - [ ] Implement the Boolean API (delegating to `assertions.py`).
     - [ ] Implement the Assert API (`assert_*` methods raising `TrajAIAssertionError`).
     - [ ] Implement `get_calls` and `get_call` (with descriptive `IndexError`).

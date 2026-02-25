@@ -159,7 +159,7 @@ def pytest_runtest_makereport(
     if call.when != "call":
         return
 
-    # Add UnitAI metadata footer on failures
+    # Add TrajAI metadata footer on failures
     if report.failed:
         parts: List[str] = []
 
@@ -175,27 +175,27 @@ def pytest_runtest_makereport(
             parts.append(f"pass_rate={pass_rate * 100:.1f}%")
 
         if parts:
-            report.sections.append(("UnitAI Metadata", " | ".join(parts)))
+            report.sections.append(("TrajAI Metadata", " | ".join(parts)))
 
 
 def pytest_runtest_logreport(report: pytest.TestReport) -> None:
-    """Add UnitAI properties to report.user_properties for JUnit XML output."""
+    """Add TrajAI properties to report.user_properties for JUnit XML output."""
     if report.when != "call":
         return
 
     for section_name, content in report.sections:
-        if section_name == "UnitAI Metadata":
+        if section_name == "TrajAI Metadata":
             for part in content.split(" | "):
                 if "=" in part:
                     key, _, val = part.partition("=")
-                    report.user_properties.append((f"unitai_{key}", val))
+                    report.user_properties.append((f"trajai_{key}", val))
 
 
 @pytest.hookimpl
 def pytest_terminal_summary(
     terminalreporter: Any, exitstatus: int, config: pytest.Config
 ) -> None:
-    """Print aggregate UnitAI summary and write GitHub Actions step summary."""
+    """Print aggregate TrajAI summary and write GitHub Actions step summary."""
     import os
 
     total_cost = 0.0
@@ -212,19 +212,19 @@ def pytest_terminal_summary(
         cost_str = ""
         pass_rate_str = ""
         for key, value in report.user_properties:
-            if key == "unitai_cost":
+            if key == "trajai_cost":
                 try:
                     cost_val = float(str(value).lstrip("$"))
                     total_cost += cost_val
                     cost_str = f"${cost_val:.4f}"
                 except (ValueError, AttributeError):
                     pass
-            elif key == "unitai_tokens":
+            elif key == "trajai_tokens":
                 try:
                     total_tokens += int(value)
                 except (ValueError, TypeError):
                     pass
-            elif key == "unitai_pass_rate":
+            elif key == "trajai_pass_rate":
                 pass_rate_str = str(value)
 
         passed_reports = terminalreporter.stats.get("passed", [])
@@ -232,7 +232,7 @@ def pytest_terminal_summary(
         test_rows.append((report.nodeid, status, cost_str, pass_rate_str))
 
     if total_cost > 0 or total_tokens > 0:
-        terminalreporter.write_sep("=", "UnitAI Summary")
+        terminalreporter.write_sep("=", "TrajAI Summary")
         terminalreporter.write_line(f"  Total cost:   ${total_cost:.4f}")
         if total_tokens:
             terminalreporter.write_line(f"  Total tokens: {total_tokens}")
@@ -254,7 +254,7 @@ def _write_github_step_summary(
     """Write a Markdown cost summary to the GitHub Actions step summary file."""
     try:
         lines: List[str] = []
-        lines.append("## UnitAI Test Summary\n")
+        lines.append("## TrajAI Test Summary\n")
 
         if test_rows:
             lines.append("| Test | Status | Cost | Pass Rate |")

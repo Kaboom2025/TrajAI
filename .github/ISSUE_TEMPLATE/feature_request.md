@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest a new feature or enhancement for UnitAI
+about: Suggest a new feature or enhancement for TrajAI
 title: "[FEATURE] "
 labels: enhancement
 assignees: ''

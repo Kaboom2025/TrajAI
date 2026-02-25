@@ -4,7 +4,7 @@ Get from zero to running AI agent tests in 5 minutes.
 
 ---
 
-## 1. Install UnitAI
+## 1. Install TrajAI
 
 ```bash
 pip install trajai
@@ -92,7 +92,7 @@ test_agent.py::test_no_refund_for_undelivered_order PASSED
 
 ## 5. Understanding the Output
 
-When a test fails, UnitAI prints the full trajectory so you can see exactly what happened:
+When a test fails, TrajAI prints the full trajectory so you can see exactly what happened:
 
 ```python
 def test_wrong_order():
@@ -134,7 +134,7 @@ print(result.llm_calls)     # Number of LLM API calls
 
 ## 7. Add to CI
 
-UnitAI tests are standard pytest tests. Add them to your CI pipeline like any other test:
+TrajAI tests are standard pytest tests. Add them to your CI pipeline like any other test:
 
 ```yaml
 # .github/workflows/test.yml

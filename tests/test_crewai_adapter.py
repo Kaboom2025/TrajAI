@@ -216,7 +216,7 @@ class TestExecute:
 
         mock_output = _make_crew_output("Task is done.")
 
-        with patch("unitai.adapters.crewai.Crew") as mock_crew:
+        with patch("trajai.adapters.crewai.Crew") as mock_crew:
             mock_crew.return_value.kickoff.return_value = mock_output
             traj = adapter.execute(wrapped, "do task", timeout=30.0)
 
@@ -242,7 +242,7 @@ class TestExecute:
         adapter = CrewAIAdapter(toolkit)
         wrapped = adapter.inject_mocks(agent, toolkit)
 
-        with patch("unitai.adapters.crewai.Crew") as mock_crew:
+        with patch("trajai.adapters.crewai.Crew") as mock_crew:
             mock_crew.return_value.kickoff.side_effect = RuntimeError("crew exploded")
             traj = adapter.execute(wrapped, "do task", timeout=30.0)
 
@@ -255,7 +255,7 @@ class TestExecute:
         adapter = CrewAIAdapter(toolkit)
         wrapped = adapter.inject_mocks(agent, toolkit)
 
-        with patch("unitai.adapters.crewai.Crew") as mock_crew:
+        with patch("trajai.adapters.crewai.Crew") as mock_crew:
             mock_crew.return_value.kickoff.side_effect = TrajAIMockError("intentional")
             with pytest.raises(TrajAIMockError):
                 adapter.execute(wrapped, "do task", timeout=30.0)
@@ -279,7 +279,7 @@ class TestExecute:
             injected_tool._run(order_id="1")
             return mock_output
 
-        with patch("unitai.adapters.crewai.Crew") as mock_crew:
+        with patch("trajai.adapters.crewai.Crew") as mock_crew:
             mock_crew.return_value.kickoff.side_effect = fake_kickoff
             traj = adapter.execute(wrapped, "find order", timeout=30.0)
 
@@ -313,7 +313,7 @@ class TestToolkitRun:
 
         mock_output = _make_crew_output("Agent done.")
 
-        with patch("unitai.adapters.crewai.Crew") as mock_crew:
+        with patch("trajai.adapters.crewai.Crew") as mock_crew:
             mock_crew.return_value.kickoff.return_value = mock_output
             result = toolkit.run(agent, "do something")
 
@@ -332,7 +332,7 @@ class TestToolkitRun:
             mock_tool.invoke({"order_id": "5"})
             return mock_output
 
-        with patch("unitai.adapters.crewai.Crew") as mock_crew:
+        with patch("trajai.adapters.crewai.Crew") as mock_crew:
             mock_crew.return_value.kickoff.side_effect = fake_kickoff
             result = toolkit.run(agent, "find order 5")
 

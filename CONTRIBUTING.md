@@ -1,6 +1,6 @@
-# Contributing to UnitAI
+# Contributing to TrajAI
 
-Thanks for your interest in contributing to UnitAI! This guide covers how to set up development, run tests, and submit changes.
+Thanks for your interest in contributing to TrajAI! This guide covers how to set up development, run tests, and submit changes.
 
 ---
 
@@ -10,7 +10,7 @@ Thanks for your interest in contributing to UnitAI! This guide covers how to set
 
 ```bash
 git clone https://github.com/saalik/trajai.git
-cd unitai
+cd trajai
 ```
 
 2. Create a virtual environment:
@@ -81,7 +81,7 @@ mypy .
 
 ## Adding a New Assertion
 
-1. Add a pure function to `unitai/core/assertions.py`:
+1. Add a pure function to `trajai/core/assertions.py`:
 
 ```python
 def my_assertion(trajectory: Trajectory, ...) -> tuple[bool, str]:
@@ -89,7 +89,7 @@ def my_assertion(trajectory: Trajectory, ...) -> tuple[bool, str]:
     ...
 ```
 
-2. Add a boolean method to `AgentRunResult` in `unitai/core/result.py`:
+2. Add a boolean method to `AgentRunResult` in `trajai/core/result.py`:
 
 ```python
 def my_assertion(self, ...) -> bool:
@@ -111,9 +111,9 @@ def assert_my_assertion(self, ...) -> None:
 
 ## Adding a New Adapter
 
-1. Create a new file in `unitai/adapters/` (e.g., `my_framework.py`).
+1. Create a new file in `trajai/adapters/` (e.g., `my_framework.py`).
 2. Subclass `BaseAdapter` and implement `can_handle()`, `inject_mocks()`, `execute()`, and `extract_tools()`.
-3. Add a conditional import in `unitai/adapters/__init__.py`.
+3. Add a conditional import in `trajai/adapters/__init__.py`.
 4. Add the framework as an optional dependency in `pyproject.toml`.
 5. Add tests in `tests/` and a fixture agent in `tests/fixtures/`.
 6. Document the adapter in `docs/adapters.md`.
@@ -136,7 +136,7 @@ def assert_my_assertion(self, ...) -> None:
 Use the [bug report template](https://github.com/saalik/trajai/issues/new?template=bug_report.md) on GitHub. Include:
 
 - Python version and OS
-- UnitAI version (`pip show trajai`)
+- TrajAI version (`pip show trajai`)
 - Minimal reproduction steps
 - Expected vs actual behavior
 

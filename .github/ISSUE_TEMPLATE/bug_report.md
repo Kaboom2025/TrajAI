@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug or unexpected behavior in UnitAI
+about: Report a bug or unexpected behavior in TrajAI
 title: "[BUG] "
 labels: bug
 assignees: ''
@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 
 Steps to reproduce the behavior:
 
-1. Install UnitAI version `...`
+1. Install TrajAI version `...`
 2. Create an agent with `...`
 3. Run test with `...`
 4. See error
@@ -49,7 +49,7 @@ def test_bug():
 
 ## Environment
 
-- **UnitAI version:** [e.g., 0.1.0] (run `pip show trajai`)
+- **TrajAI version:** [e.g., 0.1.0] (run `pip show trajai`)
 - **Python version:** [e.g., 3.12.0] (run `python --version`)
 - **Operating system:** [e.g., macOS 14.0, Ubuntu 22.04, Windows 11]
 - **Framework:** [e.g., LangGraph, CrewAI, generic] and version if applicable

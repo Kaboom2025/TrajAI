@@ -18,6 +18,6 @@ def mock_toolkit() -> MockToolkit:  # type: ignore[misc]
 
 
 @pytest.fixture
-def unitai_config(request: pytest.FixtureRequest) -> TrajAIConfig:
+def trajai_config(request: pytest.FixtureRequest) -> TrajAIConfig:
     """Returns the TrajAIConfig loaded during pytest_configure."""
     return request.config.stash[_TRAJAI_CONFIG_KEY]

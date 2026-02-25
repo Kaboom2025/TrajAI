@@ -1,6 +1,6 @@
 """Scenario 8: Statistical Testing with Pass Rate Thresholds
 
-This scenario demonstrates UnitAI's statistical testing feature for handling
+This scenario demonstrates TrajAI's statistical testing feature for handling
 non-deterministic LLM behavior.
 
 Key concepts:
@@ -158,7 +158,7 @@ def show_ci_integration() -> None:
     print()
     print("In your .github/workflows/test.yml:")
     print()
-    print("  - name: Run UnitAI tests")
+    print("  - name: Run TrajAI tests")
     print("    run: trajai test --n 10 --threshold 0.9 --budget 5.00")
     print()
     print("This will:")

@@ -317,7 +317,7 @@ if result.error:
 
 ## Metadata Assertions (Pure Functions)
 
-These are available as pure functions in `unitai.core.assertions` but are not exposed as methods on `AgentRunResult`. Use them directly with the trajectory:
+These are available as pure functions in `trajai.core.assertions` but are not exposed as methods on `AgentRunResult`. Use them directly with the trajectory:
 
 ```python
 from trajai.core.assertions import cost_under, tokens_under, duration_under, llm_calls_under

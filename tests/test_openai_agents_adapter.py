@@ -174,7 +174,7 @@ class TestExecute:
 
         mock_result = _make_run_result(final_output="Order 42 delivered.")
 
-        with patch("unitai.adapters.openai_agents.Runner") as mock_runner:
+        with patch("trajai.adapters.openai_agents.Runner") as mock_runner:
             mock_runner.run_sync.return_value = mock_result
             traj = adapter.execute(wrapped, "check order 42", timeout=30.0)
 
@@ -193,7 +193,7 @@ class TestExecute:
             prompt_tokens=50, completion_tokens=25, model="gpt-4o-mini"
         )
 
-        with patch("unitai.adapters.openai_agents.Runner") as mock_runner:
+        with patch("trajai.adapters.openai_agents.Runner") as mock_runner:
             mock_runner.run_sync.return_value = mock_result
             traj = adapter.execute(wrapped, "say hello", timeout=30.0)
 
@@ -212,7 +212,7 @@ class TestExecute:
 
         mock_result = _make_run_result(final_output="Here is your answer.")
 
-        with patch("unitai.adapters.openai_agents.Runner") as mock_runner:
+        with patch("trajai.adapters.openai_agents.Runner") as mock_runner:
             mock_runner.run_sync.return_value = mock_result
             traj = adapter.execute(wrapped, "hi", timeout=30.0)
 
@@ -224,7 +224,7 @@ class TestExecute:
         adapter = OpenAIAgentsAdapter(toolkit)
         wrapped = adapter.inject_mocks(agent, toolkit)
 
-        with patch("unitai.adapters.openai_agents.Runner") as mock_runner:
+        with patch("trajai.adapters.openai_agents.Runner") as mock_runner:
             mock_runner.run_sync.side_effect = RuntimeError("agent exploded")
             traj = adapter.execute(wrapped, "do something", timeout=30.0)
 
@@ -237,7 +237,7 @@ class TestExecute:
         adapter = OpenAIAgentsAdapter(toolkit)
         wrapped = adapter.inject_mocks(agent, toolkit)
 
-        with patch("unitai.adapters.openai_agents.Runner") as mock_runner:
+        with patch("trajai.adapters.openai_agents.Runner") as mock_runner:
             mock_runner.run_sync.side_effect = TrajAIMockError("intentional mock error")
             with pytest.raises(TrajAIMockError):
                 adapter.execute(wrapped, "check", timeout=30.0)
@@ -254,7 +254,7 @@ class TestToolkitRun:
         toolkit = MockToolkit()
 
         mock_result = _make_run_result(final_output="Hello from mock!")
-        with patch("unitai.adapters.openai_agents.Runner") as mock_runner:
+        with patch("trajai.adapters.openai_agents.Runner") as mock_runner:
             mock_runner.run_sync.return_value = mock_result
             result = toolkit.run(agent, "say hello")
 
@@ -275,7 +275,7 @@ class TestToolkitRun:
 
         mock_result = _make_run_result(final_output="Order found.")
 
-        with patch("unitai.adapters.openai_agents.Runner") as mock_runner:
+        with patch("trajai.adapters.openai_agents.Runner") as mock_runner:
             # Simulate actual tool invocation by calling the mock during run
             def fake_run_sync(a: Any, inp: Any, **kw: Any) -> Any:
                 import asyncio

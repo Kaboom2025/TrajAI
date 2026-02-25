@@ -1,17 +1,17 @@
 # Implementation Plan: Phase 1 - Core Data Model & Mock Primitives
 
-This plan covers the initial scaffolding of the UnitAI project and the implementation of its core data structures and mocking layer.
+This plan covers the initial scaffolding of the TrajAI project and the implementation of its core data structures and mocking layer.
 
 ## Phase 1: Project Scaffolding [checkpoint: fa617b2]
 - [x] **Task: Initialize Directory Structure** ecd84df
-    - [ ] Create all package directories: `unitai`, `unitai/core`, `unitai/mock`, `unitai/runner`, `unitai/adapters`, `unitai/pytest_plugin`, `unitai/cli`, `unitai/ci`, `unitai/config`.
+    - [ ] Create all package directories: `trajai`, `trajai/core`, `trajai/mock`, `trajai/runner`, `trajai/adapters`, `trajai/pytest_plugin`, `trajai/cli`, `trajai/ci`, `trajai/config`.
     - [ ] Create `__init__.py` files in each directory.
 - [x] **Task: Project Configuration** 89ecf78
     - [ ] Create `pyproject.toml` with build system (Hatch), project metadata, and dependencies (core: none, dev: pytest, ruff, mypy, pre-commit).
     - [ ] Set up `.gitignore` and `.github/workflows/ci.yml`.
 - [x] **Task: Conductor - User Manual Verification 'Project Scaffolding' (Protocol in workflow.md)**
 
-## Phase 2: Core Data Models (`unitai.core`) [checkpoint: 641181f]
+## Phase 2: Core Data Models (`trajai.core`) [checkpoint: 641181f]
 - [x] **Task: Implement Trajectory & TrajectoryStep Dataclasses** e9be248
     - [ ] Define `TrajectoryStep` with `step_type` validation in `__post_init__`.
     - [ ] Define `Trajectory` to hold steps and metadata.
@@ -24,7 +24,7 @@ This plan covers the initial scaffolding of the UnitAI project and the implement
     - [ ] Run `mypy --strict` and `ruff check`.
 - [x] **Task: Conductor - User Manual Verification 'Core Data Models' (Protocol in workflow.md)**
 
-## Phase 3: Mock Layer Implementation (`unitai.mock`) [checkpoint: 6eb3e73]
+## Phase 3: Mock Layer Implementation (`trajai.mock`) [checkpoint: 6eb3e73]
 - [x] **Task: Implement Response Strategies** 7f41652
     - [ ] Create `strategies.py` with `StaticStrategy`, `SequenceStrategy`, `ConditionalStrategy`, `ErrorStrategy`, and `CallableStrategy`.
     - [ ] Implement custom error types: `MockExhaustedError`, `NoMatchingConditionError`.

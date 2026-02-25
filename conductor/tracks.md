@@ -19,5 +19,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [x] **Track: Implement the statistical test execution layer (Phase 4 of UnitAI core).**
+- [x] **Track: Implement the statistical test execution layer (Phase 4 of TrajAI core).**
 *Link: [./archive/statistical_runner_20260217/](./archive/statistical_runner_20260217/)*

@@ -1,11 +1,11 @@
 # Track Specification: Phase 3 - Assertion Library
 
 ## Overview
-This track implements the comprehensive assertion engine for UnitAI. It provides developers with an expressive, deterministic API to verify agent trajectories. The library uses a dual-API design: boolean methods for logic/composition and `assert_*` methods for rich, descriptive failure reporting. All assertion logic is decoupled into pure functions for reuse and testability.
+This track implements the comprehensive assertion engine for TrajAI. It provides developers with an expressive, deterministic API to verify agent trajectories. The library uses a dual-API design: boolean methods for logic/composition and `assert_*` methods for rich, descriptive failure reporting. All assertion logic is decoupled into pure functions for reuse and testability.
 
 ## Functional Requirements
 
-### 1. Pure Assertion Logic (`unitai.core.assertions`)
+### 1. Pure Assertion Logic (`trajai.core.assertions`)
 - Implement all assertion logic as pure functions that take a `Trajectory` and return a `tuple[bool, str]`, where the string is a descriptive failure message.
 - **Tool Call Assertions:**
     - `tool_was_called(name)`

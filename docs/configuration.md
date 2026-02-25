@@ -1,6 +1,6 @@
 # Configuration Reference
 
-UnitAI is configured through TOML files and/or environment variables. No configuration is required to get started — all settings have sensible defaults.
+TrajAI is configured through TOML files and/or environment variables. No configuration is required to get started — all settings have sensible defaults.
 
 ---
 

@@ -1,6 +1,6 @@
 # Refund Agent Example
 
-A multi-step refund workflow agent tested with UnitAI. Demonstrates ordering constraints, argument validation, sequence mocks, and error handling.
+A multi-step refund workflow agent tested with TrajAI. Demonstrates ordering constraints, argument validation, sequence mocks, and error handling.
 
 ## What This Shows
 

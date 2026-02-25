@@ -62,7 +62,7 @@ You care about *behavior*, not text output.
 
 ## The Solution: Mock Tools, Not LLMs
 
-This is what UnitAI does differently. Instead of mocking the LLM (fragile) or hitting real APIs (slow, expensive), you mock the *tools*.
+This is what TrajAI does differently. Instead of mocking the LLM (fragile) or hitting real APIs (slow, expensive), you mock the *tools*.
 
 ```python
 from trajai.mock import MockToolkit
@@ -109,7 +109,7 @@ You see exactly what happened, step by step.
 
 "But the LLM is still non-deterministic! Sometimes it calls tools in a different order."
 
-True. And UnitAI handles this with statistical testing:
+True. And TrajAI handles this with statistical testing:
 
 ```python
 from trajai.runner import statistical
@@ -128,18 +128,18 @@ This runs the test 10 times. If 9 out of 10 runs pass, the test passes. You're a
 
 ## Framework Support
 
-UnitAI works with any agent framework:
+TrajAI works with any agent framework:
 
 - **LangGraph** — auto-detects `CompiledStateGraph`, replaces tools in `ToolNode`
 - **CrewAI** — auto-detects `Crew` and `Agent`, replaces `BaseTool` instances
 - **OpenAI Agents SDK** — auto-detects `agents.Agent`, replaces `FunctionTool` objects
 - **Generic** — any Python callable that takes `(input, tools)`
 
-For framework-specific agents, tool injection is automatic. Just call `toolkit.run(agent, input)` and UnitAI figures out the rest.
+For framework-specific agents, tool injection is automatic. Just call `toolkit.run(agent, input)` and TrajAI figures out the rest.
 
 ## How We Test AI Agents at [Your Company]
 
-Since adopting UnitAI, our agent test suite:
+Since adopting TrajAI, our agent test suite:
 
 - Runs in **under 30 seconds** (down from 15 minutes)
 - Costs **$0.02 per run** (down from $5-10)
@@ -150,7 +150,7 @@ We have 50+ agent tests covering refund flows, order lookup, support escalation,
 
 ## Try It
 
-UnitAI is open source (MIT license) and available on PyPI:
+TrajAI is open source (MIT license) and available on PyPI:
 
 ```bash
 pip install trajai

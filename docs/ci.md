@@ -1,17 +1,17 @@
 # CI Integration Guide
 
-UnitAI integrates with any CI system that can run pytest and process JUnit XML reports.
+TrajAI integrates with any CI system that can run pytest and process JUnit XML reports.
 
 ---
 
 ## GitHub Actions (Recommended)
 
-Use the official UnitAI composite action for zero-config setup.
+Use the official TrajAI composite action for zero-config setup.
 
 ### Quick Start
 
 ```yaml
-# .github/workflows/unitai.yml
+# .github/workflows/trajai.yml
 name: Agent Tests
 
 on:
@@ -29,8 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run UnitAI Tests
-        uses: unitai/trajai-action@v1   # or path: ./ci/github_action
+      - name: Run TrajAI Tests
+        uses: trajai/trajai-action@v1   # or path: ./ci/github_action
         with:
           python-version: "3.12"
           junit-xml: test-results/trajai.xml
@@ -39,8 +39,8 @@ jobs:
 ### With LangGraph and Budget Control
 
 ```yaml
-      - name: Run UnitAI Tests
-        uses: unitai/trajai-action@v1
+      - name: Run TrajAI Tests
+        uses: trajai/trajai-action@v1
         with:
           python-version: "3.12"
           install-extras: "langgraph"
@@ -52,22 +52,22 @@ jobs:
 ### Using Action Outputs
 
 ```yaml
-      - name: Run UnitAI Tests
-        id: unitai
-        uses: unitai/trajai-action@v1
+      - name: Run TrajAI Tests
+        id: trajai
+        uses: trajai/trajai-action@v1
         with:
           python-version: "3.12"
 
       - name: Report results
         run: |
-          echo "Passed: ${{ steps.unitai.outputs.pass-count }}"
-          echo "Failed: ${{ steps.unitai.outputs.fail-count }}"
-          echo "Cost:   \$${{ steps.unitai.outputs.total-cost }}"
+          echo "Passed: ${{ steps.trajai.outputs.pass-count }}"
+          echo "Failed: ${{ steps.trajai.outputs.fail-count }}"
+          echo "Cost:   \$${{ steps.trajai.outputs.total-cost }}"
 ```
 
 ### GitHub Actions Step Summary
 
-When running in GitHub Actions, UnitAI automatically writes a Markdown cost summary
+When running in GitHub Actions, TrajAI automatically writes a Markdown cost summary
 to the job summary (visible in the **Summary** tab of each workflow run):
 
 | Test | Status | Cost | Pass Rate |
@@ -114,7 +114,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unitai-test-results
+          name: trajai-test-results
           path: test-results/trajai.xml
 ```
 
@@ -184,7 +184,7 @@ jobs:
       - checkout
 
       - run:
-          name: Install UnitAI
+          name: Install TrajAI
           command: |
             pip install trajai[langgraph]
             pip install -r requirements.txt
@@ -200,7 +200,7 @@ jobs:
 
       - store_artifacts:
           path: test-results
-          destination: unitai-results
+          destination: trajai-results
 
 workflows:
   main:
@@ -227,7 +227,7 @@ trajai test --xml test-results/trajai.xml
 # The exit code is non-zero if tests fail — standard CI behavior
 ```
 
-UnitAI tests are standard pytest tests. Any CI integration that:
+TrajAI tests are standard pytest tests. Any CI integration that:
 1. Runs `pytest` or `trajai test`
 2. Reads JUnit XML (optional, for rich reporting)
 

@@ -1,4 +1,4 @@
-"""UnitAI CLI — `unitai` command entrypoint."""
+"""TrajAI CLI — `trajai` command entrypoint."""
 from __future__ import annotations
 
 import argparse
@@ -9,7 +9,7 @@ from typing import List, Optional
 
 
 def _cmd_test(args: argparse.Namespace) -> int:
-    """Run tests via pytest with UnitAI integration."""
+    """Run tests via pytest with TrajAI integration."""
     import pytest  # type: ignore[import]
     
     from trajai.config import get_config
@@ -97,7 +97,7 @@ def _cmd_init(args: argparse.Namespace) -> int:
         content = gitignore_path.read_text()
         if ".trajai/" not in content:
             with open(gitignore_path, "a") as f:
-                f.write("\n# UnitAI cache and artifacts\n.trajai/\n")
+                f.write("\n# TrajAI cache and artifacts\n.trajai/\n")
             print(f"  Updated: {gitignore_path} (added .trajai/)")
         else:
             print(f"  Skipped (already present): .trajai/ in {gitignore_path}")
@@ -132,11 +132,11 @@ def _cmd_cache(args: argparse.Namespace) -> int:
     subcommand: str = args.cache_cmd or "stats"
     if subcommand == "clear":
         cache.clear()
-        print("[UnitAI] Cache cleared.")
+        print("[TrajAI] Cache cleared.")
         return 0
     elif subcommand == "stats":
         stats = cache.stats()
-        print(f"[UnitAI] Cache Statistics:")
+        print(f"[TrajAI] Cache Statistics:")
         print(f"  Entries: {stats.entry_count}")
         print(f"  Size: {stats.total_size_bytes / 1024:.2f} KB")
         print(f"  Hits: {stats.hit_count}")
@@ -145,19 +145,19 @@ def _cmd_cache(args: argparse.Namespace) -> int:
             print(f"  Hit Rate: {stats.hit_rate * 100:.1f}%")
         return 0
     else:
-        print(f"[UnitAI] Unknown cache subcommand: {subcommand}")
+        print(f"[TrajAI] Unknown cache subcommand: {subcommand}")
         return 1
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="unitai",
-        description="UnitAI — testing framework for AI agents.",
+        prog="trajai",
+        description="TrajAI — testing framework for AI agents.",
     )
     subparsers = parser.add_subparsers(dest="command")
 
     # --- test ---
-    test_parser = subparsers.add_parser("test", help="Run UnitAI tests.")
+    test_parser = subparsers.add_parser("test", help="Run TrajAI tests.")
     test_parser.add_argument(
         "path",
         nargs="?",

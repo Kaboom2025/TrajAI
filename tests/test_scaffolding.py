@@ -3,15 +3,14 @@ import os
 
 def test_directory_structure() -> None:
     expected_dirs = [
-        "unitai",
-        "unitai/core",
-        "unitai/mock",
-        "unitai/runner",
-        "unitai/adapters",
-        "unitai/pytest_plugin",
-        "unitai/cli",
-        "unitai/ci",
-        "unitai/config",
+        "trajai",
+        "trajai/core",
+        "trajai/mock",
+        "trajai/runner",
+        "trajai/adapters",
+        "trajai/pytest_plugin",
+        "trajai/cli",
+        "trajai/ci",
     ]
 
     for d in expected_dirs:

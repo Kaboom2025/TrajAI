@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from trajai.core.trajectory import Trajectory
 
 class TrajAIAssertionError(AssertionError):
-    """Raised when a UnitAI assertion fails."""
+    """Raised when a TrajAI assertion fails."""
     pass
 
 # --- Tool Call Assertions ---
