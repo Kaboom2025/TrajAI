@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 if TYPE_CHECKING:
     from trajai.core.trajectory import Trajectory
@@ -22,22 +22,22 @@ class BaseAdapter(ABC):
 
     @abstractmethod
     def execute(
-        self, 
-        wrapped_agent: Any, 
-        input: str, 
+        self,
+        wrapped_agent: Any,
+        input: str,
         timeout: float,
         cache: Optional[Any] = None,  # ReplayCache instance
         cache_mode: str = "auto",  # "auto", "record", "replay", "no-cache"
     ) -> Trajectory:
         """Execute the agent and return the collected trajectory.
-        
+
         Args:
             wrapped_agent: The agent with mocks injected.
             input: User input string.
             timeout: Maximum execution time in seconds.
             cache: Optional ReplayCache instance for LLM response caching.
-            cache_mode: Cache mode - "auto" (use cache if enabled), 
-                       "record" (force fresh calls and cache), 
+            cache_mode: Cache mode - "auto" (use cache if enabled),
+                       "record" (force fresh calls and cache),
                        "replay" (use cache only, fail on miss),
                        "no-cache" (ignore cache).
         """

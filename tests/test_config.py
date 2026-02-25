@@ -5,15 +5,13 @@ import os
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from trajai.config import TrajAIConfig, get_config, reload_config
 
 
 def test_config_defaults() -> None:
     """Test that config has sensible defaults."""
     config = TrajAIConfig()
-    
+
     assert config.default_n == 10
     assert config.default_threshold == 0.95
     assert config.max_workers == 5
@@ -27,7 +25,7 @@ def test_config_env_override() -> None:
     os.environ["TRAJAI_DEFAULT_N"] = "20"
     os.environ["TRAJAI_DEFAULT_THRESHOLD"] = "0.90"
     os.environ["TRAJAI_STRICT_MOCKS"] = "false"
-    
+
     try:
         config = reload_config()
         assert config.default_n == 20
@@ -51,13 +49,13 @@ default_threshold = 0.85
 strict_mocks = false
 cache_enabled = true
 """)
-        
+
         # Change to tmpdir to load config
         old_cwd = os.getcwd()
         try:
             os.chdir(tmpdir)
             config = reload_config()
-            
+
             assert config.default_n == 15
             assert config.default_threshold == 0.85
             assert config.strict_mocks is False
@@ -79,12 +77,12 @@ name = "test"
 default_n = 25
 cost_budget_per_test = 2.50
 """)
-        
+
         old_cwd = os.getcwd()
         try:
             os.chdir(tmpdir)
             config = reload_config()
-            
+
             assert config.default_n == 25
             assert config.cost_budget_per_test == 2.50
         finally:
@@ -100,14 +98,14 @@ def test_config_env_overrides_file() -> None:
 [tool.trajai]
 default_n = 10
 """)
-        
+
         os.environ["TRAJAI_DEFAULT_N"] = "30"
-        
+
         old_cwd = os.getcwd()
         try:
             os.chdir(tmpdir)
             config = reload_config()
-            
+
             # Env var should override file
             assert config.default_n == 30
         finally:
@@ -128,7 +126,7 @@ def test_config_bool_parsing() -> None:
         ("0", False),
         ("no", False),
     ]
-    
+
     for value, expected in test_cases:
         os.environ["TRAJAI_STRICT_MOCKS"] = value
         try:
@@ -143,14 +141,14 @@ def test_config_get_config_singleton() -> None:
     """Test that get_config returns a singleton."""
     config1 = get_config()
     config2 = get_config()
-    
+
     assert config1 is config2
 
 
 def test_config_model_override_alias() -> None:
     """Test that TRAJAI_MODEL is an alias for TRAJAI_MODEL_OVERRIDE."""
     os.environ["TRAJAI_MODEL"] = "gpt-4o-mini"
-    
+
     try:
         config = reload_config()
         assert config.model_override == "gpt-4o-mini"

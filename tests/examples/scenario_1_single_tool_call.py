@@ -20,16 +20,18 @@ Real-world example:
 """
 
 import warnings
+
 warnings.filterwarnings("ignore")
 
-from langchain_core.messages import AIMessage
-from trajai.mock.toolkit import MockToolkit
-from tests.fixtures.langgraph_agent import (
+from langchain_core.messages import AIMessage  # noqa: E402
+
+from tests.fixtures.langgraph_agent import (  # noqa: E402
     FakeToolCallingModel,
     build_react_agent,
     get_tool_definitions,
     make_tool_call_message,
 )
+from trajai.mock.toolkit import MockToolkit  # noqa: E402
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -134,9 +136,9 @@ print(f"    Error:      {lookup_call.error}")
 # Summary
 # ─────────────────────────────────────────────────────────────────────────────
 print(f"\n{BOLD}{GREEN}✓ Scenario 1 complete!{RESET}")
-print(f"  This example showed how to:")
-print(f"    1. Create a simple mock tool with return_value")
-print(f"    2. Use tool_was_called() and tool_not_called() assertions")
-print(f"    3. Access result metadata (output, llm_calls, total_tokens)")
-print(f"    4. Inspect the trajectory for detailed execution info")
+print("  This example showed how to:")
+print("    1. Create a simple mock tool with return_value")
+print("    2. Use tool_was_called() and tool_not_called() assertions")
+print("    3. Access result metadata (output, llm_calls, total_tokens)")
+print("    4. Inspect the trajectory for detailed execution info")
 print()

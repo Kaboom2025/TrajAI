@@ -6,7 +6,7 @@ with environment variable overrides.
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
@@ -14,36 +14,36 @@ from typing import Optional
 @dataclass
 class TrajAIConfig:
     """TrajAI configuration settings."""
-    
+
     # Statistical runner defaults
     default_n: int = 10
     default_threshold: float = 0.95
     max_workers: int = 5
-    
+
     # Cost controls
     cost_budget_per_test: float = 1.00
     cost_budget_per_suite: float = 10.00
     model_override: str = ""
-    
+
     # Mock behavior
     strict_mocks: bool = True
-    
+
     # Cache settings
     cache_enabled: bool = False
     cache_directory: str = ".trajai/cache"
     cache_ttl_hours: float = 168.0  # 7 days
-    
+
     # Output
     junit_xml: str = "test-results/trajai.xml"
     verbose: bool = False
-    
+
     # Adapter (for future use)
     adapter: str = ""
-    
+
     @classmethod
     def load(cls) -> TrajAIConfig:
         """Load configuration from files and environment variables.
-        
+
         Priority order (highest to lowest):
         1. Environment variables (TRAJAI_*)
         2. trajai.toml
@@ -51,31 +51,31 @@ class TrajAIConfig:
         4. Defaults
         """
         config = cls()
-        
+
         # Try to load from pyproject.toml or trajai.toml
         cwd = Path.cwd()
         trajai_toml = cwd / "trajai.toml"
         pyproject_toml = cwd / "pyproject.toml"
-        
+
         # Load from trajai.toml first (if exists)
         if trajai_toml.exists():
             try:
                 config._load_from_toml(trajai_toml)
             except Exception:
                 pass  # Ignore parse errors, fall back to defaults
-        
+
         # Load from pyproject.toml [tool.trajai] section (if exists)
         if pyproject_toml.exists():
             try:
                 config._load_from_pyproject_toml(pyproject_toml)
             except Exception:
                 pass  # Ignore parse errors
-        
+
         # Apply environment variable overrides
         config._apply_env_overrides()
-        
+
         return config
-    
+
     def _load_from_toml(self, toml_path: Path) -> None:
         """Load configuration from a TOML file."""
         try:
@@ -86,16 +86,16 @@ class TrajAIConfig:
             except ImportError:
                 # No TOML parser available - skip file loading
                 return
-        
+
         with open(toml_path, "rb") as f:
             data = tomllib.load(f)
-        
+
         trajai_section = data.get("tool", {}).get("trajai", {})
         if not trajai_section and "trajai" in data:
             trajai_section = data["trajai"]
-        
+
         self._apply_dict(trajai_section)
-    
+
     def _load_from_pyproject_toml(self, pyproject_path: Path) -> None:
         """Load configuration from pyproject.toml [tool.trajai] section."""
         try:
@@ -106,13 +106,13 @@ class TrajAIConfig:
             except ImportError:
                 # No TOML parser available - skip file loading
                 return
-        
+
         with open(pyproject_path, "rb") as f:
             data = tomllib.load(f)
-        
+
         trajai_section = data.get("tool", {}).get("trajai", {})
         self._apply_dict(trajai_section)
-    
+
     def _apply_dict(self, data: dict) -> None:
         """Apply configuration from a dictionary."""
         if "default_n" in data:
@@ -141,7 +141,7 @@ class TrajAIConfig:
             self.verbose = bool(data["verbose"])
         if "adapter" in data:
             self.adapter = str(data["adapter"])
-    
+
     def _apply_env_overrides(self) -> None:
         """Apply environment variable overrides."""
         env_map = {
@@ -152,15 +152,19 @@ class TrajAIConfig:
             "TRAJAI_COST_BUDGET_PER_SUITE": ("cost_budget_per_suite", float),
             "TRAJAI_MODEL_OVERRIDE": ("model_override", str),
             "TRAJAI_MODEL": ("model_override", str),  # Alias
-            "TRAJAI_STRICT_MOCKS": ("strict_mocks", lambda x: x.lower() in ("true", "1", "yes")),
-            "TRAJAI_CACHE_ENABLED": ("cache_enabled", lambda x: x.lower() in ("true", "1", "yes")),
+            "TRAJAI_STRICT_MOCKS": (
+                "strict_mocks", lambda x: x.lower() in ("true", "1", "yes")
+            ),
+            "TRAJAI_CACHE_ENABLED": (
+                "cache_enabled", lambda x: x.lower() in ("true", "1", "yes")
+            ),
             "TRAJAI_CACHE_DIRECTORY": ("cache_directory", str),
             "TRAJAI_CACHE_TTL_HOURS": ("cache_ttl_hours", float),
             "TRAJAI_JUNIT_XML": ("junit_xml", str),
             "TRAJAI_VERBOSE": ("verbose", lambda x: x.lower() in ("true", "1", "yes")),
             "TRAJAI_ADAPTER": ("adapter", str),
         }
-        
+
         for env_var, (attr_name, converter) in env_map.items():
             value = os.environ.get(env_var)
             if value is not None:

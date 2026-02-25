@@ -21,10 +21,8 @@ pytest.importorskip("langgraph")
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
+    from langchain_core.messages import AIMessage
     from langgraph.graph import StateGraph
-    from langchain_core.messages import AIMessage, HumanMessage
-
-from trajai.adapters.langgraph import LangGraphAdapter
 
 from tests.fixtures.langgraph_agent import (
     FakeToolCallingModel,
@@ -32,10 +30,8 @@ from tests.fixtures.langgraph_agent import (
     get_tool_definitions,
     lookup_order,
     make_tool_call_message,
-    process_refund,
-    get_weather,
 )
-
+from trajai.adapters.langgraph import LangGraphAdapter
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -110,8 +106,8 @@ class TestInjectMocks:
         adapter = LangGraphAdapter(toolkit)
         compiled, saved = adapter.inject_mocks(agent, toolkit)
 
-        from langgraph.prebuilt import ToolNode
         from langchain_core.tools import StructuredTool
+        from langgraph.prebuilt import ToolNode
 
         for _name, spec in compiled.builder.nodes.items():
             if hasattr(spec, "runnable") and isinstance(spec.runnable, ToolNode):
@@ -262,7 +258,9 @@ class TestExecuteTrajectory:
         """Multiple tool calls should appear in trajectory in call order."""
         responses = [
             make_tool_call_message("lookup_order", {"order_id": "1"}, call_id="c1"),
-            make_tool_call_message("process_refund", {"order_id": "1", "reason": "damaged"}, call_id="c2"),
+            make_tool_call_message(
+                "process_refund", {"order_id": "1", "reason": "damaged"}, call_id="c2"
+            ),
             AIMessage(content="Refund processed."),
         ]
         agent = _simple_agent(responses)
@@ -304,7 +302,9 @@ class TestToolkitRun:
         """Boolean and assert assertion APIs should work on LangGraph trajectory."""
         responses = [
             make_tool_call_message("lookup_order", {"order_id": "7"}),
-            make_tool_call_message("process_refund", {"order_id": "7", "reason": "broken"}, call_id="c2"),
+            make_tool_call_message(
+                "process_refund", {"order_id": "7", "reason": "broken"}, call_id="c2"
+            ),
             AIMessage(content="Refund done."),
         ]
         agent = _simple_agent(responses)
@@ -341,7 +341,9 @@ class TestToolkitRun:
         """call_order_contains should work for LangGraph trajectories."""
         responses = [
             make_tool_call_message("lookup_order", {"order_id": "5"}, call_id="c1"),
-            make_tool_call_message("process_refund", {"order_id": "5", "reason": "wrong"}, call_id="c2"),
+            make_tool_call_message(
+                "process_refund", {"order_id": "5", "reason": "wrong"}, call_id="c2"
+            ),
             AIMessage(content="Done."),
         ]
         agent = _simple_agent(responses)

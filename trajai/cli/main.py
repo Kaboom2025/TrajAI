@@ -11,7 +11,7 @@ from typing import List, Optional
 def _cmd_test(args: argparse.Namespace) -> int:
     """Run tests via pytest with TrajAI integration."""
     import pytest  # type: ignore[import]
-    
+
     from trajai.config import get_config
 
     config = get_config()
@@ -25,7 +25,7 @@ def _cmd_test(args: argparse.Namespace) -> int:
         os.environ["TRAJAI_COST_BUDGET_PER_TEST"] = str(args.budget)
     if args.model is not None:
         os.environ["TRAJAI_MODEL"] = args.model
-    
+
     # Cache flags
     if args.record:
         os.environ["TRAJAI_CACHE_ENABLED"] = "true"
@@ -122,13 +122,13 @@ def _cmd_cache(args: argparse.Namespace) -> int:
     """Cache management."""
     from trajai.config import get_config
     from trajai.runner.replay import ReplayCache
-    
+
     config = get_config()
     cache = ReplayCache(
         directory=config.cache_directory,
         ttl_hours=config.cache_ttl_hours,
     )
-    
+
     subcommand: str = args.cache_cmd or "stats"
     if subcommand == "clear":
         cache.clear()
@@ -136,7 +136,7 @@ def _cmd_cache(args: argparse.Namespace) -> int:
         return 0
     elif subcommand == "stats":
         stats = cache.stats()
-        print(f"[TrajAI] Cache Statistics:")
+        print("[TrajAI] Cache Statistics:")
         print(f"  Entries: {stats.entry_count}")
         print(f"  Size: {stats.total_size_bytes / 1024:.2f} KB")
         print(f"  Hits: {stats.hit_count}")

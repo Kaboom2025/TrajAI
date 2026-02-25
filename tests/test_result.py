@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import pytest
-
 from trajai.core.result import AgentRunResult, MockToolCall
 from trajai.core.trajectory import Trajectory
 

@@ -49,5 +49,7 @@ def quick_search_agent(input: str, tools: dict) -> str:
     if not sources:
         return "No results found."
 
-    summary = tools["summarize"]({"text": sources[0].get("snippet", ""), "max_length": 100})
+    summary = tools["summarize"](
+        {"text": sources[0].get("snippet", ""), "max_length": 100}
+    )
     return f"Quick answer: {summary.get('summary', 'No summary available.')}"

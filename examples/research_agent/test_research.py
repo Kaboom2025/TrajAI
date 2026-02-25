@@ -1,9 +1,8 @@
 """Tests for the research agent, including statistical testing."""
-from trajai.core.assertions import cost_under, tokens_under
+from agent import quick_search_agent, research_agent
+
 from trajai.mock import MockToolkit
 from trajai.runner.statistical import StatisticalRunner
-
-from agent import quick_search_agent, research_agent
 
 MOCK_SOURCES = [
     {"url": "https://example.com/1", "title": "Source 1", "snippet": "First result"},
@@ -22,7 +21,9 @@ def _setup_research_toolkit() -> MockToolkit:
         {"text": "Content from source 3 about deep learning."},
     ])
     toolkit.mock("summarize", return_value={
-        "summary": "Machine learning encompasses neural networks and deep learning approaches."
+        "summary": (
+            "Machine learning encompasses neural networks and deep learning approaches."
+        )
     })
     toolkit.mock("generate_citations", return_value={
         "formatted": ["Source 1 (2024)", "Source 2 (2024)", "Source 3 (2024)"]
@@ -94,7 +95,9 @@ def test_quick_search_statistical():
     def _single_run():
         toolkit = MockToolkit()
         toolkit.mock("search", return_value={"results": MOCK_SOURCES})
-        toolkit.mock("summarize", return_value={"summary": "A concise answer about the topic."})
+        toolkit.mock(
+            "summarize", return_value={"summary": "A concise answer about the topic."}
+        )
 
         result = toolkit.run_callable(quick_search_agent, "What is AI?")
         assert result.tool_was_called("search")

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from trajai.adapters.base import BaseAdapter
 from trajai.core.trajectory import Trajectory, TrajectoryStep
@@ -9,12 +9,12 @@ if TYPE_CHECKING:
     from trajai.mock.toolkit import MockToolkit
 
 try:
-    from langgraph.graph import StateGraph
-    from langgraph.graph.state import CompiledStateGraph
-    from langgraph.prebuilt import ToolNode
     from langchain_core.callbacks import BaseCallbackHandler
     from langchain_core.messages import AIMessage, HumanMessage
     from langchain_core.tools import StructuredTool
+    from langgraph.graph import StateGraph
+    from langgraph.graph.state import CompiledStateGraph
+    from langgraph.prebuilt import ToolNode
 
     HAS_LANGGRAPH = True
 except ImportError:
@@ -52,7 +52,9 @@ class _TrajectoryCallbackHandler(_BaseCallbackHandlerClass):
             self._pending[run_id] = model_name
 
     def on_llm_end(self, response: Any, run_id: Any = None, **kwargs: Any) -> None:
-        model_name = self._pending.pop(run_id, "unknown") if run_id is not None else "unknown"
+        model_name = (
+            self._pending.pop(run_id, "unknown") if run_id is not None else "unknown"
+        )
 
         prompt_tokens = 0
         completion_tokens = 0

@@ -15,7 +15,6 @@ from langchain_core.messages import AIMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
 from langchain_core.tools import tool
 
-
 # ---------------------------------------------------------------------------
 # Tool definitions
 # ---------------------------------------------------------------------------

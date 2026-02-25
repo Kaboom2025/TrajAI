@@ -28,9 +28,10 @@ Real-world example:
 """
 
 import warnings
+
 warnings.filterwarnings("ignore")
 
-from trajai.mock.toolkit import MockToolkit, AdapterNotFoundError
+from trajai.mock.toolkit import AdapterNotFoundError, MockToolkit  # noqa: E402
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -80,12 +81,12 @@ unsupported_agent = CustomUnsupportedAgent()
 print(f"  Agent type: {unsupported_agent}")
 
 try:
-    print(f"  Calling toolkit.run()...")
+    print("  Calling toolkit.run()...")
     result = toolkit.run(unsupported_agent, "Hello, what is 2+2?")
     print(f"  {RED}✗ Expected AdapterNotFoundError but nothing was raised!{RESET}")
 except AdapterNotFoundError as e:
     print_error("AdapterNotFoundError raised as expected", True)
-    print(f"\n  Error message:")
+    print("\n  Error message:")
     print(f"    {BOLD}{e}{RESET}")
 
 
@@ -160,10 +161,10 @@ print("  ✓ Tests can gracefully skip or fail with context")
 # Summary
 # ─────────────────────────────────────────────────────────────────────────────
 print(f"\n{BOLD}{GREEN}✓ Scenario 5 complete!{RESET}")
-print(f"  This example showed how to:")
-print(f"    1. Handle AdapterNotFoundError with try/except")
-print(f"    2. Interpret error messages")
-print(f"    3. Use pytest.raises() to test for exceptions")
-print(f"    4. Understand framework support status")
-print(f"    5. Plan fallback strategies")
+print("  This example showed how to:")
+print("    1. Handle AdapterNotFoundError with try/except")
+print("    2. Interpret error messages")
+print("    3. Use pytest.raises() to test for exceptions")
+print("    4. Understand framework support status")
+print("    5. Plan fallback strategies")
 print()

@@ -25,16 +25,18 @@ Real-world example:
 """
 
 import warnings
+
 warnings.filterwarnings("ignore")
 
-from langchain_core.messages import AIMessage
-from trajai.mock.toolkit import MockToolkit
-from tests.fixtures.langgraph_agent import (
+from langchain_core.messages import AIMessage  # noqa: E402
+
+from tests.fixtures.langgraph_agent import (  # noqa: E402
     FakeToolCallingModel,
     build_react_agent,
     get_tool_definitions,
     make_tool_call_message,
 )
+from trajai.mock.toolkit import MockToolkit  # noqa: E402
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -100,7 +102,10 @@ print_ok(
 if result.tool_call_count("lookup_order", 2):
     print_ok("Tool called exactly twice", True)
 else:
-    actual_count = len([s for s in result.trajectory.steps if s.step_type == "tool_call" and s.tool_name == "lookup_order"])
+    actual_count = len([
+        s for s in result.trajectory.steps
+        if s.step_type == "tool_call" and s.tool_name == "lookup_order"
+    ])
     print(f"  {RED}✗ Expected 2 calls, got {actual_count}{RESET}")
 
 
@@ -111,7 +116,7 @@ print_section("Results from Each Call")
 
 # First call (index 0)
 call_0 = result.get_call("lookup_order", 0)
-print(f"    Call 0:")
+print("    Call 0:")
 print(f"      - Arguments: {call_0.args}")
 print(f"      - Result:    {call_0.result}")
 print_ok(
@@ -121,7 +126,7 @@ print_ok(
 
 # Second call (index 1)
 call_1 = result.get_call("lookup_order", 1)
-print(f"    Call 1:")
+print("    Call 1:")
 print(f"      - Arguments: {call_1.args}")
 print(f"      - Result:    {call_1.result}")
 print_ok(
@@ -155,7 +160,7 @@ print_section("Advanced - Argument Tracking Across Calls")
 # Collect all arguments from lookup_order calls
 lookup_calls = result.get_calls("lookup_order")
 
-print(f"    lookup_order calls made with order_ids:")
+print("    lookup_order calls made with order_ids:")
 for i, call in enumerate(lookup_calls):
     order_id = call.args.get("order_id")
     status = call.result.get("status")
@@ -186,10 +191,10 @@ print("      print(f'Call {i}: {call.args} → {call.result}')")
 # Summary
 # ─────────────────────────────────────────────────────────────────────────────
 print(f"\n{BOLD}{GREEN}✓ Scenario 4 complete!{RESET}")
-print(f"  This example showed how to:")
-print(f"    1. Use sequence mock for repeated tool calls")
-print(f"    2. Verify tool_call_count() for N invocations")
-print(f"    3. Access each call result with get_call(name, index)")
-print(f"    4. Verify argument flow across multiple iterations")
-print(f"    5. Test batch-processing agent behavior")
+print("  This example showed how to:")
+print("    1. Use sequence mock for repeated tool calls")
+print("    2. Verify tool_call_count() for N invocations")
+print("    3. Access each call result with get_call(name, index)")
+print("    4. Verify argument flow across multiple iterations")
+print("    5. Test batch-processing agent behavior")
 print()

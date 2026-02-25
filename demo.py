@@ -8,6 +8,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from langchain_core.messages import AIMessage  # noqa: E402
+
 from tests.fixtures.langgraph_agent import (  # noqa: E402
     FakeToolCallingModel,
     build_react_agent,

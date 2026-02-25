@@ -3,13 +3,19 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from functools import wraps
-from typing import Any, Callable, Dict, List, Optional, Type
+from typing import Any, Callable, Dict, Optional
+
 from trajai.core.assertions import TrajAIAssertionError
 from trajai.mock.toolkit import MockToolkit
 
-class CostLimitExceeded(Exception):
+
+class CostLimitExceededError(Exception):
     """Raised when the LLM API cost exceeds the configured budget."""
+
     pass
+
+
+CostLimitExceeded = CostLimitExceededError  # backward compat alias
 
 class TrajAIStatisticalError(AssertionError):
     """Raised when a statistical test fails to meet the pass rate threshold."""
@@ -22,35 +28,38 @@ class StatisticalResult:
     failed_runs: int
     total_cost: float
     failure_modes: Dict[str, int] = field(default_factory=dict)
-    
+
     @property
     def pass_rate(self) -> float:
         if self.total_runs == 0:
             return 0.0
         return self.passed_runs / self.total_runs
-    
+
     def summary(self) -> str:
         lines = []
-        lines.append(f"Statistical Result: {self.passed_runs}/{self.total_runs} passed ({self.pass_rate*100:.1f}%)")
+        lines.append(
+            f"Statistical Result: {self.passed_runs}/{self.total_runs} passed"
+            f" ({self.pass_rate*100:.1f}%)"
+        )
         lines.append(f"Total Cost: ${self.total_cost:.4f}")
-        
+
         if self.failure_modes:
             lines.append("Failure Modes:")
             for error_msg, count in self.failure_modes.items():
                 lines.append(f"  {count}x — {error_msg}")
-                
+
         return "\n".join(lines)
 
 class StatisticalRunner:
     def __init__(
-        self, 
-        n: Optional[int] = None, 
-        threshold: Optional[float] = None, 
-        max_workers: Optional[int] = None, 
+        self,
+        n: Optional[int] = None,
+        threshold: Optional[float] = None,
+        max_workers: Optional[int] = None,
         budget: Optional[float] = None
     ):
         """Initialize StatisticalRunner.
-        
+
         Args:
             n: Number of runs. If None, use config default.
             threshold: Pass rate threshold. If None, use config default.
@@ -58,30 +67,34 @@ class StatisticalRunner:
             budget: Cost budget. If None, use config default.
         """
         from trajai.config import get_config
-        
+
         config = get_config()
         self.n = n if n is not None else config.default_n
-        self.threshold = threshold if threshold is not None else config.default_threshold
-        self.max_workers = max_workers if max_workers is not None else config.max_workers
+        self.threshold = (
+            threshold if threshold is not None else config.default_threshold
+        )
+        self.max_workers = (
+            max_workers if max_workers is not None else config.max_workers
+        )
         self.budget = budget if budget is not None else config.cost_budget_per_test
         self._stop_event = threading.Event()
 
     def _execute_run(
-        self, 
-        test_fn: Callable[..., Any], 
-        args: Any, 
-        kwargs: Any, 
+        self,
+        test_fn: Callable[..., Any],
+        args: Any,
+        kwargs: Any,
         has_mock_toolkit: bool
     ) -> Optional[tuple[bool, float, Optional[str]]]:
         if self._stop_event.is_set():
             return None
-            
+
         run_kwargs = kwargs.copy()
         toolkit = None
         if has_mock_toolkit:
             toolkit = MockToolkit()
             run_kwargs["mock_toolkit"] = toolkit
-        
+
         passed = False
         error_msg = None
         try:
@@ -92,20 +105,22 @@ class StatisticalRunner:
         except Exception:
             self._stop_event.set()
             raise
-        
+
         run_cost = 0.0
         if toolkit:
             run_cost = sum(call.cost or 0.0 for call in toolkit._recorded_llm_calls)
-            
+
         return passed, run_cost, error_msg
 
-    def run(self, test_fn: Callable[..., Any], *args: Any, **kwargs: Any) -> StatisticalResult:
+    def run(
+        self, test_fn: Callable[..., Any], *args: Any, **kwargs: Any
+    ) -> StatisticalResult:
         self._stop_event.clear()
         passed_runs = 0
         failed_runs = 0
         total_cost = 0.0
         failure_modes: Dict[str, int] = {}
-        
+
         sig = inspect.signature(test_fn)
         has_mock_toolkit = "mock_toolkit" in sig.parameters
 
@@ -113,9 +128,9 @@ class StatisticalRunner:
         result = self._execute_run(test_fn, args, kwargs, has_mock_toolkit)
         if result is None: # Should not happen for Run 1
              return StatisticalResult(0, 0, 0, 0.0)
-             
+
         passed, run_cost, error_msg = result
-        
+
         total_cost += run_cost
         if passed:
             passed_runs += 1
@@ -123,12 +138,12 @@ class StatisticalRunner:
             failed_runs += 1
             if error_msg:
                 failure_modes[error_msg] = failure_modes.get(error_msg, 0) + 1
-        
+
         # Calibration check
         estimated_total = run_cost * self.n
         if estimated_total > self.budget:
             self._stop_event.set()
-            raise CostLimitExceeded(
+            raise CostLimitExceededError(
                 f"First run cost ${run_cost:.4f}. "
                 f"Estimated total for {self.n} runs: ${estimated_total:.4f}. "
                 f"Budget: ${self.budget:.2f}. "
@@ -139,28 +154,30 @@ class StatisticalRunner:
             # Remaining runs in parallel
             with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
                 futures = [
-                    executor.submit(self._execute_run, test_fn, args, kwargs, has_mock_toolkit) 
+                    executor.submit(
+                        self._execute_run, test_fn, args, kwargs, has_mock_toolkit
+                    )
                     for _ in range(self.n - 1)
                 ]
-                
+
                 try:
                     for future in as_completed(futures):
-                        # If a thread set the stop event due to unhandled exception, 
+                        # If a thread set the stop event due to unhandled exception,
                         # future.result() will raise it here.
                         res = future.result()
                         if res is None:
                             continue
-                            
+
                         passed, run_cost, error_msg = res
                         total_cost += run_cost
-                        
+
                         if total_cost > self.budget:
                             self._stop_event.set()
                             for f in futures:
                                 f.cancel()
-                            raise CostLimitExceeded(
-                                f"Budget exceeded mid-run. Cumulative cost: ${total_cost:.4f}. "
-                                f"Budget: ${self.budget:.2f}."
+                            raise CostLimitExceededError(
+                                f"Budget exceeded mid-run. Cumulative cost:"
+                                f" ${total_cost:.4f}. Budget: ${self.budget:.2f}."
                             )
 
                         if passed:
@@ -168,7 +185,9 @@ class StatisticalRunner:
                         else:
                             failed_runs += 1
                             if error_msg:
-                                failure_modes[error_msg] = failure_modes.get(error_msg, 0) + 1
+                                failure_modes[error_msg] = (
+                                    failure_modes.get(error_msg, 0) + 1
+                                )
                 except Exception:
                     self._stop_event.set()
                     for f in futures:
@@ -184,13 +203,13 @@ class StatisticalRunner:
         )
 
 def statistical(
-    n: Optional[int] = None, 
-    threshold: Optional[float] = None, 
-    max_workers: Optional[int] = None, 
+    n: Optional[int] = None,
+    threshold: Optional[float] = None,
+    max_workers: Optional[int] = None,
     budget: Optional[float] = None
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decorator to run a test function multiple times and assert on pass rate.
-    
+
     Args:
         n: Number of runs. If None, use config default.
         threshold: Pass rate threshold. If None, use config default.
@@ -201,17 +220,19 @@ def statistical(
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> StatisticalResult:
             runner = StatisticalRunner(
-                n=n, 
-                threshold=threshold, 
-                max_workers=max_workers, 
+                n=n,
+                threshold=threshold,
+                max_workers=max_workers,
                 budget=budget
             )
             result = runner.run(func, *args, **kwargs)
-            
+
             if result.pass_rate < runner.threshold:
                 raise TrajAIStatisticalError(
-                    f"Statistical failure: {result.passed_runs}/{result.total_runs} passed "
-                    f"({result.pass_rate*100:.1f}%) — required: {runner.threshold*100:.1f}%\n\n"
+                    f"Statistical failure:"
+                    f" {result.passed_runs}/{result.total_runs} passed"
+                    f" ({result.pass_rate*100:.1f}%)"
+                    f" — required: {runner.threshold*100:.1f}%\n\n"
                     f"{result.summary()}"
                 )
             return result

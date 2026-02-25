@@ -24,15 +24,17 @@ Real-world example:
 """
 
 import warnings
+
 warnings.filterwarnings("ignore")
 
-from langchain_core.messages import AIMessage
-from trajai.mock.toolkit import MockToolkit
-from tests.fixtures.langgraph_agent import (
+from langchain_core.messages import AIMessage  # noqa: E402
+
+from tests.fixtures.langgraph_agent import (  # noqa: E402
     FakeToolCallingModel,
     build_react_agent,
     get_tool_definitions,
 )
+from trajai.mock.toolkit import MockToolkit  # noqa: E402
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -137,9 +139,9 @@ print("  ✓ Tests agent's common sense / reasoning ability")
 # Summary
 # ─────────────────────────────────────────────────────────────────────────────
 print(f"\n{BOLD}{GREEN}✓ Scenario 3 complete!{RESET}")
-print(f"  This example showed how to:")
-print(f"    1. Assert that specific tools were NOT called")
-print(f"    2. Verify agent responds directly for general knowledge")
-print(f"    3. Inspect trajectory for no tool_call steps")
-print(f"    4. Validate agent cost-efficiency by avoiding unnecessary APIs")
+print("  This example showed how to:")
+print("    1. Assert that specific tools were NOT called")
+print("    2. Verify agent responds directly for general knowledge")
+print("    3. Inspect trajectory for no tool_call steps")
+print("    4. Validate agent cost-efficiency by avoiding unnecessary APIs")
 print()

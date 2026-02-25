@@ -3,7 +3,8 @@ Scenario 2: Two Tool Calls in Sequence
 =======================================
 
 What it simulates:
-    An agent that performs multiple actions in sequence (lookup order, then process refund).
+    An agent that performs multiple actions in sequence
+    (lookup order, then process refund).
 
 Use case:
     Testing multi-step workflows where tool call order matters and you need to assert
@@ -25,16 +26,18 @@ Real-world example:
 """
 
 import warnings
+
 warnings.filterwarnings("ignore")
 
-from langchain_core.messages import AIMessage
-from trajai.mock.toolkit import MockToolkit
-from tests.fixtures.langgraph_agent import (
+from langchain_core.messages import AIMessage  # noqa: E402
+
+from tests.fixtures.langgraph_agent import (  # noqa: E402
     FakeToolCallingModel,
     build_react_agent,
     get_tool_definitions,
     make_tool_call_message,
 )
+from trajai.mock.toolkit import MockToolkit  # noqa: E402
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -64,7 +67,9 @@ print_header("Scenario 2 — Two Tool Calls in Sequence")
 model = FakeToolCallingModel(
     responses=[
         make_tool_call_message("lookup_order", {"order_id": "99"}, call_id="c1"),
-        make_tool_call_message("process_refund", {"order_id": "99", "reason": "damaged"}, call_id="c2"),
+        make_tool_call_message(
+            "process_refund", {"order_id": "99", "reason": "damaged"}, call_id="c2"
+        ),
         AIMessage(content="Refund for order #99 approved."),
     ],
 )
@@ -118,12 +123,12 @@ print_ok(
 print_section("Tool Call Details (each step)")
 
 lookup_call = result.get_call("lookup_order")
-print(f"    lookup_order:")
+print("    lookup_order:")
 print(f"      - Arguments: {lookup_call.args}")
 print(f"      - Result:    {lookup_call.result}")
 
 refund_call = result.get_call("process_refund")
-print(f"    process_refund:")
+print("    process_refund:")
 print(f"      - Arguments: {refund_call.args}")
 print(f"      - Result:    {refund_call.result}")
 
@@ -167,10 +172,10 @@ else:
 # Summary
 # ─────────────────────────────────────────────────────────────────────────────
 print(f"\n{BOLD}{GREEN}✓ Scenario 2 complete!{RESET}")
-print(f"  This example showed how to:")
-print(f"    1. Register multiple mocks for different tools")
-print(f"    2. Assert tool_called_before() to enforce ordering")
-print(f"    3. Use call_order() to see the full sequence")
-print(f"    4. Verify argument flow across workflow steps")
-print(f"    5. Check output content with output_contains()")
+print("  This example showed how to:")
+print("    1. Register multiple mocks for different tools")
+print("    2. Assert tool_called_before() to enforce ordering")
+print("    3. Use call_order() to see the full sequence")
+print("    4. Verify argument flow across workflow steps")
+print("    5. Check output content with output_contains()")
 print()

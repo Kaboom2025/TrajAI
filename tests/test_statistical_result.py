@@ -1,8 +1,8 @@
-import pytest
 from trajai.runner.statistical import StatisticalResult
 
+
 def test_statistical_result_initialization():
-    """Test that StatisticalResult initializes with correct defaults and computed properties."""
+    """Test StatisticalResult initializes with correct defaults and computed props."""
     result = StatisticalResult(
         total_runs=10,
         passed_runs=7,
@@ -13,7 +13,7 @@ def test_statistical_result_initialization():
             "AssertionError: Output mismatch": 1
         }
     )
-    
+
     assert result.total_runs == 10
     assert result.passed_runs == 7
     assert result.failed_runs == 3
@@ -32,9 +32,9 @@ def test_statistical_result_summary_formatting():
             "AssertionError: Timeout": 2
         }
     )
-    
+
     summary = result.summary()
-    
+
     assert "Statistical Result: 8/10 passed (80.0%)" in summary
     assert "Total Cost: $1.2500" in summary
     assert "Failure Modes:" in summary
@@ -49,8 +49,8 @@ def test_statistical_result_empty_failures():
         total_cost=0.10,
         failure_modes={}
     )
-    
+
     summary = result.summary()
-    
+
     assert "Statistical Result: 5/5 passed (100.0%)" in summary
     assert "Failure Modes" not in summary
