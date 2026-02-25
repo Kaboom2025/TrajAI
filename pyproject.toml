@@ -92,5 +92,6 @@ module = [
     "agents.tool",
     "langgraph.*",
     "langchain_core.*",
+    "tomli",
 ]
 ignore_missing_imports = true

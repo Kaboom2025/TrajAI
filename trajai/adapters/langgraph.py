@@ -21,13 +21,15 @@ except ImportError:
     HAS_LANGGRAPH = False
 
 
-if HAS_LANGGRAPH:
+if TYPE_CHECKING:
+    _BaseCallbackHandlerClass: type = BaseCallbackHandler
+elif HAS_LANGGRAPH:
     _BaseCallbackHandlerClass = BaseCallbackHandler
 else:
-    _BaseCallbackHandlerClass = object  # type: ignore[assignment,misc]
+    _BaseCallbackHandlerClass = object
 
 
-class _TrajectoryCallbackHandler(_BaseCallbackHandlerClass):
+class _TrajectoryCallbackHandler(_BaseCallbackHandlerClass):  # type: ignore[misc]
     """Captures LLM calls from LangChain callbacks.
 
     Tool calls are already recorded by MockTool.invoke, so this handler

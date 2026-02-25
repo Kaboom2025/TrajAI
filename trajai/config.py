@@ -79,12 +79,11 @@ class TrajAIConfig:
     def _load_from_toml(self, toml_path: Path) -> None:
         """Load configuration from a TOML file."""
         try:
-            import tomllib  # Python 3.11+
+            import tomllib
         except ImportError:
             try:
-                import tomli as tomllib  # type: ignore[import-not-found, no-redef]
+                import tomli as tomllib  # type: ignore[no-redef]
             except ImportError:
-                # No TOML parser available - skip file loading
                 return
 
         with open(toml_path, "rb") as f:
@@ -99,12 +98,11 @@ class TrajAIConfig:
     def _load_from_pyproject_toml(self, pyproject_path: Path) -> None:
         """Load configuration from pyproject.toml [tool.trajai] section."""
         try:
-            import tomllib  # Python 3.11+
+            import tomllib
         except ImportError:
             try:
                 import tomli as tomllib  # type: ignore[no-redef]
             except ImportError:
-                # No TOML parser available - skip file loading
                 return
 
         with open(pyproject_path, "rb") as f:
