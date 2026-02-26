@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 license = "MIT"
 keywords = ["ai", "agents", "testing", "pytest", "llm", "langchain", "crewai", "openai"]
 authors = [
-  { name = "Saalik", email = "saalik@example.com" },
+  { name = "Saalik", email = "saalikahmed@gmail.com" },
 ]
 classifiers = [
   "Development Status :: 3 - Alpha",
