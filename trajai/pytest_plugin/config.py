@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional
@@ -21,6 +20,13 @@ class TrajAIConfig:
 
 def _read_toml_section(path: Path) -> Dict[str, Any]:
     """Read [tool.trajai] section from a TOML file."""
+    try:
+        import tomllib
+    except ImportError:
+        try:
+            import tomli as tomllib  # type: ignore[no-redef]
+        except ImportError:
+            return {}
     try:
         with open(path, "rb") as f:
             data = tomllib.load(f)

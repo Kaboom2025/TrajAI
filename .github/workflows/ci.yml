@@ -38,8 +38,14 @@ jobs:
     - name: Run tests
       run: pytest -v
     
-    - name: Run example tests
-      run: |
-        cd examples/generic_chatbot && pytest test_chatbot.py -v
-        cd ../refund_agent && pytest test_refund.py -v
-        cd ../research_agent && pytest test_research.py -v
+    - name: Run example tests (generic_chatbot)
+      working-directory: examples/generic_chatbot
+      run: pytest test_chatbot.py -v
+
+    - name: Run example tests (refund_agent)
+      working-directory: examples/refund_agent
+      run: pytest test_refund.py -v
+
+    - name: Run example tests (research_agent)
+      working-directory: examples/research_agent
+      run: pytest test_research.py -v

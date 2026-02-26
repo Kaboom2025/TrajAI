@@ -38,7 +38,7 @@ class TestWriteGithubStepSummary:
             ("tests/test_foo.py::test_baz", "FAIL", "$0.0010", "80.0%"),
         )
         _write_github_step_summary(path, rows, total_cost=0.0033, total_tokens=0)
-        return Path(path).read_text()
+        return Path(path).read_text(encoding="utf-8")
 
     def test_creates_file(self) -> None:
         with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
@@ -114,7 +114,7 @@ class TestWriteGithubStepSummary:
             from trajai.pytest_plugin.plugin import _write_github_step_summary
 
             _write_github_step_summary(path, [], total_cost=0.0, total_tokens=0)
-            content = Path(path).read_text()
+            content = Path(path).read_text(encoding="utf-8")
             assert "0 tests" in content
         finally:
             os.unlink(path)
@@ -126,7 +126,7 @@ class TestWriteGithubStepSummary:
             from trajai.pytest_plugin.plugin import _write_github_step_summary
 
             _write_github_step_summary(path, [], total_cost=0.0, total_tokens=1234)
-            content = Path(path).read_text()
+            content = Path(path).read_text(encoding="utf-8")
             assert "1234" in content
         finally:
             os.unlink(path)
@@ -134,7 +134,7 @@ class TestWriteGithubStepSummary:
     def test_appends_to_existing_file(self) -> None:
         """The summary should append to an existing file (GitHub Actions pattern)."""
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".md", delete=False
+            mode="w", suffix=".md", delete=False, encoding="utf-8"
         ) as f:
             f.write("# Existing content\n")
             path = f.name
@@ -142,7 +142,7 @@ class TestWriteGithubStepSummary:
             from trajai.pytest_plugin.plugin import _write_github_step_summary
 
             _write_github_step_summary(path, [], total_cost=0.0, total_tokens=0)
-            content = Path(path).read_text()
+            content = Path(path).read_text(encoding="utf-8")
             assert "# Existing content" in content
             assert "## TrajAI Test Summary" in content
         finally:
