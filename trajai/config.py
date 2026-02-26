@@ -89,11 +89,8 @@ class TrajAIConfig:
         with open(toml_path, "rb") as f:
             data = tomllib.load(f)
 
-        trajai_section = data.get("tool", {}).get("trajai", {})
-        if not trajai_section and "trajai" in data:
-            trajai_section = data["trajai"]
-
-        self._apply_dict(trajai_section)
+        # trajai.toml uses top-level keys directly (not nested under [trajai])
+        self._apply_dict(data)
 
     def _load_from_pyproject_toml(self, pyproject_path: Path) -> None:
         """Load configuration from pyproject.toml [tool.trajai] section."""
