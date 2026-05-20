@@ -37,6 +37,7 @@ class CacheStats:
     total_size_bytes: int
     hit_count: int = 0
     miss_count: int = 0
+    total_cached_cost: float = 0.0
 
     @property
     def hit_rate(self) -> float:
@@ -48,10 +49,15 @@ class CacheStats:
 
     @property
     def estimated_savings_usd(self) -> float:
-        """Estimated cost savings from cache hits."""
-        # This is a rough estimate - actual savings depend on cache hit rate
-        # We'll compute this based on average cost per entry
-        return 0.0  # TODO: Implement if needed
+        """Estimated cost savings from cache hits.
+
+        Estimated as ``hit_count * average_cost_per_entry``, where the
+        average is taken across all currently stored cache entries.
+        """
+        if self.entry_count == 0 or self.hit_count == 0:
+            return 0.0
+        average_cost = self.total_cached_cost / self.entry_count
+        return self.hit_count * average_cost
 
 
 class ReplayCache:
@@ -215,6 +221,7 @@ class ReplayCache:
         """Get cache statistics."""
         entry_count = 0
         total_size = 0
+        total_cached_cost = 0.0
 
         if self.directory.exists():
             for cache_file in self.directory.glob("*.json"):
@@ -223,10 +230,16 @@ class ReplayCache:
                     total_size += cache_file.stat().st_size
                 except OSError:
                     pass
+                try:
+                    with open(cache_file, "r", encoding="utf-8") as f:
+                        total_cached_cost += float(json.load(f).get("cost", 0.0))
+                except (json.JSONDecodeError, KeyError, IOError, TypeError, ValueError):
+                    pass
 
         return CacheStats(
             entry_count=entry_count,
             total_size_bytes=total_size,
             hit_count=self._hit_count,
             miss_count=self._miss_count,
+            total_cached_cost=total_cached_cost,
         )
